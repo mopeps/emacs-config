@@ -114,12 +114,12 @@
 
 (use-package general
   :config
-  (general-create-definer rune/leader-keys
+  (general-create-definer bonk/leader-keys
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
-    :global-prefix "SPC")
+    :global-prefix "C-SPC")
 
-  (rune/leader-keys
+  (bonk/leader-keys
     "t"  '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")))
 
@@ -154,8 +154,32 @@
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-(rune/leader-keys
+(bonk/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
+
+
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/github")
+    (setq projectile-project-search-path '("~/github")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+;; Now, if we want better integration with ivy in projectile, we use the following
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+
+;; Time for magit
+;; it's basically a git porcelain (= a better interface for git on emacs)
+(use-package magit
+  :commands (magit-status magit-get-current-branch)
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 
 
@@ -221,7 +245,7 @@
  '(custom-safe-themes
    '("c5a81a42df109b02a9a68dfe0ed530080372c1a0bbcb374da77ee3a57e1be719" default))
  '(package-selected-packages
-   '(hydra evil-collection evil general srcery-theme helpful counsel ivy-rich which-key rainbow-delimiters use-package ivy doom-themes doom-modeline command-log-mode)))
+   '(magit counsel-projectile projectile hydra evil-collection evil general srcery-theme helpful counsel ivy-rich which-key rainbow-delimiters use-package ivy doom-themes doom-modeline command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
