@@ -1,22 +1,24 @@
 (setq inhibit-startup-message t)
 
-(scroll-bar-mode -1) ; Disable visible scrollbar
-(tool-bar-mode -1)   ; Disable the toolbar
-(tooltip-mode -1)    ; Disable tooltips
-(set-fringe-mode 10) ; Give some breathing room
+  (scroll-bar-mode -1) ; Disable visible scrollbar
+  (tool-bar-mode -1)   ; Disable the toolbar
+  (tooltip-mode -1)    ; Disable tooltips
+  (set-fringe-mode 10) ; Give some breathing room
 
-(menu-bar-mode -1)   ; isable the menu bar
+  (menu-bar-mode -1)   ; isable the menu bar
 
-;; Set up the visible bell
-(setq visible-bell t)
+  ;; Set up the visible bell
+  (setq visible-bell t)
 
-;; (C-q Tab) inserts a tab space
-(add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
+(column-number-mode)
+(global-display-line-numbers-mode t)
 
-(set-face-attribute 'default nil :font "Iosevka Nerd Font-14" )
-
-;; Make Esc quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; Initialize package sources
 (require 'package)
@@ -41,86 +43,17 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-(column-number-mode)
-(global-display-line-numbers-mode t)
-
-;; Disable line numbers for some modes
-(dolist (mode '(org-mode-hook
-                term-mode-hook
-		shell-mode-hook
-                eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
-
-
-(use-package command-log-mode)
-
-(use-package ivy
-  :diminish
-  :bind (("C-s" . swiper)
-         :map ivy-minibuffer-map
-         ("TAB" . ivy-alt-done)	
-         ("C-l" . ivy-alt-done)
-         ("C-j" . ivy-next-line)
-         ("C-k" . ivy-previous-line)
-         :map ivy-switch-buffer-map
-         ("C-k" . ivy-previous-line)
-         ("C-l" . ivy-done)
-         ("C-d" . ivy-switch-buffer-kill)
-         :map ivy-reverse-i-search-map
-         ("C-k" . ivy-previous-line)
-         ("C-d" . ivy-reverse-i-search-kill))
-  :config
-  (ivy-mode 1))
-
-(use-package ivy-rich
-  :init
-  (ivy-rich-mode 1))
-
-(use-package counsel
-  :bind (("M-x" . counsel-M-x)
-         ("C-x b" . counsel-ibuffer)
-         ("C-x C-f" . counsel-find-file)
-         :map minibuffer-local-map
-         ("C-r" . 'counsel-minibuffer-history)))
-
-(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
-
-(use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key))
-
-(use-package doom-modeline
-  :ensure t
-  :hook (after-init . doom-modeline-mode)
-  :config
-   (setq doom-modeline-height 25)
-
-   ;; How wide the mode-line bar should be. It's only respected in GUI.
-
-   ;; Whether to use hud instead of default bar. It's only respected in GUI.
-   (setq doom-modeline-hud nil))
-
-
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 0.3))
+;; Make ESC quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 (use-package general
   :config
-  (general-create-definer bonk/leader-keys
+  (general-create-definer rune/leader-keys
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
 
-  (bonk/leader-keys
+  (rune/leader-keys
     "t"  '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")))
 
@@ -147,6 +80,62 @@
   :config
   (evil-collection-init))
 
+(use-package command-log-mode)
+
+(use-package doom-themes
+  :init (load-theme 'doom-gruvbox t))
+
+(use-package all-the-icons)
+
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
+
+(use-package ivy
+  :diminish
+  :bind (("C-s" . swiper)
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
+  :config
+  (ivy-mode 1))
+
+(use-package ivy-rich
+  :init
+  (ivy-rich-mode 1))
+
+(use-package counsel
+  :bind (("C-M-j" . 'counsel-switch-buffer)
+         :map minibuffer-local-map
+         ("C-r" . 'counsel-minibuffer-history))
+  :config
+  (counsel-mode 1))
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key))
+
 (use-package hydra)
 
 (defhydra hydra-text-scale (:timeout 4)
@@ -155,46 +144,14 @@
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-(bonk/leader-keys
+(rune/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
-
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  (when (file-directory-p "~/github")
-    (setq projectile-project-search-path '("~/github")))
-  (setq projectile-switch-project-action #'projectile-dired))
-
-;; Now, if we want better integration with ivy in projectile, we use the following
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
-
-
-;; Time for magit
-;; it's basically a git porcelain (= a better interface for git on emacs)
-(use-package magit
-  :commands (magit-status magit-get-current-branch)
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-
-;; NOTE: Make sure to configure a GitHub token before using this package!
-;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
-;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
-;; (use-package forge
-;;   :after magit)
-
-(defun bonk/org-mode-setup ()
-  (org-indent-mode)
-  (variable-pitch-mode 1)
-  (visual-line-mode 1))
-
-;; Org Mode Configuration ------------------------------------------------------
+(use-package org
+  :hook (org-mode . bonk/org-mode-setup)
+  :config
+  (setq org-ellipsis " ▾")
+  (bonk/org-font-setup))
 
 (defun bonk/org-font-setup ()
   ;; Replace list hyphen with dot
@@ -222,12 +179,6 @@
   (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
-(use-package org
-  :hook (org-mode . bonk/org-mode-setup)
-  :config
-  (setq org-ellipsis " ▾")
-  (bonk/org-font-setup))
-
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode)
@@ -242,69 +193,102 @@
 (use-package visual-fill-column
   :hook (org-mode . bonk/org-mode-visual-fill))
 
+;; Automatically tangle our Emacs.org config file when we save it
+(defun bonk/org-babel-tangle-config ()
+  (when (string-equal (buffer-file-name)
+                      (expand-file-name "~/github/emacs-config/config.org"))
+    ;; Dynamic scoping to the rescue
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle)))
+  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'bonk/org-babel-tangle-config))))
 
+(org-babel-do-load-languages
+  'org-babel-load-languages
+  '((emacs-lisp . t)
+    (python . t)))
 
+(push '("conf-unix" . conf-unix) org-src-lang-modes)
 
+(defun efs/lsp-mode-setup ()
+  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (lsp-headerline-breadcrumb-mode))
 
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :hook (lsp-mode . efs/lsp-mode-setup)
+  :init
+  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+  :config
+  (lsp-enable-which-key-integration t))
 
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode)
+  :custom
+  (lsp-ui-doc-position 'bottom))
 
+(use-package lsp-treemacs
+  :after lsp)
 
+(use-package lsp-ivy)
 
+(use-package typescript-mode
+  :mode "\\.ts\\'"
+  :hook (typescript-mode . lsp-deferred)
+  :config
+  (setq typescript-indent-level 2))
 
+(use-package inf-ruby)
 
+(use-package ruby-mode  ; built-in
+;; Other extensions are already registered in `auto-mode-alist' by `ruby-mode'
+:mode "\\.\\(?:a?rb\\|aslsx\\)\\'"
+:mode "/\\(?:Brew\\|Fast\\)file\\'"
+:interpreter "j?ruby\\(?:[0-9.]+\\)"
+:config
+(setq ruby-insert-encoding-magic-comment nil))
 
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+        (:map lsp-mode-map
+         ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
 
+(use-package company-box
+  :hook (company-mode . company-box-mode))
 
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/github")
+    (setq projectile-project-search-path '("~/github")))
+  (setq projectile-switch-project-action #'projectile-dired))
 
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
 
+(use-package magit
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
+;; NOTE: Make sure to configure a GitHub token before using this package!
+;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+;; (use-package forge)
 
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("c5a81a42df109b02a9a68dfe0ed530080372c1a0bbcb374da77ee3a57e1be719" default))
- '(package-selected-packages
-   '(org-bullets visual-fill-column magit counsel-projectile projectile hydra evil-collection evil general srcery-theme helpful counsel ivy-rich which-key rainbow-delimiters use-package ivy doom-themes doom-modeline command-log-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
