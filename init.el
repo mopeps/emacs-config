@@ -24,8 +24,8 @@
 (require 'package)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
 
 
 (setq package-check-signature nil) 
@@ -42,6 +42,7 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+(use-package use-package-ensure-system-package)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -209,17 +210,27 @@
 
 (push '("conf-unix" . conf-unix) org-src-lang-modes)
 
-(defun efs/lsp-mode-setup ()
+;; Increase for better lsp-mode performance; see
+;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+(setq gc-cons-threshold 100000000)
+(when (boundp 'read-process-output-max)
+  ;; New in Emacs 27
+  (setq read-process-output-max (* 1024 1024)))
+
+(defun bonk/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook (lsp-mode . efs/lsp-mode-setup)
+  :hook (lsp-mode . bonk/lsp-mode-setup)
   :init
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :config
-  (lsp-enable-which-key-integration t))
+  (lsp-enable-which-key-integration t)
+  :custom
+  (lsp-file-watch-threshold nil)
+  (lsp-solargraph-multi-root nil))
 
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
@@ -239,27 +250,36 @@
 
 (use-package inf-ruby)
 
-(use-package ruby-mode  ; built-in
-;; Other extensions are already registered in `auto-mode-alist' by `ruby-mode'
-:mode "\\.\\(?:a?rb\\|aslsx\\)\\'"
-:mode "/\\(?:Brew\\|Fast\\)file\\'"
-:interpreter "j?ruby\\(?:[0-9.]+\\)"
-:config
-(setq ruby-insert-encoding-magic-comment nil))
+(use-package ruby-mode
+  :ensure nil
+  :after lsp-mode
+  :hook ((ruby-mode . lsp-deferred)
+	 (ruby-mode . amk-lsp-format-on-save)))
+
+(use-package robe)
+(add-hook 'ruby-mode-hook 'robe-mode)
+
+(require 'flymake-ruby)
+(add-hook 'ruby-mode-hook 'flymake-ruby-load)
 
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
   :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
+	      ("<tab>" . company-complete-selection))
+  (:map lsp-mode-map
+	("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
 
+(global-company-mode t)
+(push 'company-robe company-backends)
+
 (use-package company-box
   :hook (company-mode . company-box-mode))
+(eval-after-load 'company
+  '(push 'company-robe company-backends))
 
 (use-package projectile
   :diminish projectile-mode

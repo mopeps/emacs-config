@@ -55,8 +55,8 @@
   (require 'package)
 
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("org" . "https://orgmode.org/elpa/")
-                           ("elpa" . "https://elpa.gnu.org/packages/")))
+			   ("org" . "https://orgmode.org/elpa/")
+			   ("elpa" . "https://elpa.gnu.org/packages/")))
 
 
   (setq package-check-signature nil) 
@@ -73,6 +73,7 @@
 
   (require 'use-package)
   (setq use-package-always-ensure t)
+  (use-package use-package-ensure-system-package)
 
 #+end_src
 
@@ -367,17 +368,27 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 
 #+begin_src emacs-lisp
 
-  (defun efs/lsp-mode-setup ()
+  ;; Increase for better lsp-mode performance; see
+  ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+  (setq gc-cons-threshold 100000000)
+  (when (boundp 'read-process-output-max)
+    ;; New in Emacs 27
+    (setq read-process-output-max (* 1024 1024)))
+
+  (defun bonk/lsp-mode-setup ()
     (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
     (lsp-headerline-breadcrumb-mode))
 
   (use-package lsp-mode
     :commands (lsp lsp-deferred)
-    :hook (lsp-mode . efs/lsp-mode-setup)
+    :hook (lsp-mode . bonk/lsp-mode-setup)
     :init
     (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
     :config
-    (lsp-enable-which-key-integration t))
+    (lsp-enable-which-key-integration t)
+    :custom
+    (lsp-file-watch-threshold nil)
+    (lsp-solargraph-multi-root nil))
 
 #+end_src
 
@@ -453,8 +464,6 @@ npm install -g typescript-language-server typescript
 This will install the [[https://github.com/theia-ide/typescript-language-server][typescript-language-server]] and the TypeScript compiler package.
 
 *** Ruby
-
-    This is a configuration for the Ruby language so that =.rb= files activate =solargraph
 **** inf-ruby
      #+begin_src emacs-lisp
        (use-package inf-ruby)
@@ -462,13 +471,24 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
      
 **** ruby-mode
      #+begin_src emacs-lisp
-       (use-package ruby-mode  ; built-in
-       ;; Other extensions are already registered in `auto-mode-alist' by `ruby-mode'
-       :mode "\\.\\(?:a?rb\\|aslsx\\)\\'"
-       :mode "/\\(?:Brew\\|Fast\\)file\\'"
-       :interpreter "j?ruby\\(?:[0-9.]+\\)"
-       :config
-       (setq ruby-insert-encoding-magic-comment nil))
+       (use-package ruby-mode
+	 :ensure nil
+	 :after lsp-mode
+	 :hook ((ruby-mode . lsp-deferred)
+		(ruby-mode . amk-lsp-format-on-save)))
+     #+end_src
+
+**** robe-mode
+     #+begin_src emacs-lisp
+       (use-package robe)
+       (add-hook 'ruby-mode-hook 'robe-mode)
+
+     #+end_src
+
+**** Flymake
+     #+begin_src emacs-lisp
+       (require 'flymake-ruby)
+       (add-hook 'ruby-mode-hook 'flymake-ruby-load)
      #+end_src
      
 ** Company Mode
@@ -483,17 +503,23 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
     :after lsp-mode
     :hook (lsp-mode . company-mode)
     :bind (:map company-active-map
-           ("<tab>" . company-complete-selection))
-          (:map lsp-mode-map
-           ("<tab>" . company-indent-or-complete-common))
+		("<tab>" . company-complete-selection))
+    (:map lsp-mode-map
+	  ("<tab>" . company-indent-or-complete-common))
     :custom
     (company-minimum-prefix-length 1)
     (company-idle-delay 0.0))
 
+  (global-company-mode t)
+  (push 'company-robe company-backends)
+
   (use-package company-box
     :hook (company-mode . company-box-mode))
+  (eval-after-load 'company
+    '(push 'company-robe company-backends))
 
 #+end_src
+
 ** Projectile
 
 [[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
