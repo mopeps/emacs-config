@@ -88,12 +88,12 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
   (use-package general
     :config
-    (general-create-definer rune/leader-keys
+    (general-create-definer bonk/leader-keys
       :keymaps '(normal insert visual emacs)
       :prefix "SPC"
       :global-prefix "C-SPC")
 
-    (rune/leader-keys
+    (bonk/leader-keys
       "t"  '(:ignore t :which-key "toggles")
       "tt" '(counsel-load-theme :which-key "choose theme")))
 
@@ -250,7 +250,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
     ("k" text-scale-decrease "out")
     ("f" nil "finished" :exit t))
 
-  (rune/leader-keys
+  (bonk/leader-keys
     "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 #+end_src
@@ -312,7 +312,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 #+end_src
 
 ** Center Org Buffers
-
+   
 #+begin_src emacs-lisp
 (defun bonk/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
@@ -490,7 +490,12 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
        (require 'flymake-ruby)
        (add-hook 'ruby-mode-hook 'flymake-ruby-load)
      #+end_src
-     
+
+*** Golang
+*** Elisp
+*** Rust
+*** C/C++
+*** 
 ** Company Mode
 
 [[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
@@ -571,6 +576,179 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
+* Terminals
+** Term-mode
+   =term-mode= is a built-in terminal emulator in Emacs. Because it is written in Emacs Lisp, you
+   can start using it inmediately with very little configuration. If you are on Linux or macOs,
+   =term-mode= is a great choice to get started because it supports fairly complex terminal applications
+   (=htop=, =vim= , etc) and works pretty reliably.
+
+   However, because it is written in ELisp, it can be slower than the other options like =vterm=.
+   The speed will only be an issue if you regularly run console apps with a lot of output.
+
+   - *line-mode*: It enables you to use normal Emacs keybindings while moving around in the terminal
+     buffer ( it's similar to NORMAL mode in vim)
+   - *char-mode*: It's similar to insert mode in VIM, meaning that , it allows you to write in
+     the terminal buffer.
+
+   With =evil-collection= installed, you will automatically switch to =char-mode= whenever you
+   enter insert mode, and when escaping, you will return to =line-mode=.
+
+   You can try running a terminal with =M-x term!=. :)
+
+*** Useful key bindings:
+    - =C-c C-p= / =C-c C-n= - go back and forward in the buffer's promts( also =[[= and =]\]= with
+      evil-mode)
+    - =C-c C-k= - Enter char-mode
+    - =C-c C-j= - Return to line-mode
+    - If you have =evil-collection= term-mode will work the way i mentioned before.
+
+    #+begin_src emacs-lisp
+      (use-package term
+	:config
+	(setq explicit-shell-file-name "zsh") ;; You can change this to bash, fish, etc
+	;;(setq explicit-zsh-args '()) ;; Use it to set especific shell args
+	(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
+
+   #+end_src
+
+*** Term-mode 256color
+    The =eterm-256color= package enhances the output of =term-mode= to enable handling of a
+    wider range of color codes so that many popular terminal applications look as you would
+    expect them to.  Keep in mind that this package requires =ncurses= to be installed on your
+    machine so that it has access to the =tic= program.  Most Linux distributions come with
+    this program installed already so you may not have to do anything extra to use it.
+
+#+begin_src emacs-lisp
+
+  (use-package eterm-256color
+    :hook (term-mode . eterm-256color-mode))
+
+#+end_src
+
+** Vterm
+   [[https://github.com/akermu/emacs-libvterm/][vterm]] is an improved terminal emulator package which uses a compiled native module to
+   interact with the underlying terminal applications. This enables it to be much faster
+   than =term-mode= and to also provide a more complete terminal emulation experience.
+   Make sure that you have the [[https://github.com/akermu/emacs-libvterm/#requirements][necessary dependencies]] installed before trying to use
+   =vterm= because there is a module that will need to be compiled before you can use it
+   successfully.
+
+#+begin_src emacs-lisp
+
+    (use-package vterm
+      :commands vterm
+      :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
+      :config
+      (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
+      (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+      (setq vterm-max-scrollback 10000)
+      ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
+      ;; spawn another if want one.
+      (setq vterm-kill-buffer-on-exit t)
+      (setq vterm-timer-delay 0.01))
+#+end_src
+
+** Shell-mode
+   TBD (i'm pretty satisfied with vterm, but i could try this one day)
+** Eshell
+   TBD (i'm pretty satisfied with vterm, but i could try this one day)
+* File Management
+** Dired
+*** Key Bindings
+
+**** Navigation
+**** Emacs / Evil
+     - =n= / =j= - next line
+     - =p= / =k= - previous line
+     - =j= / =J= - jump to file in buffer
+     - =RET= - select file or directory
+     - =^= - go to parent directory
+     - =S-RET= / =g O= - Open file in "other" window
+     - =M-RET= - Show file in other window without focusing (previewing files)
+     - =g o= (=dired-view-file=) - Open file but in a "preview" mode, close with =q=
+     - =g= / =g r= Refresh the buffer with =revert-buffer=
+       after changing configuration (and after filesystem changes!)
+
+**** Marking Files
+    - =m= - Marks a file
+    - =u= - Unmarks a file
+    - =U= - Unmarks all files in buffer
+    - =* t= / =t= - Inverts marked files in buffer
+    - =% m= - Mark files in buffer using regular expression
+    - =*= - Lots of other auto-marking functions
+    - =k= / =K= - "Kill" marked items (refresh buffer with =g= / =g r= to get them back)
+    - Many operations can be done on a single file if there are no active marks!
+
+**** Copying and Renaming files
+
+    - =C= - Copy marked files (or if no files are marked, the current file)
+    - Copying single and multiple files
+    - =U= - Unmark all files in buffer
+    - =R= - Rename marked files, renaming multiple is a move!
+    - =% R= - Rename based on regular expression: =^test= , =old-\&=
+
+**** Power Command:
+     =C-x C-q= (=dired-toggle-read-only=) - Makes all file names in the buffer
+     editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to abort.
+
+**** Deleting Files
+
+    - =D= - Delete marked file
+    - =d= - Mark file for deletion
+    - =x= - Execute deletion for marks
+    - =delete-by-moving-to-trash= - Move to trash instead of deleting permanently
+
+**** Creating and extracting archives
+
+    - =Z= - Compress or uncompress a file or folder to (=.tar.gz=)
+    - =c= - Compress selection to a specific file
+    - =dired-compress-files-alist= - Bind compression commands to file extension
+
+**** Other common operations
+
+    - =T= - Touch (change timestamp)
+    - =M= - Change file mode
+    - =O= - Change file owner
+    - =G= - Change file group
+    - =S= - Create a symbolic link to this file
+    - =L= - Load an Emacs Lisp file into Emacs
+
+
+*** Configuration
+
+    #+begin_src emacs-lisp
+
+(use-package dired
+  :ensure nil
+  :commands (dired dired-jump)
+  :bind (("C-x C-j" . dired-jump))
+  :custom ((dired-listing-switches "-agho --group-directories-first"))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-single-up-directory
+    "l" 'dired-single-buffer))
+
+(use-package dired-single)
+
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
+
+(use-package dired-open
+  :config
+  ;; Doesn't work as expected!
+  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+  (setq dired-open-extensions '(("png" . "feh")
+                                ("mkv" . "mpv"))))
+
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
+
+    #+end_src
+
 * Structure Templates
 #+begin_src emacs-lisp
     (require 'org-tempo)
@@ -583,8 +761,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 #+RESULTS:
 : ((el . src emacs-lisp) (py . src python) (sh . src shell) (a . export ascii) (c . center) (C . comment) (e . example) (E . export) (h . export html) (l . export latex) (q . quote) (s . src) (v . verse))
 * Applications
-
-** Some App
+** example config 'Some App'
 #+begin_src conf-unix :tangle ~/.config/some-app/config :mkdirp yes
 
 	value=4

@@ -49,12 +49,12 @@
 
 (use-package general
   :config
-  (general-create-definer rune/leader-keys
+  (general-create-definer bonk/leader-keys
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
 
-  (rune/leader-keys
+  (bonk/leader-keys
     "t"  '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")))
 
@@ -145,7 +145,7 @@
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-(rune/leader-keys
+(bonk/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 (use-package org
@@ -307,6 +307,55 @@
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package term
+  :config
+  (setq explicit-shell-file-name "zsh") ;; You can change this to bash, fish, etc
+  ;;(setq explicit-zsh-args '()) ;; Use it to set especific shell args
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
+
+(use-package eterm-256color
+  :hook (term-mode . eterm-256color-mode))
+
+(use-package vterm
+  :commands vterm
+  :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
+  :config
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
+  (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+  (setq vterm-max-scrollback 10000)
+  ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
+  ;; spawn another if want one.
+  (setq vterm-kill-buffer-on-exit t)
+  (setq vterm-timer-delay 0.01))
+
+(use-package dired
+  :ensure nil
+  :commands (dired dired-jump)
+  :bind (("C-x C-j" . dired-jump))
+  :custom ((dired-listing-switches "-agho --group-directories-first"))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-single-up-directory
+    "l" 'dired-single-buffer))
+
+(use-package dired-single)
+
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
+
+(use-package dired-open
+  :config
+  ;; Doesn't work as expected!
+  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+  (setq dired-open-extensions '(("png" . "feh")
+                                ("mkv" . "mpv"))))
+
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
 
 (require 'org-tempo)
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
