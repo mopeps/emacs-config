@@ -20,6 +20,17 @@
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+;; Use terminal PATH variable
+(defun set-exec-path-from-shell-PATH ()
+  (let ((path-from-shell (shell-command-to-string "$SHELL -i -c 'echo $PATH'")))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
+;; Backup and Autosave Directories
+(setq temporary-file-directory "~/.tmp/emacs/")
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 ;; Initialize package sources
 (require 'package)
 
@@ -35,6 +46,9 @@
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
+(use-package exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
 
 ;; Initialize use-package on non-Linux platforms
 (unless (package-installed-p 'use-package)
@@ -148,6 +162,17 @@
 (bonk/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
+;; Use ruler in text-mode
+;;    (add-hook 'text-mode-hook
+       ;;       (function (lambda ()
+	       ;;	   (setq ruler-mode-show-tab-stops t)
+		       ;;   (ruler-mode 1))))
+
+(require 'ido)
+(ido-mode 'buffers) ;; only use this line to turn off ido for file names!
+(setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
+			   "*Messages*" "Async Shell Command"))
+
 (use-package org
   :hook (org-mode . bonk/org-mode-setup)
   :config
@@ -215,19 +240,50 @@
 (setq gc-cons-threshold 100000000)
 (when (boundp 'read-process-output-max)
   ;; New in Emacs 27
-  (setq read-process-output-max (* 1024 1024)))
+  (setq read-process-output-max (* 2048 2048)))
 
 (defun bonk/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))
 
 (use-package lsp-mode
+  :ensure t
   :commands (lsp lsp-deferred)
   :hook (lsp-mode . bonk/lsp-mode-setup)
   :init
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :config
+
+  (add-hook 'typescript-mode-hook 'lsp)
+  (add-hook 'js2-mode-hook 'lsp)
+  (add-hook 'php-mode 'lsp)
+  (add-hook 'css-mode 'lsp)
+  (add-hook 'web-mode 'lsp)
   (lsp-enable-which-key-integration t)
+  (setq lsp-completion-enable t)
+
+  (setq lsp-language-id-configuration '((java-mode . "java")
+					(python-mode . "python")
+					(gfm-view-mode . "markdown")
+					(rust-mode . "rust")
+					(css-mode . "css")
+					(xml-mode . "xml")
+					(c-mode . "c")
+					(c++-mode . "cpp")
+					(objc-mode . "objective-c")
+					(web-mode . "html")
+					(html-mode . "html")
+					(sgml-mode . "html")
+					(mhtml-mode . "html")
+					(go-mode . "go")
+					(haskell-mode . "haskell")
+					(php-mode . "php")
+					(json-mode . "json")
+					(js2-mode . "javascript")
+					(typescript-mode . "typescript")
+					))
+
+
   :custom
   (lsp-file-watch-threshold nil)
   (lsp-solargraph-multi-root nil))
@@ -242,6 +298,27 @@
 
 (use-package lsp-ivy)
 
+
+
+(use-package yasnippet                  ; Snippets
+  :ensure t
+  :config
+  (setq
+   yas-verbosity 1                      ; No need to be so verbose
+   yas-wrap-around-region t)
+
+  (with-eval-after-load 'yasnippet
+    (setq yas-snippt-dirs '(yasnippet-snippets-dir)))
+
+  (yas-reload-all)
+  (yas-global-mode))
+
+(use-package yasnippet-snippets         ; Collection of snippets
+  :ensure t)
+
+(use-package flycheck)
+(setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
+
 (use-package typescript-mode
   :mode "\\.ts\\'"
   :hook (typescript-mode . lsp-deferred)
@@ -253,14 +330,91 @@
 (use-package ruby-mode
   :ensure nil
   :after lsp-mode
+  :mode "\\.rb\\'"
   :hook ((ruby-mode . lsp-deferred)
-	 (ruby-mode . amk-lsp-format-on-save)))
+	 (ruby-mode . amk-lsp-format-on-save))
+  :config
+  (setq ruby-indent-level 2)
+  (setq ruby-indent-tabs-mode t))
+(use-package enh-ruby-mode
+  :config
+  (setq enh-ruby-indent-tabs-mode t))
 
 (use-package robe)
 (add-hook 'ruby-mode-hook 'robe-mode)
+(eval-after-load 'company
+  '(push 'company-robe company-backends))
 
 (require 'flymake-ruby)
 (add-hook 'ruby-mode-hook 'flymake-ruby-load)
+
+(use-package rspec-mode)
+(eval-after-load 'rspec-mode
+ '(rspec-install-snippets))
+
+(use-package go-mode :ensure t)
+      (add-hook 'go-mode-hook (lambda ()
+				(setq tab-width 4)))
+      (require 'lsp-mode)
+      (add-hook 'go-mode-hook #'lsp)
+      (add-hook 'before-save-hook 'gofmt-before-save)
+      (defun lsp-go-install-save-hooks ()
+	(add-hook 'before-save-hook 'lsp-format-buffer t t)
+	(add-hook 'before-save-hook 'lsp-organize-imports t t))
+      (add-hook 'go-mode-hook 'lsp-go-install-save-hooks)
+;; configure gopls
+      (lsp-register-custom-settings
+       '(("gopls.completeUnimported" t t)
+	 ("gopls.staticcheck" t t)))
+      ;; Start LSP Mode and YASnippet mode
+      (add-hook 'go-mode-hook 'lsp-deferred)
+      (add-hook 'go-mode-hook 'yas-minor-mode)
+
+(use-package add-node-modules-path :ensure t)
+(use-package web-mode :ensure t)
+(use-package js2-mode :ensure t)
+(use-package rjsx-mode :ensure t)
+(add-to-list 'auto-mode-alist '("\\.js\\'"    . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.pac\\'"   . js2-mode))
+(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+
+(with-eval-after-load 'js2-mode
+  (defun bonk-js-mode-defaults ()
+    ;; electric-layout-mode doesn't play nice with smartparens
+    (setq-local electric-layout-rules '((?\; . after)))
+    (setq mode-name "JS2")
+    (js2-imenu-extras-mode +1)
+    (subword-mode +1))
+
+  (setq bonk-js-mode-hook 'bonk-js-mode-defaults)
+
+  (add-hook 'js2-mode-hook (lambda () (run-hooks 'bonk-js-mode-hook))))
+;; disable default jsonlint
+(setq-default flycheck-disabled-checkers
+	      (append flycheck-disabled-checkers
+		      '(javascript-jshint json-jsonlist)))
+;; using a global eslint
+(require 'flycheck)
+
+;; Enable eslint checker for web-mode
+(flycheck-add-mode 'javascript-eslint 'web-mode)
+;; Enable flycheck globally
+(add-hook 'after-init-hook #'global-flycheck-mode)
+;; add node modules path
+(add-hook 'flycheck-mode-hook 'add-node-modules-path)
+
+(use-package tide
+  :ensure t
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+	 (typescript-mode . tide-hl-identifier-mode)
+	 (before-save . tide-format-before-save)))
+
+;; yaml-mode doesn't derive from prog-mode, but we can at least enable
+;; whitespace-mode and apply cleanup.
+(use-package yaml-mode)
+(add-hook 'yaml-mode-hook 'whitespace-mode)
+(add-hook 'yaml-mode-hook 'subword-mode)
 
 (use-package company
   :after lsp-mode
@@ -274,12 +428,32 @@
   (company-idle-delay 0.0))
 
 (global-company-mode t)
-(push 'company-robe company-backends)
-
 (use-package company-box
   :hook (company-mode . company-box-mode))
 (eval-after-load 'company
   '(push 'company-robe company-backends))
+
+
+
+(use-package company-inf-ruby
+  :after (company ruby-mode)
+  :config (add-to-list 'company-backends 'company-inf-ruby))
+
+(use-package ac-js2
+  :after (company tide js2-mode web-mode)
+  :config (add-to-list 'company-backends 'ac-js2))
+
+;; HTML company backend
+       (use-package company-web
+	 :after (company web-mode)
+	 :config (add-to-list 'company-backends 'company-web))
+;; WIP missing CSS backend
+
+;; Add `company-elisp' backend for elisp.
+(add-hook 'emacs-lisp-mode-hook
+	  '(lambda ()
+	     (require 'company-elisp)
+	     (push 'company-elisp company-backends)))
 
 (use-package projectile
   :diminish projectile-mode
@@ -321,7 +495,6 @@
   :commands vterm
   :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
   :config
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
   (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
   (setq vterm-max-scrollback 10000)
   ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
@@ -329,11 +502,14 @@
   (setq vterm-kill-buffer-on-exit t)
   (setq vterm-timer-delay 0.01))
 
+(setq backup-directory-alist            '((".*" . "~/.Trash")))
+
 (use-package dired
   :ensure nil
   :commands (dired dired-jump)
   :bind (("C-x C-j" . dired-jump))
-  :custom ((dired-listing-switches "-agho --group-directories-first"))
+  :custom ((setq insert-directory-program "gls" dired-use-ls-dired t)
+	   (setq dired-listing-switches "-al --group-directories-first"))
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
     "h" 'dired-single-up-directory
@@ -349,7 +525,7 @@
   ;; Doesn't work as expected!
   ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
   (setq dired-open-extensions '(("png" . "feh")
-                                ("mkv" . "mpv"))))
+				("mkv" . "mpv"))))
 
 (use-package dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)

@@ -47,10 +47,20 @@
 **
 #+end_src
 
-* Package system setup
+* Package And System setup
 
 #+begin_src emacs-lisp
-
+  ;; Use terminal PATH variable
+  (defun set-exec-path-from-shell-PATH ()
+    (let ((path-from-shell (shell-command-to-string "$SHELL -i -c 'echo $PATH'")))
+      (setenv "PATH" path-from-shell)
+      (setq exec-path (split-string path-from-shell path-separator))))
+  ;; Backup and Autosave Directories
+  (setq temporary-file-directory "~/.tmp/emacs/")
+  (setq backup-directory-alist
+	`((".*" . ,temporary-file-directory)))
+  (setq auto-save-file-name-transforms
+	`((".*" ,temporary-file-directory t)))
   ;; Initialize package sources
   (require 'package)
 
@@ -66,6 +76,9 @@
   (package-initialize)
   (unless package-archive-contents
     (package-refresh-contents))
+  (use-package exec-path-from-shell)
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize))
 
   ;; Initialize use-package on non-Linux platforms
   (unless (package-installed-p 'use-package)
@@ -255,8 +268,23 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 #+end_src
 
+** Rule mode
+   #+begin_src emacs-lisp
+     ;; Use ruler in text-mode
+ ;;    (add-hook 'text-mode-hook
+	;;       (function (lambda ()
+		;;	   (setq ruler-mode-show-tab-stops t)
+			;;   (ruler-mode 1))))
+   #+end_src
+** Ido (tool for buffer)
+   #+begin_src emacs-lisp
+     (require 'ido)
+     (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
+     (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
+				"*Messages*" "Async Shell Command"))
+   #+end_src
 * Org Mode
-
+  
 ** Basic configuration
 
 #+begin_src emacs-lisp
@@ -357,7 +385,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 ** Languages
 
 *** IDE Features with lsp-mode
-
+    
 **** lsp-mode
 
 We use the excellent [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] to enable IDE-like functionality for many different programming languages via "language servers" that speak the [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]].  Before trying to set up =lsp-mode= for a particular language, check out the [[https://emacs-lsp.github.io/lsp-mode/page/languages/][documentation for your language]] so that you can learn which language servers are available and how to install them.
@@ -368,33 +396,66 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 
 #+begin_src emacs-lisp
 
-  ;; Increase for better lsp-mode performance; see
-  ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-  (setq gc-cons-threshold 100000000)
-  (when (boundp 'read-process-output-max)
-    ;; New in Emacs 27
-    (setq read-process-output-max (* 1024 1024)))
+    ;; Increase for better lsp-mode performance; see
+    ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+    (setq gc-cons-threshold 100000000)
+    (when (boundp 'read-process-output-max)
+      ;; New in Emacs 27
+      (setq read-process-output-max (* 2048 2048)))
 
-  (defun bonk/lsp-mode-setup ()
-    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-    (lsp-headerline-breadcrumb-mode))
+    (defun bonk/lsp-mode-setup ()
+      (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+      (lsp-headerline-breadcrumb-mode))
 
-  (use-package lsp-mode
-    :commands (lsp lsp-deferred)
-    :hook (lsp-mode . bonk/lsp-mode-setup)
-    :init
-    (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-    :config
-    (lsp-enable-which-key-integration t)
-    :custom
-    (lsp-file-watch-threshold nil)
-    (lsp-solargraph-multi-root nil))
+    (use-package lsp-mode
+      :ensure t
+      :commands (lsp lsp-deferred)
+      :hook (lsp-mode . bonk/lsp-mode-setup)
+      :init
+      (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+      :config
+
+      (add-hook 'typescript-mode-hook 'lsp)
+      (add-hook 'js2-mode-hook 'lsp)
+      (add-hook 'php-mode 'lsp)
+      (add-hook 'css-mode 'lsp)
+      (add-hook 'web-mode 'lsp)
+      (lsp-enable-which-key-integration t)
+      (setq lsp-completion-enable t)
+
+      (setq lsp-language-id-configuration '((java-mode . "java")
+					    (python-mode . "python")
+					    (gfm-view-mode . "markdown")
+					    (rust-mode . "rust")
+					    (css-mode . "css")
+					    (xml-mode . "xml")
+					    (c-mode . "c")
+					    (c++-mode . "cpp")
+					    (objc-mode . "objective-c")
+					    (web-mode . "html")
+					    (html-mode . "html")
+					    (sgml-mode . "html")
+					    (mhtml-mode . "html")
+					    (go-mode . "go")
+					    (haskell-mode . "haskell")
+					    (php-mode . "php")
+					    (json-mode . "json")
+					    (js2-mode . "javascript")
+					    (typescript-mode . "typescript")
+					    ))
+
+
+      :custom
+      (lsp-file-watch-threshold nil)
+      (lsp-solargraph-multi-root nil))
 
 #+end_src
 
 **** lsp-ui
 
-[[https://emacs-lsp.github.io/lsp-ui/][lsp-ui]] is a set of UI enhancements built on top of =lsp-mode= which make Emacs feel even more like an IDE.  Check out the screenshots on the =lsp-ui= homepage (linked at the beginning of this paragraph) to see examples of what it can do.
+[[https://emacs-lsp.github.io/lsp-ui/][lsp-ui]] is a set of UI enhancements built on top of =lsp-mode= which make Emacs feel even more
+like an IDE.  Check out the screenshots on the =lsp-ui= homepage (linked at the beginning
+of this paragraph) to see examples of what it can do.
 
 #+begin_src emacs-lisp
 
@@ -439,6 +500,43 @@ Try these commands with =M-x=:
 
 #+end_src
 
+**** lsp-clients
+     #+begin_src emacs-lisp
+     #+end_src
+*** Yasnippets
+    Yasnippet automatically inserts code templates when I write a word and press the tab key.
+    It predefines most of the common templates, including the dreadful =if err !\=nil { ....=
+
+    #+begin_src emacs-lisp
+
+      (use-package yasnippet                  ; Snippets
+	:ensure t
+	:config
+	(setq
+	 yas-verbosity 1                      ; No need to be so verbose
+	 yas-wrap-around-region t)
+
+	(with-eval-after-load 'yasnippet
+	  (setq yas-snippt-dirs '(yasnippet-snippets-dir)))
+
+	(yas-reload-all)
+	(yas-global-mode))
+
+      (use-package yasnippet-snippets         ; Collection of snippets
+	:ensure t)
+    #+end_src
+
+*** Flycheck
+
+    Flycheck is one of the two main packages for code checks in the background. The
+    other one is Flymake. I use Flycheck because it allows me to define a custom “advanced”
+    checker.
+    #+begin_src emacs-lisp
+
+      (use-package flycheck)
+      (setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
+
+    #+end_src
 *** TypeScript
 
 This is a basic configuration for the TypeScript language so that =.ts= files activate =typescript-mode= when opened.  We're also adding a hook to =typescript-mode-hook= to call =lsp-deferred= so that we activate =lsp-mode= to get LSP features every time we edit TypeScript code.
@@ -471,31 +569,123 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
      
 **** ruby-mode
      #+begin_src emacs-lisp
-       (use-package ruby-mode
-	 :ensure nil
-	 :after lsp-mode
-	 :hook ((ruby-mode . lsp-deferred)
-		(ruby-mode . amk-lsp-format-on-save)))
+	    (use-package ruby-mode
+	      :ensure nil
+	      :after lsp-mode
+	      :mode "\\.rb\\'"
+	      :hook ((ruby-mode . lsp-deferred)
+		     (ruby-mode . amk-lsp-format-on-save))
+	      :config
+	      (setq ruby-indent-level 2)
+	      (setq ruby-indent-tabs-mode t))
+	    (use-package enh-ruby-mode
+	      :config
+	      (setq enh-ruby-indent-tabs-mode t))
+
      #+end_src
 
 **** robe-mode
      #+begin_src emacs-lisp
        (use-package robe)
        (add-hook 'ruby-mode-hook 'robe-mode)
-
+       (eval-after-load 'company
+	 '(push 'company-robe company-backends))
      #+end_src
-
+     
 **** Flymake
      #+begin_src emacs-lisp
        (require 'flymake-ruby)
        (add-hook 'ruby-mode-hook 'flymake-ruby-load)
      #+end_src
 
+**** rspec-mode
+     #+begin_src emacs-lisp
+       (use-package rspec-mode)
+       (eval-after-load 'rspec-mode
+	'(rspec-install-snippets))
+     #+end_src
 *** Golang
+    
+    #+begin_src emacs-lisp
+      (use-package go-mode :ensure t)
+      (add-hook 'go-mode-hook (lambda ()
+				(setq tab-width 4)))
+      (require 'lsp-mode)
+      (add-hook 'go-mode-hook #'lsp)
+      (add-hook 'before-save-hook 'gofmt-before-save)
+      (defun lsp-go-install-save-hooks ()
+	(add-hook 'before-save-hook 'lsp-format-buffer t t)
+	(add-hook 'before-save-hook 'lsp-organize-imports t t))
+      (add-hook 'go-mode-hook 'lsp-go-install-save-hooks)
+;; configure gopls
+      (lsp-register-custom-settings
+       '(("gopls.completeUnimported" t t)
+	 ("gopls.staticcheck" t t)))
+      ;; Start LSP Mode and YASnippet mode
+      (add-hook 'go-mode-hook 'lsp-deferred)
+      (add-hook 'go-mode-hook 'yas-minor-mode)
+
+    #+end_src
+    
 *** Elisp
 *** Rust
 *** C/C++
-*** 
+*** Javascript
+***** base-config
+    #+begin_src emacs-lisp
+      (use-package add-node-modules-path :ensure t)
+      (use-package web-mode :ensure t)
+      (use-package js2-mode :ensure t)
+      (use-package rjsx-mode :ensure t)
+      (add-to-list 'auto-mode-alist '("\\.js\\'"    . js2-mode))
+      (add-to-list 'auto-mode-alist '("\\.pac\\'"   . js2-mode))
+      (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+
+      (with-eval-after-load 'js2-mode
+	(defun bonk-js-mode-defaults ()
+	  ;; electric-layout-mode doesn't play nice with smartparens
+	  (setq-local electric-layout-rules '((?\; . after)))
+	  (setq mode-name "JS2")
+	  (js2-imenu-extras-mode +1)
+	  (subword-mode +1))
+
+	(setq bonk-js-mode-hook 'bonk-js-mode-defaults)
+
+	(add-hook 'js2-mode-hook (lambda () (run-hooks 'bonk-js-mode-hook))))
+      ;; disable default jsonlint
+      (setq-default flycheck-disabled-checkers
+		    (append flycheck-disabled-checkers
+			    '(javascript-jshint json-jsonlist)))
+      ;; using a global eslint
+      (require 'flycheck)
+
+      ;; Enable eslint checker for web-mode
+      (flycheck-add-mode 'javascript-eslint 'web-mode)
+      ;; Enable flycheck globally
+      (add-hook 'after-init-hook #'global-flycheck-mode)
+      ;; add node modules path
+      (add-hook 'flycheck-mode-hook 'add-node-modules-path)
+
+    #+end_src
+***** Tide
+      #+begin_src emacs-lisp
+	(use-package tide
+	  :ensure t
+	  :after (typescript-mode company flycheck)
+	  :hook ((typescript-mode . tide-setup)
+		 (typescript-mode . tide-hl-identifier-mode)
+		 (before-save . tide-format-before-save)))
+      #+end_src
+*** Yaml
+    #+begin_src emacs-lisp
+      ;; yaml-mode doesn't derive from prog-mode, but we can at least enable
+      ;; whitespace-mode and apply cleanup.
+      (use-package yaml-mode)
+      (add-hook 'yaml-mode-hook 'whitespace-mode)
+      (add-hook 'yaml-mode-hook 'subword-mode)
+
+    #+end_src
+    
 ** Company Mode
 
 [[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
@@ -516,15 +706,54 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
     (company-idle-delay 0.0))
 
   (global-company-mode t)
-  (push 'company-robe company-backends)
-
   (use-package company-box
     :hook (company-mode . company-box-mode))
   (eval-after-load 'company
     '(push 'company-robe company-backends))
 
 #+end_src
+*** Company Backends
+**** Golang
+   #+begin_src emacs-lisp
 
+     #+end_src
+
+**** Ruby
+     #+begin_src emacs-lisp
+       (use-package company-inf-ruby
+	 :after (company ruby-mode)
+	 :config (add-to-list 'company-backends 'company-inf-ruby))
+     #+end_src
+
+**** JavaScript
+     #+begin_src emacs-lisp
+
+       (use-package ac-js2
+	 :after (company tide js2-mode web-mode)
+	 :config (add-to-list 'company-backends 'ac-js2))
+
+     #+end_src
+
+**** Web
+     #+begin_src emacs-lisp
+
+	;; HTML company backend
+       (use-package company-web
+	 :after (company web-mode)
+	 :config (add-to-list 'company-backends 'company-web))
+;; WIP missing CSS backend
+     #+end_src
+
+**** eLisp
+     #+begin_src emacs-lisp
+       ;; Add `company-elisp' backend for elisp.
+       (add-hook 'emacs-lisp-mode-hook
+		 '(lambda ()
+		    (require 'company-elisp)
+		    (push 'company-elisp company-backends)))
+
+     #+end_src
+     
 ** Projectile
 
 [[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
@@ -640,7 +869,6 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
       :commands vterm
       :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
       :config
-      (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
       (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
       (setq vterm-max-scrollback 10000)
       ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
@@ -654,6 +882,13 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 ** Eshell
    TBD (i'm pretty satisfied with vterm, but i could try this one day)
 * File Management
+** Backup-files
+*** Configuration
+    I don't like when emacs creates backup files next to the originals, since it can be tedious
+    to commit changes on a project.
+    #+begin_src emacs-lisp
+      (setq backup-directory-alist            '((".*" . "~/.Trash")))
+    #+end_src
 ** Dired
 *** Key Bindings
 
@@ -719,33 +954,34 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
     #+begin_src emacs-lisp
 
-(use-package dired
-  :ensure nil
-  :commands (dired dired-jump)
-  :bind (("C-x C-j" . dired-jump))
-  :custom ((dired-listing-switches "-agho --group-directories-first"))
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-    "h" 'dired-single-up-directory
-    "l" 'dired-single-buffer))
+      (use-package dired
+	:ensure nil
+	:commands (dired dired-jump)
+	:bind (("C-x C-j" . dired-jump))
+	:custom ((setq insert-directory-program "gls" dired-use-ls-dired t)
+		 (setq dired-listing-switches "-al --group-directories-first"))
+	:config
+	(evil-collection-define-key 'normal 'dired-mode-map
+	  "h" 'dired-single-up-directory
+	  "l" 'dired-single-buffer))
 
-(use-package dired-single)
+      (use-package dired-single)
 
-(use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode))
+      (use-package all-the-icons-dired
+	:hook (dired-mode . all-the-icons-dired-mode))
 
-(use-package dired-open
-  :config
-  ;; Doesn't work as expected!
-  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-  (setq dired-open-extensions '(("png" . "feh")
-                                ("mkv" . "mpv"))))
+      (use-package dired-open
+	:config
+	;; Doesn't work as expected!
+	;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+	(setq dired-open-extensions '(("png" . "feh")
+				      ("mkv" . "mpv"))))
 
-(use-package dired-hide-dotfiles
-  :hook (dired-mode . dired-hide-dotfiles-mode)
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-    "H" 'dired-hide-dotfiles-mode))
+      (use-package dired-hide-dotfiles
+	:hook (dired-mode . dired-hide-dotfiles-mode)
+	:config
+	(evil-collection-define-key 'normal 'dired-mode-map
+	  "H" 'dired-hide-dotfiles-mode))
 
     #+end_src
 
@@ -755,6 +991,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
   (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
 
 #+end_src
 
