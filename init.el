@@ -1,4 +1,5 @@
 (setq inhibit-startup-message t)
+(setq warning-minimum-level :emergency)
 
   (scroll-bar-mode -1) ; Disable visible scrollbar
   (tool-bar-mode -1)   ; Disable the toolbar
@@ -15,9 +16,9 @@
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
-                term-mode-hook
-                shell-mode-hook
-                eshell-mode-hook))
+				term-mode-hook
+				shell-mode-hook
+				eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (set-face-attribute 'default nil :font "Iosevka Nerd Font-12" )
@@ -263,6 +264,14 @@
 (setq-default indent-tabs-mode t)
 (setq-default tab-width 4) ; I want tabs to be four spaces wide
 ;; Indentation levels for each lang
+(defvaralias 'js2-basic-offset 'tabwidth)
+(defvaralias 'js-indent-level 'tab-width)
+(defvaralias 'js-indent-level 'tab-width)
+(defvaralias 'rjsx-indent-level 'tab-width)
+(defvaralias 'rjsx-mode-markup-indent-offset 'tab-width)
+(defvaralias 'rjsx-mode-code-indent-offset 'tab-width)
+(defvaralias 'web-mode-css-indent-offset 'tab-width)
+(defvaralias 'js2-indent-level 'tab-width)
 
 ;; Increase for better lsp-mode performance; see
 ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
@@ -325,12 +334,12 @@
   :after lsp)
 
 (use-package lsp-ivy
-  :after lsp)
+  :after lsp-mode)
 
 
 
 (use-package yasnippet                  ; Snippets
-  :after lsp
+  :after lsp-mode
   :config
   (setq
    yas-verbosity 1                      ; No need to be so verbose
@@ -346,7 +355,7 @@
   :after yasnippet)
 
 (use-package flycheck
-  :after lsp)
+  :after lsp-mode)
 (setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
 
 (use-package typescript-mode
@@ -405,18 +414,10 @@
   (add-hook 'go-mode-hook 'yas-minor-mode))
 
 (use-package rjsx-mode
-  :ensure t
   :mode "\\.js\\'"
   :config
   (setq indent-tabs-mode t)
-  (setq js2-basic-offset 4)
-  (defvaralias 'js-indent-level 'tab-width)
-  (defvaralias 'js-indent-level 'tab-width)
-  (defvaralias 'rjsx-indent-level 'tab-width)
-  (defvaralias 'rjsx-mode-markup-indent-offset 'tab-width)
-  (defvaralias 'rjsx-mode-code-indent-offset 'tab-width)
-  (defvaralias 'web-mode-css-indent-offset 'tab-width)
-  (defvaralias 'js2-indent-level 'tab-width))
+  (setq js2-basic-offset 4))
 
 (defun setup-tide-mode()
   "Setup function for tide."

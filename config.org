@@ -5,27 +5,28 @@
   
 #+begin_src emacs-lisp
 
-    (setq inhibit-startup-message t)
+	(setq inhibit-startup-message t)
+  (setq warning-minimum-level :emergency)
 
-    (scroll-bar-mode -1) ; Disable visible scrollbar
-    (tool-bar-mode -1)   ; Disable the toolbar
-    (tooltip-mode -1)    ; Disable tooltips
-    (set-fringe-mode 10) ; Give some breathing room
+	(scroll-bar-mode -1) ; Disable visible scrollbar
+	(tool-bar-mode -1)   ; Disable the toolbar
+	(tooltip-mode -1)    ; Disable tooltips
+	(set-fringe-mode 10) ; Give some breathing room
 
-    (menu-bar-mode -1)   ; isable the menu bar
+	(menu-bar-mode -1)   ; isable the menu bar
 
-    ;; Set up the visible bell
-    (setq visible-bell t)
+	;; Set up the visible bell
+	(setq visible-bell t)
 
   (column-number-mode)
   (global-display-line-numbers-mode t)
 
   ;; Disable line numbers for some modes
   (dolist (mode '(org-mode-hook
-                  term-mode-hook
-                  shell-mode-hook
-                  eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+				  term-mode-hook
+				  shell-mode-hook
+				  eshell-mode-hook))
+	(add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 #+end_src
 
@@ -439,6 +440,14 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 	 (setq-default indent-tabs-mode t)
 	 (setq-default tab-width 4) ; I want tabs to be four spaces wide
 	 ;; Indentation levels for each lang
+	 (defvaralias 'js2-basic-offset 'tabwidth)
+	 (defvaralias 'js-indent-level 'tab-width)
+	 (defvaralias 'js-indent-level 'tab-width)
+	 (defvaralias 'rjsx-indent-level 'tab-width)
+	 (defvaralias 'rjsx-mode-markup-indent-offset 'tab-width)
+	 (defvaralias 'rjsx-mode-code-indent-offset 'tab-width)
+	 (defvaralias 'web-mode-css-indent-offset 'tab-width)
+	 (defvaralias 'js2-indent-level 'tab-width)
 
 	 ;; Increase for better lsp-mode performance; see
 	 ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
@@ -555,7 +564,7 @@ Try these commands with =M-x=:
 #+begin_src emacs-lisp
 
 	(use-package lsp-ivy
-	  :after lsp)
+	  :after lsp-mode)
 
 #+end_src
 
@@ -569,7 +578,7 @@ Try these commands with =M-x=:
     #+begin_src emacs-lisp
 
 	  (use-package yasnippet                  ; Snippets
-		:after lsp
+		:after lsp-mode
 		:config
 		(setq
 		 yas-verbosity 1                      ; No need to be so verbose
@@ -593,7 +602,7 @@ Try these commands with =M-x=:
     #+begin_src emacs-lisp
 
 			(use-package flycheck
-			  :after lsp)
+			  :after lsp-mode)
 			(setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
 
     #+end_src
@@ -700,18 +709,10 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
       files, so i don't really need to differentiate between modes
     #+begin_src emacs-lisp
 	  (use-package rjsx-mode
-		:ensure t
 		:mode "\\.js\\'"
 		:config
 		(setq indent-tabs-mode t)
-		(setq js2-basic-offset 4)
-		(defvaralias 'js-indent-level 'tab-width)
-		(defvaralias 'js-indent-level 'tab-width)
-		(defvaralias 'rjsx-indent-level 'tab-width)
-		(defvaralias 'rjsx-mode-markup-indent-offset 'tab-width)
-		(defvaralias 'rjsx-mode-code-indent-offset 'tab-width)
-		(defvaralias 'web-mode-css-indent-offset 'tab-width)
-		(defvaralias 'js2-indent-level 'tab-width))
+		(setq js2-basic-offset 4))
 
 	#+end_src
 
