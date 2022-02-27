@@ -2,7 +2,7 @@
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
 * Basic UI config
-
+  
 #+begin_src emacs-lisp
 
     (setq inhibit-startup-message t)
@@ -29,15 +29,18 @@
 
 #+end_src
 
+#+RESULTS:
+
 
 ** Font Configuration
 
-#+begin_src emacs-lisp :tangle ./init-new.el
+#+begin_src emacs-lisp
 
-;; (C-q Tab) inserts a tab space
-(add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
+  (set-face-attribute 'default nil :font "Iosevka Nerd Font-12" )
 
-(set-face-attribute 'default nil :font "Iosevka Nerd Font-14" )
+  ;; (C-q Tab) inserts a tab space
+  (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
+
 
 #+end_src
 
@@ -50,12 +53,7 @@
 * Package And System setup
 
 #+begin_src emacs-lisp
-  ;; Use terminal PATH variable
-  (defun set-exec-path-from-shell-PATH ()
-    (let ((path-from-shell (shell-command-to-string "$SHELL -i -c 'echo $PATH'")))
-      (setenv "PATH" path-from-shell)
-      (setq exec-path (split-string path-from-shell path-separator))))
-  ;; Backup and Autosave Directories
+;; Backup and Autosave Directories
   (setq temporary-file-directory "~/.tmp/emacs/")
   (setq backup-directory-alist
 	`((".*" . ,temporary-file-directory)))
@@ -90,9 +88,14 @@
 
 #+end_src
 
+#+RESULTS:
+
 * Keybinding Configuration
 
-This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil-mode]] for a Vi-like modal editing experience.  [[https://github.com/noctuid/general.el][general.el]] is used for easy keybinding configuration that integrates well with which-key.  [[https://github.com/emacs-evil/evil-collection][evil-collection]] is used to automatically configure various Emacs modes with Vi-like keybindings for evil-mode.
+This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil-mode]] for a Vi-like modal editing experience.
+[[https://github.com/noctuid/general.el][general.el]] is used for easy keybinding configuration that integrates well with which-key.
+[[https://github.com/emacs-evil/evil-collection][evil-collection]] is used to automatically configure various Emacs modes with Vi-like keybindings
+for evil-mode.
 
 #+begin_src emacs-lisp
 
@@ -104,11 +107,19 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
     (general-create-definer bonk/leader-keys
       :keymaps '(normal insert visual emacs)
       :prefix "SPC"
-      :global-prefix "C-SPC")
+      :global-prefix "C-SPC"))
 
     (bonk/leader-keys
       "t"  '(:ignore t :which-key "toggles")
-      "tt" '(counsel-load-theme :which-key "choose theme")))
+      "tt" '(counsel-load-theme :which-key "choose theme")
+    ;; Window navigation
+      "H" '(windmove-left :which-key "move to left window")
+      "L" '(windmove-right :which-key "move to right window")
+      "J" '(windmove-down :which-key "move to below window")
+      "K" '(windmove-up :which-key "move to above window")
+    ;; Buffer options
+      "DD" '(kill-this-buffer :which "kills the current buffer")
+      )
 
   (use-package evil
     :init
@@ -135,6 +146,9 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
+#+RESULTS:
+: t
+
 * UI Configuration
 
 ** Command Log Mode
@@ -143,7 +157,8 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+begin_src emacs-lisp
 
-(use-package command-log-mode)
+  (use-package command-log-mode
+	:commands command-log-mode)
 
 #+end_src
 
@@ -155,8 +170,15 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+begin_src emacs-lisp
 
-(use-package doom-themes
-  :init (load-theme 'doom-gruvbox t))
+  (use-package doom-themes
+  :init (load-theme 'doom-zenburn t))
+  (use-package ewal-spacemacs-themes)
+  (use-package moe-theme)
+  (use-package zenburn-theme)
+  (use-package yoshi-theme)
+  (use-package sublime-themes)
+  (use-package gruvbox-theme)
+  (use-package color-theme-sanityinc-tomorrow)
 
 #+end_src
 
@@ -178,19 +200,25 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
+#+RESULTS:
+
 ** Which Key
 
 [[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix.  For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run.  This is very useful for learning the possible key bindings in the mode of your current buffer.
 
 #+begin_src emacs-lisp
 
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 1))
+  (use-package which-key
+	:defer 0
+	:diminish which-key-mode
+	:config
+	(which-key-mode)
+	(setq which-key-idle-delay 1))
 
 #+end_src
+
+#+RESULTS:
+: t
 
 ** Ivy and Counsel
 
@@ -231,6 +259,9 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
+#+RESULTS:
+: counsel-minibuffer-history
+
 ** Helpful Help Commands
 
 [[https://github.com/Wilfred/helpful][Helpful]] adds a lot of very helpful (get it?) information to Emacs' =describe-= command buffers.  For example, if you use =describe-function=, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
@@ -238,16 +269,20 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 #+begin_src emacs-lisp
 
   (use-package helpful
-    :custom
-    (counsel-describe-function-function #'helpful-callable)
-    (counsel-describe-variable-function #'helpful-variable)
-    :bind
-    ([remap describe-function] . counsel-describe-function)
-    ([remap describe-command] . helpful-command)
-    ([remap describe-variable] . counsel-describe-variable)
-    ([remap describe-key] . helpful-key))
+	:commands (helpful-callable helpful-variable helpful-command helpful-key)
+	:custom
+	(counsel-describe-function-function #'helpful-callable)
+	(counsel-describe-variable-function #'helpful-variable)
+	:bind
+	([remap describe-function] . counsel-describe-function)
+	([remap describe-command] . helpful-command)
+	([remap describe-variable] . counsel-describe-variable)
+	([remap describe-key] . helpful-key))
 
 #+end_src
+
+#+RESULTS:
+: helpful-key
 
 ** Text Scaling
 
@@ -255,18 +290,21 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 #+begin_src emacs-lisp
 
-  (use-package hydra)
+	  (use-package hydra
+		:defer t)
 
-  (defhydra hydra-text-scale (:timeout 4)
-    "scale text"
-    ("j" text-scale-increase "in")
-    ("k" text-scale-decrease "out")
-    ("f" nil "finished" :exit t))
+	  (defhydra hydra-text-scale (:timeout 4)
+		"scale text"
+		("j" text-scale-increase "in")
+		("k" text-scale-decrease "out")
+		("f" nil "finished" :exit t))
 
-  (bonk/leader-keys
-    "ts" '(hydra-text-scale/body :which-key "scale text"))
+	  (bonk/leader-keys
+		"ts" '(hydra-text-scale/body :which-key "scale text"))
 
 #+end_src
+
+#+RESULTS:
 
 ** Rule mode
    #+begin_src emacs-lisp
@@ -276,6 +314,9 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 		;;	   (setq ruler-mode-show-tab-stops t)
 			;;   (ruler-mode 1))))
    #+end_src
+
+   #+RESULTS:
+
 ** Ido (tool for buffer)
    #+begin_src emacs-lisp
      (require 'ido)
@@ -283,48 +324,55 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
      (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
 				"*Messages*" "Async Shell Command"))
    #+end_src
+
+   #+RESULTS:
+
 * Org Mode
   
 ** Basic configuration
 
 #+begin_src emacs-lisp
 
-(use-package org
-  :hook (org-mode . bonk/org-mode-setup)
-  :config
-  (setq org-ellipsis " ▾")
-  (bonk/org-font-setup))
+  (use-package org
+	:pin org
+	:commands (org-capture org-agenda)
+	:hook (org-mode . bonk/org-mode-setup)
+	:config
+	(setq org-ellipsis " ▾")
+	(bonk/org-font-setup))
 
 #+end_src
 ** Better Font Faces
 
 #+begin_src emacs-lisp
 
-(defun bonk/org-font-setup ()
-  ;; Replace list hyphen with dot
-  (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+    (defun bonk/org-font-setup ()
+      ;; Replace list hyphen with dot
+      (font-lock-add-keywords 'org-mode
+			      '(("^ *\\([-]\\) "
+				 (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-  ;; Set faces for heading levels
-  (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Hack Nerd Font" :weight 'regular :height (cdr face)))
+      ;; Set faces for heading levels
+      (dolist (face '((org-level-1 . 1.2)
+		      (org-level-2 . 1.1)
+		      (org-level-3 . 1.05)
+		      (org-level-4 . 1.0)
+		      (org-level-5 . 1.1)
+		      (org-level-6 . 1.1)
+		      (org-level-7 . 1.1)
+		      (org-level-8 . 1.1)))
+	(set-face-attribute (car face) nil :font "Hack Nerd Font"
+			    :weight 'regular
+			    :height (cdr face)))
 
-  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+      ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+      (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+      (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+      (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+      (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+      (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+      (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+      (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
 
 #+end_src
@@ -342,13 +390,14 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 ** Center Org Buffers
    
 #+begin_src emacs-lisp
-(defun bonk/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
+  (defun bonk/org-mode-visual-fill ()
+	(setq visual-fill-column-width 100
+		  visual-fill-column-center-text t)
+	(visual-fill-column-mode 1))
 
-(use-package visual-fill-column
-  :hook (org-mode . bonk/org-mode-visual-fill))
+  (use-package visual-fill-column
+	:after org
+	:hook (org-mode . bonk/org-mode-visual-fill))
 
 
 #+end_src
@@ -371,17 +420,33 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use.  [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
 
 #+begin_src emacs-lisp
-
+(with-eval-after-load 'org
   (org-babel-do-load-languages
     'org-babel-load-languages
     '((emacs-lisp . t)
       (python . t)))
 
-  (push '("conf-unix" . conf-unix) org-src-lang-modes)
+  (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 #+end_src
 
 * Development
+** General configs
+   Here is the config for wether using tabs, how to indent, how many spaces, etc.
+
+   #+begin_src emacs-lisp
+
+	 (setq-default indent-tabs-mode t)
+	 (setq-default tab-width 4) ; I want tabs to be four spaces wide
+	 ;; Indentation levels for each lang
+
+	 ;; Increase for better lsp-mode performance; see
+	 ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+	 (setq gc-cons-threshold 100000000)
+	 (when (boundp 'read-process-output-max)
+	   ;; New in Emacs 27
+	   (setq read-process-output-max (* 2048 2048)))
+   #+end_src
 ** Languages
 
 *** IDE Features with lsp-mode
@@ -396,58 +461,51 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 
 #+begin_src emacs-lisp
 
-    ;; Increase for better lsp-mode performance; see
-    ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-    (setq gc-cons-threshold 100000000)
-    (when (boundp 'read-process-output-max)
-      ;; New in Emacs 27
-      (setq read-process-output-max (* 2048 2048)))
 
-    (defun bonk/lsp-mode-setup ()
-      (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-      (lsp-headerline-breadcrumb-mode))
+  (defun bonk/lsp-mode-setup ()
+	(setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+	(lsp-headerline-breadcrumb-mode))
 
-    (use-package lsp-mode
-      :ensure t
-      :commands (lsp lsp-deferred)
-      :hook (lsp-mode . bonk/lsp-mode-setup)
-      :init
-      (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-      :config
+  (use-package lsp-mode
+	:commands (lsp lsp-deferred)
+	:hook (lsp-mode . bonk/lsp-mode-setup)
+	:init
+	(setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+	:config
 
-      (add-hook 'typescript-mode-hook 'lsp)
-      (add-hook 'js2-mode-hook 'lsp)
-      (add-hook 'php-mode 'lsp)
-      (add-hook 'css-mode 'lsp)
-      (add-hook 'web-mode 'lsp)
-      (lsp-enable-which-key-integration t)
-      (setq lsp-completion-enable t)
+	(add-hook 'typescript-mode-hook 'lsp)
+	(add-hook 'rjsx-mode-hook 'lsp)
+	(add-hook 'php-mode 'lsp)
+	(add-hook 'css-mode 'lsp)
+	(add-hook 'web-mode 'lsp)
+	(lsp-enable-which-key-integration t)
+	(setq lsp-completion-enable t)
 
-      (setq lsp-language-id-configuration '((java-mode . "java")
-					    (python-mode . "python")
-					    (gfm-view-mode . "markdown")
-					    (rust-mode . "rust")
-					    (css-mode . "css")
-					    (xml-mode . "xml")
-					    (c-mode . "c")
-					    (c++-mode . "cpp")
-					    (objc-mode . "objective-c")
-					    (web-mode . "html")
-					    (html-mode . "html")
-					    (sgml-mode . "html")
-					    (mhtml-mode . "html")
-					    (go-mode . "go")
-					    (haskell-mode . "haskell")
-					    (php-mode . "php")
-					    (json-mode . "json")
-					    (js2-mode . "javascript")
-					    (typescript-mode . "typescript")
-					    ))
+	(setq lsp-language-id-configuration '((java-mode . "java")
+					  (python-mode . "python")
+					  (gfm-view-mode . "markdown")
+					  (rust-mode . "rust")
+					  (css-mode . "css")
+					  (xml-mode . "xml")
+					  (c-mode . "c")
+					  (c++-mode . "cpp")
+					  (objc-mode . "objective-c")
+					  (web-mode . "html")
+					  (html-mode . "html")
+					  (sgml-mode . "html")
+					  (mhtml-mode . "html")
+					  (go-mode . "go")
+					  (haskell-mode . "haskell")
+					  (php-mode . "php")
+					  (json-mode . "json")
+					  (rjsx-mode . "javascript")
+					  (typescript-mode . "typescript")
+					  ))
 
 
-      :custom
-      (lsp-file-watch-threshold nil)
-      (lsp-solargraph-multi-root nil))
+	:custom
+	(lsp-file-watch-threshold nil)
+	(lsp-solargraph-multi-root nil))
 
 #+end_src
 
@@ -496,7 +554,8 @@ Try these commands with =M-x=:
 
 #+begin_src emacs-lisp
 
-  (use-package lsp-ivy)
+	(use-package lsp-ivy
+	  :after lsp)
 
 #+end_src
 
@@ -509,21 +568,21 @@ Try these commands with =M-x=:
 
     #+begin_src emacs-lisp
 
-      (use-package yasnippet                  ; Snippets
-	:ensure t
-	:config
-	(setq
-	 yas-verbosity 1                      ; No need to be so verbose
-	 yas-wrap-around-region t)
+	  (use-package yasnippet                  ; Snippets
+		:after lsp
+		:config
+		(setq
+		 yas-verbosity 1                      ; No need to be so verbose
+		 yas-wrap-around-region t)
 
-	(with-eval-after-load 'yasnippet
-	  (setq yas-snippt-dirs '(yasnippet-snippets-dir)))
+		(with-eval-after-load 'yasnippet
+		  (setq yas-snippt-dirs '(yasnippet-snippets-dir)))
 
-	(yas-reload-all)
-	(yas-global-mode))
+		(yas-reload-all)
+		(yas-global-mode))
 
-      (use-package yasnippet-snippets         ; Collection of snippets
-	:ensure t)
+	  (use-package yasnippet-snippets         ; Collection of snippets
+		:after yasnippet)
     #+end_src
 
 *** Flycheck
@@ -533,8 +592,9 @@ Try these commands with =M-x=:
     checker.
     #+begin_src emacs-lisp
 
-      (use-package flycheck)
-      (setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
+			(use-package flycheck
+			  :after lsp)
+			(setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
 
     #+end_src
 *** TypeScript
@@ -545,9 +605,7 @@ This is a basic configuration for the TypeScript language so that =.ts= files ac
 
   (use-package typescript-mode
     :mode "\\.ts\\'"
-    :hook (typescript-mode . lsp-deferred)
-    :config
-    (setq typescript-indent-level 2))
+    :hook (typescript-mode . lsp-deferred))
 
 #+end_src
 
@@ -564,66 +622,72 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 *** Ruby
 **** inf-ruby
      #+begin_src emacs-lisp
-       (use-package inf-ruby)
+			  (use-package inf-ruby
+				:after lsp-mode)
      #+end_src
      
 **** ruby-mode
      #+begin_src emacs-lisp
-	    (use-package ruby-mode
-	      :ensure nil
-	      :after lsp-mode
-	      :mode "\\.rb\\'"
-	      :hook ((ruby-mode . lsp-deferred)
-		     (ruby-mode . amk-lsp-format-on-save))
-	      :config
-	      (setq ruby-indent-level 2)
-	      (setq ruby-indent-tabs-mode t))
-	    (use-package enh-ruby-mode
-	      :config
-	      (setq enh-ruby-indent-tabs-mode t))
+	   (use-package ruby-mode
+		 :after lsp-mode
+		 :mode "\\.rb\\'"
+		 :hook ((ruby-mode . lsp-deferred)
+				(ruby-mode . amk-lsp-format-on-save))
+		 :config
+		 (setq ruby-indent-tabs-mode t)
+		 (setq ruby-indent-level tab-width))
+
+	   (use-package enh-ruby-mode
+		 :after lsp-mode
+		 :config
+		 (setq enh-ruby-indent-tabs-mode t))
 
      #+end_src
 
 **** robe-mode
      #+begin_src emacs-lisp
-       (use-package robe)
-       (add-hook 'ruby-mode-hook 'robe-mode)
-       (eval-after-load 'company
-	 '(push 'company-robe company-backends))
+	   (use-package robe
+		 :after lsp)
+	   (add-hook 'ruby-mode-hook 'robe-mode)
+	   (eval-after-load 'company
+		 '(push 'company-robe company-backends))
      #+end_src
      
 **** Flymake
      #+begin_src emacs-lisp
-       (require 'flymake-ruby)
-       (add-hook 'ruby-mode-hook 'flymake-ruby-load)
+		 (require 'flymake-ruby)
+		 (add-hook 'ruby-mode-hook 'flymake-ruby-load)
      #+end_src
 
 **** rspec-mode
      #+begin_src emacs-lisp
-       (use-package rspec-mode)
-       (eval-after-load 'rspec-mode
-	'(rspec-install-snippets))
+	   (use-package rspec-mode
+		 :after (lsp ruby-mode))
+	   (eval-after-load 'rspec-mode
+		 '(rspec-install-snippets))
      #+end_src
 *** Golang
     
     #+begin_src emacs-lisp
-      (use-package go-mode :ensure t)
-      (add-hook 'go-mode-hook (lambda ()
-				(setq tab-width 4)))
-      (require 'lsp-mode)
-      (add-hook 'go-mode-hook #'lsp)
-      (add-hook 'before-save-hook 'gofmt-before-save)
-      (defun lsp-go-install-save-hooks ()
-	(add-hook 'before-save-hook 'lsp-format-buffer t t)
-	(add-hook 'before-save-hook 'lsp-organize-imports t t))
-      (add-hook 'go-mode-hook 'lsp-go-install-save-hooks)
-;; configure gopls
-      (lsp-register-custom-settings
-       '(("gopls.completeUnimported" t t)
-	 ("gopls.staticcheck" t t)))
-      ;; Start LSP Mode and YASnippet mode
-      (add-hook 'go-mode-hook 'lsp-deferred)
-      (add-hook 'go-mode-hook 'yas-minor-mode)
+	  (use-package go-mode
+		:mode "\\.go'\\"
+		:after lsp-mode
+		:config
+		(add-hook 'go-mode-hook (lambda ()
+								  (setq tab-width 4)))
+		(add-hook 'go-mode-hook #'lsp)
+		(add-hook 'before-save-hook 'gofmt-before-save)
+		(defun lsp-go-install-save-hooks ()
+		  (add-hook 'before-save-hook 'lsp-format-buffer t t)
+		  (add-hook 'before-save-hook 'lsp-organize-imports t t))
+		(add-hook 'go-mode-hook 'lsp-go-install-save-hooks)
+		;; configure gopls
+		(lsp-register-custom-settings
+		 '(("gopls.completeUnimported" t t)
+		   ("gopls.staticcheck" t t)))
+		;; Start LSP Mode and YASnippet mode
+		(add-hook 'go-mode-hook 'lsp-deferred)
+		(add-hook 'go-mode-hook 'yas-minor-mode))
 
     #+end_src
     
@@ -631,58 +695,62 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 *** Rust
 *** C/C++
 *** Javascript
-***** base-config
+***** RJSX mode
+      It has all the features from js2 , and all the js files i've been using till now are .js
+      files, so i don't really need to differentiate between modes
     #+begin_src emacs-lisp
-      (use-package add-node-modules-path :ensure t)
-      (use-package web-mode :ensure t)
-      (use-package js2-mode :ensure t)
-      (use-package rjsx-mode :ensure t)
-      (add-to-list 'auto-mode-alist '("\\.js\\'"    . js2-mode))
-      (add-to-list 'auto-mode-alist '("\\.pac\\'"   . js2-mode))
-      (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+	  (use-package rjsx-mode
+		:ensure t
+		:mode "\\.js\\'"
+		:config
+		(setq indent-tabs-mode t)
+		(setq js2-basic-offset 4)
+		(defvaralias 'js-indent-level 'tab-width)
+		(defvaralias 'js-indent-level 'tab-width)
+		(defvaralias 'rjsx-indent-level 'tab-width)
+		(defvaralias 'rjsx-mode-markup-indent-offset 'tab-width)
+		(defvaralias 'rjsx-mode-code-indent-offset 'tab-width)
+		(defvaralias 'web-mode-css-indent-offset 'tab-width)
+		(defvaralias 'js2-indent-level 'tab-width))
 
-      (with-eval-after-load 'js2-mode
-	(defun bonk-js-mode-defaults ()
-	  ;; electric-layout-mode doesn't play nice with smartparens
-	  (setq-local electric-layout-rules '((?\; . after)))
-	  (setq mode-name "JS2")
-	  (js2-imenu-extras-mode +1)
-	  (subword-mode +1))
+	#+end_src
 
-	(setq bonk-js-mode-hook 'bonk-js-mode-defaults)
-
-	(add-hook 'js2-mode-hook (lambda () (run-hooks 'bonk-js-mode-hook))))
-      ;; disable default jsonlint
-      (setq-default flycheck-disabled-checkers
-		    (append flycheck-disabled-checkers
-			    '(javascript-jshint json-jsonlist)))
-      ;; using a global eslint
-      (require 'flycheck)
-
-      ;; Enable eslint checker for web-mode
-      (flycheck-add-mode 'javascript-eslint 'web-mode)
-      ;; Enable flycheck globally
-      (add-hook 'after-init-hook #'global-flycheck-mode)
-      ;; add node modules path
-      (add-hook 'flycheck-mode-hook 'add-node-modules-path)
-
-    #+end_src
 ***** Tide
       #+begin_src emacs-lisp
-	(use-package tide
-	  :ensure t
-	  :after (typescript-mode company flycheck)
-	  :hook ((typescript-mode . tide-setup)
-		 (typescript-mode . tide-hl-identifier-mode)
-		 (before-save . tide-format-before-save)))
+	(defun setup-tide-mode()
+	  "Setup function for tide."
+	  (interactive)
+	  (tide-setup)
+	  (flycheck-mode +1)
+	  (setq flycheck-check-syntax-automatically '(save mode-enabled)))
+
+	  (use-package tide
+	    :after (rjsx-mode company flycheck)
+	    :hook (rjsx-mode . setup-tide-mode))
+
       #+end_src
+
+***** Prettier 
+
+  It is important to have prettier installed through npm beforehand though
+  =npm install -g prettier=
+    #+begin_src emacs-lisp
+	  (use-package prettier-js
+		:after (rjsx-mode)
+		:hook (rjsx-mode . setup-tide-mode))
+
+    #+end_src
+
+    
 *** Yaml
     #+begin_src emacs-lisp
-      ;; yaml-mode doesn't derive from prog-mode, but we can at least enable
-      ;; whitespace-mode and apply cleanup.
-      (use-package yaml-mode)
-      (add-hook 'yaml-mode-hook 'whitespace-mode)
-      (add-hook 'yaml-mode-hook 'subword-mode)
+	  ;; yaml-mode doesn't derive from prog-mode, but we can at least enable
+	  ;; whitespace-mode and apply cleanup.
+	  (use-package yaml-mode
+		:after lsp-mode
+		:config
+		(add-hook 'yaml-mode-hook 'whitespace-mode)
+		(add-hook 'yaml-mode-hook 'subword-mode))
 
     #+end_src
     
@@ -746,11 +814,11 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 **** eLisp
      #+begin_src emacs-lisp
-       ;; Add `company-elisp' backend for elisp.
-       (add-hook 'emacs-lisp-mode-hook
-		 '(lambda ()
-		    (require 'company-elisp)
-		    (push 'company-elisp company-backends)))
+	   ;; Add `company-elisp' backend for elisp.
+	   (add-hook 'emacs-lisp-mode-hook
+				 '(lambda ()
+					(require 'company-elisp)
+					(push 'company-elisp company-backends)))
 
      #+end_src
      
@@ -833,11 +901,12 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
     - If you have =evil-collection= term-mode will work the way i mentioned before.
 
     #+begin_src emacs-lisp
-      (use-package term
-	:config
-	(setq explicit-shell-file-name "zsh") ;; You can change this to bash, fish, etc
-	;;(setq explicit-zsh-args '()) ;; Use it to set especific shell args
-	(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
+	  (use-package term
+		:commands term
+		:config
+		(setq explicit-shell-file-name "zsh") ;; You can change this to bash, fish, etc
+		;;(setq explicit-zsh-args '()) ;; Use it to set especific shell args
+		(setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
 
    #+end_src
 
@@ -851,7 +920,8 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 #+begin_src emacs-lisp
 
   (use-package eterm-256color
-    :hook (term-mode . eterm-256color-mode))
+	:after term
+	:hook (term-mode . eterm-256color-mode))
 
 #+end_src
 
@@ -865,16 +935,26 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+begin_src emacs-lisp
 
-    (use-package vterm
-      :commands vterm
-      :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
-      :config
-      (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
-      (setq vterm-max-scrollback 10000)
-      ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
-      ;; spawn another if want one.
-      (setq vterm-kill-buffer-on-exit t)
-      (setq vterm-timer-delay 0.01))
+  (use-package vterm
+    :commands vterm
+    :hook (vterm-mode . hide-mode-line-mode) ; modeline serves no purpose in vterm
+    :config
+    (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+    (setq vterm-max-scrollback 10000)
+    ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
+    ;; spawn another if want one.
+    (setq vterm-kill-buffer-on-exit t)
+    (setq vterm-timer-delay 0.01))
+
+#+end_src
+
+*** Keybindings for opening vterm in other windows with =SPACE v +options=
+
+#+begin_src emacs-lisp
+	(bonk/leader-keys
+	  "vt" '(vterm-other-window :which-key "vterm in new window")
+	  "vb" '(vterm :which-key "open new buffer for vterm"))
+
 #+end_src
 
 ** Shell-mode
@@ -987,11 +1067,12 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 * Structure Templates
 #+begin_src emacs-lisp
-    (require 'org-tempo)
-  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
+  (with-eval-after-load 'org
+	  (require 'org-tempo)
+	(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+	(add-to-list 'org-structure-template-alist '("py" . "src python"))
+	(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+	(add-to-list 'org-structure-template-alist '("rb" . "src ruby")))
 
 #+end_src
 
