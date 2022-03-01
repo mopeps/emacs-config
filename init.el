@@ -65,21 +65,22 @@
 (use-package general
   :config
   (general-create-definer bonk/leader-keys
-    :keymaps '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC"))
+	:keymaps '(normal insert visual emacs)
+	:prefix "SPC"
+	:global-prefix "C-SPC"))
 
   (bonk/leader-keys
-    "t"  '(:ignore t :which-key "toggles")
-    "tt" '(counsel-load-theme :which-key "choose theme")
+	"t"  '(:ignore t :which-key "toggles")
+	"tt" '(counsel-load-theme :which-key "choose theme")
   ;; Window navigation
-    "H" '(windmove-left :which-key "move to left window")
-    "L" '(windmove-right :which-key "move to right window")
-    "J" '(windmove-down :which-key "move to below window")
-    "K" '(windmove-up :which-key "move to above window")
+	"H" '(windmove-left :which-key "move to left window")
+	"L" '(windmove-right :which-key "move to right window")
+	"J" '(windmove-down :which-key "move to below window")
+	"K" '(windmove-up :which-key "move to above window")
   ;; Buffer options
-    "DD" '(kill-this-buffer :which "kills the current buffer")
-    )
+	"DD" '(kill-this-buffer :which "kills the current buffer")
+	"vcc" '(vterm-send-C-c :which "kills current vterm process")
+	)
 
 (use-package evil
   :init
@@ -571,16 +572,3 @@
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("rb" . "src ruby")))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(pdf-tools web-mode zenburn-theme yoshi-theme yasnippet-snippets yaml-mode which-key vterm visual-fill-column use-package-ensure-system-package tide theme-changer sublime-themes srcery-theme rspec-mode robe rjsx-mode rainbow-delimiters prettier-js org-bullets moe-theme magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful gruvbox-theme go-mode general flymake-ruby exec-path-from-shell ewal-spacemacs-themes evil-collection eterm-256color enh-ruby-mode doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles counsel-projectile company-web company-inf-ruby company-box command-log-mode color-theme-sanityinc-tomorrow bundler all-the-icons-dired add-node-modules-path ac-js2)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
