@@ -285,6 +285,7 @@
   (lsp-headerline-breadcrumb-mode))
 
 (use-package lsp-mode
+  :ensure t
   :commands (lsp lsp-deferred)
   :hook (lsp-mode . bonk/lsp-mode-setup)
   :init
@@ -334,12 +335,12 @@
   :after lsp)
 
 (use-package lsp-ivy
-  :after lsp-mode)
+  :after lsp)
 
 
 
 (use-package yasnippet                  ; Snippets
-  :after lsp-mode
+  :after company
   :config
   (setq
    yas-verbosity 1                      ; No need to be so verbose
@@ -355,7 +356,7 @@
   :after yasnippet)
 
 (use-package flycheck
-  :after lsp-mode)
+  :after company)
 (setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
 
 (use-package typescript-mode
@@ -363,24 +364,22 @@
   :hook (typescript-mode . lsp-deferred))
 
 (use-package inf-ruby
-  :after lsp-mode)
+  :after lsp)
 
 (use-package ruby-mode
-  :after lsp-mode
   :mode "\\.rb\\'"
-  :hook ((ruby-mode . lsp-deferred)
-		 (ruby-mode . amk-lsp-format-on-save))
+  :hook ((ruby-mode . lsp-deferred))
   :config
   (setq ruby-indent-tabs-mode t)
   (setq ruby-indent-level tab-width))
 
 (use-package enh-ruby-mode
-  :after lsp-mode
+  :after ruby-mode
   :config
   (setq enh-ruby-indent-tabs-mode t))
 
 (use-package robe
-  :after lsp)
+  :after ruby-mode)
 (add-hook 'ruby-mode-hook 'robe-mode)
 (eval-after-load 'company
   '(push 'company-robe company-backends))
@@ -389,13 +388,13 @@
 (add-hook 'ruby-mode-hook 'flymake-ruby-load)
 
 (use-package rspec-mode
-  :after (lsp ruby-mode))
+  :after ruby-mode)
 (eval-after-load 'rspec-mode
   '(rspec-install-snippets))
 
 (use-package go-mode
-  :mode "\\.go'\\"
-  :after lsp-mode
+  :mode "\\.go\\'"
+  :hook (go-mode . lsp-deferred)
   :config
   (add-hook 'go-mode-hook (lambda ()
 							(setq tab-width 4)))
@@ -415,6 +414,7 @@
 
 (use-package rjsx-mode
   :mode "\\.js\\'"
+  :hook (rjsx-mode . lsp-deferred)
   :config
   (setq indent-tabs-mode t)
   (setq js2-basic-offset 4))
@@ -451,7 +451,7 @@
 	("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
+  (company-idle-delay 0.2))
 
 (global-company-mode t)
 (use-package company-box
@@ -571,3 +571,16 @@
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("rb" . "src ruby")))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(pdf-tools web-mode zenburn-theme yoshi-theme yasnippet-snippets yaml-mode which-key vterm visual-fill-column use-package-ensure-system-package tide theme-changer sublime-themes srcery-theme rspec-mode robe rjsx-mode rainbow-delimiters prettier-js org-bullets moe-theme magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful gruvbox-theme go-mode general flymake-ruby exec-path-from-shell ewal-spacemacs-themes evil-collection eterm-256color enh-ruby-mode doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles counsel-projectile company-web company-inf-ruby company-box command-log-mode color-theme-sanityinc-tomorrow bundler all-the-icons-dired add-node-modules-path ac-js2)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:background nil)))))

@@ -1,4 +1,5 @@
 #+title Bonk's emacs config
+#+OPTIONS: toc:t
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
 * Basic UI config
@@ -329,7 +330,6 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
    #+RESULTS:
 
 * Org Mode
-  
 ** Basic configuration
 
 #+begin_src emacs-lisp
@@ -459,7 +459,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 ** Languages
 
 *** IDE Features with lsp-mode
-    
+
 **** lsp-mode
 
 We use the excellent [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] to enable IDE-like functionality for many different programming languages via "language servers" that speak the [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]].  Before trying to set up =lsp-mode= for a particular language, check out the [[https://emacs-lsp.github.io/lsp-mode/page/languages/][documentation for your language]] so that you can learn which language servers are available and how to install them.
@@ -476,6 +476,7 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 	(lsp-headerline-breadcrumb-mode))
 
   (use-package lsp-mode
+	:ensure t
 	:commands (lsp lsp-deferred)
 	:hook (lsp-mode . bonk/lsp-mode-setup)
 	:init
@@ -564,7 +565,7 @@ Try these commands with =M-x=:
 #+begin_src emacs-lisp
 
 	(use-package lsp-ivy
-	  :after lsp-mode)
+	  :after lsp)
 
 #+end_src
 
@@ -578,7 +579,7 @@ Try these commands with =M-x=:
     #+begin_src emacs-lisp
 
 	  (use-package yasnippet                  ; Snippets
-		:after lsp-mode
+		:after company
 		:config
 		(setq
 		 yas-verbosity 1                      ; No need to be so verbose
@@ -602,7 +603,7 @@ Try these commands with =M-x=:
     #+begin_src emacs-lisp
 
 			(use-package flycheck
-			  :after lsp-mode)
+			  :after company)
 			(setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
 
     #+end_src
@@ -632,22 +633,20 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 **** inf-ruby
      #+begin_src emacs-lisp
 			  (use-package inf-ruby
-				:after lsp-mode)
+				:after lsp)
      #+end_src
      
 **** ruby-mode
      #+begin_src emacs-lisp
 	   (use-package ruby-mode
-		 :after lsp-mode
 		 :mode "\\.rb\\'"
-		 :hook ((ruby-mode . lsp-deferred)
-				(ruby-mode . amk-lsp-format-on-save))
+		 :hook ((ruby-mode . lsp-deferred))
 		 :config
 		 (setq ruby-indent-tabs-mode t)
 		 (setq ruby-indent-level tab-width))
 
 	   (use-package enh-ruby-mode
-		 :after lsp-mode
+		 :after ruby-mode
 		 :config
 		 (setq enh-ruby-indent-tabs-mode t))
 
@@ -655,11 +654,11 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 
 **** robe-mode
      #+begin_src emacs-lisp
-	   (use-package robe
-		 :after lsp)
-	   (add-hook 'ruby-mode-hook 'robe-mode)
-	   (eval-after-load 'company
-		 '(push 'company-robe company-backends))
+					 (use-package robe
+					   :after ruby-mode)
+					 (add-hook 'ruby-mode-hook 'robe-mode)
+					 (eval-after-load 'company
+					   '(push 'company-robe company-backends))
      #+end_src
      
 **** Flymake
@@ -671,7 +670,7 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 **** rspec-mode
      #+begin_src emacs-lisp
 	   (use-package rspec-mode
-		 :after (lsp ruby-mode))
+		 :after ruby-mode)
 	   (eval-after-load 'rspec-mode
 		 '(rspec-install-snippets))
      #+end_src
@@ -679,8 +678,8 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
     
     #+begin_src emacs-lisp
 	  (use-package go-mode
-		:mode "\\.go'\\"
-		:after lsp-mode
+		:mode "\\.go\\'"
+		:hook (go-mode . lsp-deferred)
 		:config
 		(add-hook 'go-mode-hook (lambda ()
 								  (setq tab-width 4)))
@@ -710,6 +709,7 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
     #+begin_src emacs-lisp
 	  (use-package rjsx-mode
 		:mode "\\.js\\'"
+		:hook (rjsx-mode . lsp-deferred)
 		:config
 		(setq indent-tabs-mode t)
 		(setq js2-basic-offset 4))
@@ -741,7 +741,7 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 		:hook (rjsx-mode . setup-tide-mode))
 
     #+end_src
-
+	
     
 *** Yaml
     #+begin_src emacs-lisp
@@ -772,7 +772,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 	  ("<tab>" . company-indent-or-complete-common))
     :custom
     (company-minimum-prefix-length 1)
-    (company-idle-delay 0.0))
+    (company-idle-delay 0.2))
 
   (global-company-mode t)
   (use-package company-box
