@@ -112,6 +112,7 @@
 (use-package sublime-themes)
 (use-package gruvbox-theme)
 (use-package color-theme-sanityinc-tomorrow)
+(use-package cyberpunk-theme)
 
 (use-package all-the-icons)
 
@@ -191,13 +192,18 @@
   (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
 							 "*Messages*" "Async Shell Command")))
 
-(use-package org
-  :pin org
-  :commands (org-capture org-agenda)
-  :hook (org-mode . bonk/org-mode-setup)
-  :config
-  (setq org-ellipsis " ▾")
-  (bonk/org-font-setup))
+(defun bonk/org-no-line-number ()
+  (global-display-line-numbers-mode 0))
+
+  (use-package org
+	:pin org
+	:commands (org-capture org-agenda)
+	:hook
+	(org-mode . bonk/org-mode-setup)
+	 (org-mode . bonk/org-no-line-number)
+	:config
+	(setq org-ellipsis " ▾")
+	(bonk/org-font-setup))
 
 (defun bonk/org-font-setup ()
   ;; Replace list hyphen with dot
@@ -589,3 +595,16 @@
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
   (add-to-list 'org-structure-template-alist '("js" . "src javascript")))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(auto-org-md zenburn-theme yoshi-theme yasnippet-snippets yaml-mode which-key web-mode vterm visual-fill-column use-package-ensure-system-package tide theme-changer sublime-themes srcery-theme rspec-mode robe rjsx-mode rainbow-delimiters prettier-js pdf-tools org-bullets ob-typescript ob-rust ob-go neotree moe-theme magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful gruvbox-theme go-mode general flymake-ruby exec-path-from-shell ewal-spacemacs-themes evil-collection eterm-256color enh-ruby-mode doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles cyberpunk-theme counsel-projectile company-web company-inf-ruby company-box command-log-mode color-theme-sanityinc-tomorrow bundler all-the-icons-dired add-node-modules-path ac-js2)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:background nil)))))

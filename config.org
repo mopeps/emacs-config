@@ -1,4 +1,4 @@
-#+title Bonk's emacs config
+#+title: Bonk's emacs config
 #+OPTIONS: toc:t
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
@@ -165,6 +165,7 @@ for evil-mode.
   (use-package sublime-themes)
   (use-package gruvbox-theme)
   (use-package color-theme-sanityinc-tomorrow)
+  (use-package cyberpunk-theme)
 
 #+end_src
 
@@ -322,13 +323,19 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 #+begin_src emacs-lisp
 
-  (use-package org
-	:pin org
-	:commands (org-capture org-agenda)
-	:hook (org-mode . bonk/org-mode-setup)
-	:config
-	(setq org-ellipsis " ▾")
-	(bonk/org-font-setup))
+  (defun bonk/org-no-line-number ()
+	(global-display-line-numbers-mode 0))
+
+	(use-package org
+	  :pin org
+	  :commands (org-capture org-agenda)
+	  :hook
+	  (org-mode . bonk/org-mode-setup)
+	   (org-mode . bonk/org-no-line-number)
+	  :config
+	  (setq org-ellipsis " ▾")
+	  (bonk/org-font-setup))
+
 
 #+end_src
 
