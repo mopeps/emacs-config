@@ -3,7 +3,7 @@
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
 * Basic UI config
-  
+** General conf
 #+begin_src emacs-lisp
 
 	(setq inhibit-startup-message t)
@@ -31,14 +31,11 @@
 
 #+end_src
 
-#+RESULTS:
-
-
 ** Font Configuration
 
 #+begin_src emacs-lisp
 
-  (set-face-attribute 'default nil :font "Iosevka Nerd Font-12" )
+  (set-face-attribute 'default nil :font "Sarasa Gothic K-12")
 
   ;; (C-q Tab) inserts a tab space
   (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
@@ -46,21 +43,9 @@
 
 #+end_src
 
-#+RESULTS:
-
-
-**
-#+end_src
-
 * Package And System setup
 
 #+begin_src emacs-lisp
-;; Backup and Autosave Directories
-  (setq temporary-file-directory "~/.tmp/emacs/")
-  (setq backup-directory-alist
-	`((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-	`((".*" ,temporary-file-directory t)))
   ;; Initialize package sources
   (require 'package)
 
@@ -122,6 +107,7 @@ for evil-mode.
 	;; Buffer options
 	  "DD" '(kill-this-buffer :which "kills the current buffer")
 	  "vcc" '(vterm-send-C-c :which "kills current vterm process")
+	  "nn" '(neotree-toggle :which "toggles neotree")
 	  )
 
   (use-package evil
@@ -149,9 +135,6 @@ for evil-mode.
 
 #+end_src
 
-#+RESULTS:
-: t
-
 * UI Configuration
 
 ** Command Log Mode
@@ -160,8 +143,8 @@ for evil-mode.
 
 #+begin_src emacs-lisp
 
-  (use-package command-log-mode
-	:commands command-log-mode)
+	  (use-package command-log-mode
+		:commands command-log-mode)
 
 #+end_src
 
@@ -216,7 +199,9 @@ for evil-mode.
 	:diminish which-key-mode
 	:config
 	(which-key-mode)
-	(setq which-key-idle-delay 1))
+	(setq which-key-idle-delay 1)
+	(setq which-key-allow-imprecise-window-fit t))
+
 
 #+end_src
 
@@ -322,15 +307,17 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 ** Ido (tool for buffer)
    #+begin_src emacs-lisp
-     (require 'ido)
-     (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
-     (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
-				"*Messages*" "Async Shell Command"))
+	 (use-package ido
+	   :config
+	   (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
+	   (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
+								  "*Messages*" "Async Shell Command")))
    #+end_src
 
    #+RESULTS:
 
 * Org Mode
+
 ** Basic configuration
 
 #+begin_src emacs-lisp
@@ -344,6 +331,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 	(bonk/org-font-setup))
 
 #+end_src
+
 ** Better Font Faces
 
 #+begin_src emacs-lisp
@@ -363,7 +351,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 		      (org-level-6 . 1.1)
 		      (org-level-7 . 1.1)
 		      (org-level-8 . 1.1)))
-	(set-face-attribute (car face) nil :font "Hack Nerd Font"
+	(set-face-attribute (car face) nil :font "Sarasa Fixed Slab K"
 			    :weight 'regular
 			    :height (cdr face)))
 
@@ -403,6 +391,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 
 #+end_src
+
 ** Auto-tangle Configuration FIles
 
 #+begin_src emacs-lisp
@@ -422,18 +411,21 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use.  [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
 
 #+begin_src emacs-lisp
-(with-eval-after-load 'org
-  (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((emacs-lisp . t)
-      (python . t)))
+	  (with-eval-after-load 'org
+		(org-babel-do-load-languages
+		  'org-babel-load-languages
+		  '((emacs-lisp . t)
+			(python . t)
+			(typescript . t)
+			(go . t)
+			(rust . t)))
 
-  (push '("conf-unix" . conf-unix) org-src-lang-modes))
-
+		(push '("conf-unix" . conf-unix) org-src-lang-modes))
 #+end_src
 
 * Development
 ** General configs
+
    Here is the config for wether using tabs, how to indent, how many spaces, etc.
 
    #+begin_src emacs-lisp
@@ -704,6 +696,18 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 *** Rust
 *** C/C++
 *** Javascript
+***** Web Mode
+#+begin_src emacs-lisp
+
+  (use-package web-mode
+	:mode "\\.html$'" "\\.jsx$" "\\.tsx$"
+	:init 
+	(setq web-mode-markup-indent-offset 4)
+	(setq web-mode-css-indent-offset 4)
+	(setq web-mode-code-indent-offset 4)
+	)
+
+#+end_src
 ***** RJSX mode
       It has all the features from js2 , and all the js files i've been using till now are .js
       files, so i don't really need to differentiate between modes
@@ -711,7 +715,7 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 	  (use-package rjsx-mode
 		:mode "\\.js\\'"
 		:hook (rjsx-mode . lsp-deferred)
-		:config
+		:init
 		(setq indent-tabs-mode t)
 		(setq js2-basic-offset 4))
 
@@ -743,7 +747,6 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 
     #+end_src
 	
-    
 *** Yaml
     #+begin_src emacs-lisp
 	  ;; yaml-mode doesn't derive from prog-mode, but we can at least enable
@@ -966,106 +969,141 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 * File Management
 ** Backup-files
 *** Configuration
-    I don't like when emacs creates backup files next to the originals, since it can be tedious
-    to commit changes on a project.
-    #+begin_src emacs-lisp
-      (setq backup-directory-alist            '((".*" . "~/.Trash")))
-    #+end_src
+
+I don't like when emacs creates backup files next to the originals, since it can be tedious
+to commit changes on a project.
+
+#+begin_src emacs-lisp
+;; Backup and Autosave Directories
+  (setq temporary-file-directory "~/.tmp/emacs/")
+  (setq auto-save-file-name-transforms
+	`((".*" ,temporary-file-directory t)))
+  (setq backup-directory-alist            '((".*" . "~/.Trash")))
+#+end_src
+
 ** Dired
 *** Key Bindings
 
 **** Navigation
 **** Emacs / Evil
-     - =n= / =j= - next line
-     - =p= / =k= - previous line
-     - =j= / =J= - jump to file in buffer
-     - =RET= - select file or directory
-     - =^= - go to parent directory
-     - =S-RET= / =g O= - Open file in "other" window
-     - =M-RET= - Show file in other window without focusing (previewing files)
-     - =g o= (=dired-view-file=) - Open file but in a "preview" mode, close with =q=
-     - =g= / =g r= Refresh the buffer with =revert-buffer=
-       after changing configuration (and after filesystem changes!)
+- =n= / =j= - next line
+- =p= / =k= - previous line
+- =j= / =J= - jump to file in buffer
+- =RET= - select file or directory
+- =^= - go to parent directory
+- =S-RET= / =g O= - Open file in "other" window
+- =M-RET= - Show file in other window without focusing (previewing files)
+- =g o= (=dired-view-file=) - Open file but in a "preview" mode, close with =q=
+- =g= / =g r= Refresh the buffer with =revert-buffer=
+  after changing configuration (and after filesystem changes!)
 
 **** Marking Files
-    - =m= - Marks a file
-    - =u= - Unmarks a file
-    - =U= - Unmarks all files in buffer
-    - =* t= / =t= - Inverts marked files in buffer
-    - =% m= - Mark files in buffer using regular expression
-    - =*= - Lots of other auto-marking functions
-    - =k= / =K= - "Kill" marked items (refresh buffer with =g= / =g r= to get them back)
-    - Many operations can be done on a single file if there are no active marks!
+- =m= - Marks a file
+- =u= - Unmarks a file
+- =U= - Unmarks all files in buffer
+- =* t= / =t= - Inverts marked files in buffer
+- =% m= - Mark files in buffer using regular expression
+- =*= - Lots of other auto-marking functions
+- =k= / =K= - "Kill" marked items (refresh buffer with =g= / =g r= to get them back)
+- Many operations can be done on a single file if there are no active marks!
 
 **** Copying and Renaming files
 
-    - =C= - Copy marked files (or if no files are marked, the current file)
-    - Copying single and multiple files
-    - =U= - Unmark all files in buffer
-    - =R= - Rename marked files, renaming multiple is a move!
-    - =% R= - Rename based on regular expression: =^test= , =old-\&=
+- =C= - Copy marked files (or if no files are marked, the current file)
+- Copying single and multiple files
+- =U= - Unmark all files in buffer
+- =R= - Rename marked files, renaming multiple is a move!
+- =% R= - Rename based on regular expression: =^test= , =old-\&=
 
 **** Power Command:
-     =C-x C-q= (=dired-toggle-read-only=) - Makes all file names in the buffer
-     editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to abort.
+=C-x C-q= (=dired-toggle-read-only=) - Makes all file names in the buffer
+editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to abort.
 
 **** Deleting Files
 
-    - =D= - Delete marked file
-    - =d= - Mark file for deletion
-    - =x= - Execute deletion for marks
-    - =delete-by-moving-to-trash= - Move to trash instead of deleting permanently
+- =D= - Delete marked file
+- =d= - Mark file for deletion
+- =x= - Execute deletion for marks
+- =delete-by-moving-to-trash= - Move to trash instead of deleting permanently
 
 **** Creating and extracting archives
 
-    - =Z= - Compress or uncompress a file or folder to (=.tar.gz=)
-    - =c= - Compress selection to a specific file
-    - =dired-compress-files-alist= - Bind compression commands to file extension
+- =Z= - Compress or uncompress a file or folder to (=.tar.gz=)
+- =c= - Compress selection to a specific file
+- =dired-compress-files-alist= - Bind compression commands to file extension
 
 **** Other common operations
 
-    - =T= - Touch (change timestamp)
-    - =M= - Change file mode
-    - =O= - Change file owner
-    - =G= - Change file group
-    - =S= - Create a symbolic link to this file
-    - =L= - Load an Emacs Lisp file into Emacs
+- =T= - Touch (change timestamp)
+- =M= - Change file mode
+- =O= - Change file owner
+- =G= - Change file group
+- =S= - Create a symbolic link to this file
+- =L= - Load an Emacs Lisp file into Emacs
 
 
 *** Configuration
 
-    #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 
-      (use-package dired
+  (use-package dired
 	:ensure nil
 	:commands (dired dired-jump)
 	:bind (("C-x C-j" . dired-jump))
 	:custom ((setq insert-directory-program "gls" dired-use-ls-dired t)
-		 (setq dired-listing-switches "-al --group-directories-first"))
+			 (setq dired-listing-switches "-al --group-directories-first"))
 	:config
 	(evil-collection-define-key 'normal 'dired-mode-map
 	  "h" 'dired-single-up-directory
 	  "l" 'dired-single-buffer))
 
-      (use-package dired-single)
+  (use-package dired-single)
 
-      (use-package all-the-icons-dired
+  (use-package all-the-icons-dired
 	:hook (dired-mode . all-the-icons-dired-mode))
 
-      (use-package dired-open
+  (use-package dired-open
 	:config
 	;; Doesn't work as expected!
 	;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
 	(setq dired-open-extensions '(("png" . "feh")
-				      ("mkv" . "mpv"))))
+								  ("mkv" . "mpv"))))
 
-      (use-package dired-hide-dotfiles
+  (use-package dired-hide-dotfiles
 	:hook (dired-mode . dired-hide-dotfiles-mode)
 	:config
 	(evil-collection-define-key 'normal 'dired-mode-map
 	  "H" 'dired-hide-dotfiles-mode))
 
-    #+end_src
+#+end_src
+
+** NeoTree
+*** KeyBindings
+
+ - =n= next line, =p= previous line。
+ - =SPC= or =RET= or =TAB= Open current item if it is a file. Fold/Unfold current item if it is a directory.
+ - =U= Go up a directory
+ - =g= Refresh
+ - =A= Maximize/Minimize the NeoTree Window
+ - =H= Toggle display hidden files
+ - =O= Recursively open a directory
+ - =C-c C-n= Create a file or create a directory if filename ends with a ‘/’
+ - =C-c C-d= Delete a file or a directory.
+ - =C-c C-r= Rename a file or a directory.
+ - =C-c C-c= Change the root directory.
+ - =C-c C-p= Copy a file or a directory.
+
+
+*** Configuration
+
+#+begin_src emacs-lisp
+
+  (use-package neotree
+	:config
+	(setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+
+
+#+end_src
 
 * Structure Templates
 #+begin_src emacs-lisp
@@ -1074,7 +1112,8 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 	(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 	(add-to-list 'org-structure-template-alist '("py" . "src python"))
 	(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-	(add-to-list 'org-structure-template-alist '("rb" . "src ruby")))
+	(add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
+	(add-to-list 'org-structure-template-alist '("js" . "src javascript")))
 
 #+end_src
 

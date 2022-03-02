@@ -21,43 +21,37 @@
 				eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-(set-face-attribute 'default nil :font "Iosevka Nerd Font-12" )
+(set-face-attribute 'default nil :font "Sarasa Gothic K-12")
 
 ;; (C-q Tab) inserts a tab space
 (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
 
-;; Backup and Autosave Directories
-  (setq temporary-file-directory "~/.tmp/emacs/")
-  (setq backup-directory-alist
-	`((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-	`((".*" ,temporary-file-directory t)))
-  ;; Initialize package sources
-  (require 'package)
+;; Initialize package sources
+(require 'package)
 
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			   ("org" . "https://orgmode.org/elpa/")
-			   ("elpa" . "https://elpa.gnu.org/packages/")))
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
 
 
-  (setq package-check-signature nil) 
-  ;; probably not necessary
+(setq package-check-signature nil) 
+;; probably not necessary
 
 
-  (package-initialize)
-  (unless package-archive-contents
-    (package-refresh-contents))
-  (use-package exec-path-from-shell)
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize))
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+(use-package exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
 
-  ;; Initialize use-package on non-Linux platforms
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
+;; Initialize use-package on non-Linux platforms
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
 
-  (require 'use-package)
-  (setq use-package-always-ensure t)
-  (use-package use-package-ensure-system-package)
+(require 'use-package)
+(setq use-package-always-ensure t)
+(use-package use-package-ensure-system-package)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -80,6 +74,7 @@
   ;; Buffer options
 	"DD" '(kill-this-buffer :which "kills the current buffer")
 	"vcc" '(vterm-send-C-c :which "kills current vterm process")
+	"nn" '(neotree-toggle :which "toggles neotree")
 	)
 
 (use-package evil
@@ -129,7 +124,8 @@
   :diminish which-key-mode
   :config
   (which-key-mode)
-  (setq which-key-idle-delay 1))
+  (setq which-key-idle-delay 1)
+  (setq which-key-allow-imprecise-window-fit t))
 
 (use-package ivy
   :diminish
@@ -189,10 +185,11 @@
 	   ;;	   (setq ruler-mode-show-tab-stops t)
 		   ;;   (ruler-mode 1))))
 
-(require 'ido)
-(ido-mode 'buffers) ;; only use this line to turn off ido for file names!
-(setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
-		   "*Messages*" "Async Shell Command"))
+(use-package ido
+  :config
+  (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
+  (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
+							 "*Messages*" "Async Shell Command")))
 
 (use-package org
   :pin org
@@ -217,7 +214,7 @@
 		  (org-level-6 . 1.1)
 		  (org-level-7 . 1.1)
 		  (org-level-8 . 1.1)))
-(set-face-attribute (car face) nil :font "Hack Nerd Font"
+(set-face-attribute (car face) nil :font "Sarasa Fixed Slab K"
 			:weight 'regular
 			:height (cdr face)))
 
@@ -256,9 +253,12 @@
 
 (with-eval-after-load 'org
   (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((emacs-lisp . t)
-      (python . t)))
+	'org-babel-load-languages
+	'((emacs-lisp . t)
+	  (python . t)
+	  (typescript . t)
+	  (go . t)
+	  (rust . t)))
 
   (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
@@ -413,10 +413,18 @@
   (add-hook 'go-mode-hook 'lsp-deferred)
   (add-hook 'go-mode-hook 'yas-minor-mode))
 
+(use-package web-mode
+  :mode "\\.html$'" "\\.jsx$" "\\.tsx$"
+  :init 
+  (setq web-mode-markup-indent-offset 4)
+  (setq web-mode-css-indent-offset 4)
+  (setq web-mode-code-indent-offset 4)
+  )
+
 (use-package rjsx-mode
   :mode "\\.js\\'"
   :hook (rjsx-mode . lsp-deferred)
-  :config
+  :init
   (setq indent-tabs-mode t)
   (setq js2-basic-offset 4))
 
@@ -535,40 +543,49 @@
   "vt" '(vterm-other-window :which-key "vterm in new window")
   "vb" '(vterm :which-key "open new buffer for vterm"))
 
-(setq backup-directory-alist            '((".*" . "~/.Trash")))
+;; Backup and Autosave Directories
+  (setq temporary-file-directory "~/.tmp/emacs/")
+  (setq auto-save-file-name-transforms
+	`((".*" ,temporary-file-directory t)))
+  (setq backup-directory-alist            '((".*" . "~/.Trash")))
 
 (use-package dired
-:ensure nil
-:commands (dired dired-jump)
-:bind (("C-x C-j" . dired-jump))
-:custom ((setq insert-directory-program "gls" dired-use-ls-dired t)
-	 (setq dired-listing-switches "-al --group-directories-first"))
-:config
-(evil-collection-define-key 'normal 'dired-mode-map
-  "h" 'dired-single-up-directory
-  "l" 'dired-single-buffer))
+  :ensure nil
+  :commands (dired dired-jump)
+  :bind (("C-x C-j" . dired-jump))
+  :custom ((setq insert-directory-program "gls" dired-use-ls-dired t)
+		   (setq dired-listing-switches "-al --group-directories-first"))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+	"h" 'dired-single-up-directory
+	"l" 'dired-single-buffer))
 
-  (use-package dired-single)
+(use-package dired-single)
 
-  (use-package all-the-icons-dired
-:hook (dired-mode . all-the-icons-dired-mode))
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
 
-  (use-package dired-open
-:config
-;; Doesn't work as expected!
-;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-(setq dired-open-extensions '(("png" . "feh")
-				  ("mkv" . "mpv"))))
+(use-package dired-open
+  :config
+  ;; Doesn't work as expected!
+  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+  (setq dired-open-extensions '(("png" . "feh")
+								("mkv" . "mpv"))))
 
-  (use-package dired-hide-dotfiles
-:hook (dired-mode . dired-hide-dotfiles-mode)
-:config
-(evil-collection-define-key 'normal 'dired-mode-map
-  "H" 'dired-hide-dotfiles-mode))
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+	"H" 'dired-hide-dotfiles-mode))
+
+(use-package neotree
+  :config
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 (with-eval-after-load 'org
 	(require 'org-tempo)
   (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("rb" . "src ruby")))
+  (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
+  (add-to-list 'org-structure-template-alist '("js" . "src javascript")))
