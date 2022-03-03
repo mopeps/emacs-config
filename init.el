@@ -21,7 +21,43 @@
 				eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-(set-face-attribute 'default nil :font "Sarasa Gothic K-12")
+(set-face-attribute 'default nil :font  "Sarasa Gothic CL-12")
+(set-face-font 'variable-pitch "Iosevka-12")
+(set-face-font 'fixed-pitch "Sarasa Gothic CL-12")
+
+;;============================================================
+;; toggle between variable pitch and fixed pitch font for 
+;; the current buffer
+(defun fixed-pitch-mode ()
+  (buffer-face-mode -1))
+
+(defun variable-pitch-mode ()
+  (buffer-face-mode t))
+
+(defun toggle-pitch (&optional arg)
+  "Switch between the `fixed-pitch' face and the `variable-pitch' face"
+  (interactive)
+  (buffer-face-toggle 'variable-pitch))
+
+;; enable buffer-face mode to provide buffer-local fonts
+(buffer-face-mode)
+
+;; Set the fonts to format correctly
+(add-hook 'text-mode-hook 'fixed-pitch-mode)
+(add-hook 'dired-mode-hook 'variable-pitch-mode)
+(add-hook 'calendar-mode-hook 'variable-pitch-mode)
+(add-hook 'org-agenda-mode-hook 'variable-pitch-mode)
+(add-hook 'shell-mode-hook 'variable-pitch-mode)
+(add-hook 'eshell-mode-hook 'variable-pitch-mode)
+(add-hook 'neotree-mode-hook 'variable-pitch-mode)
+(add-hook 'counsel-mode-hook 'variable-pitch-mode)
+(add-hook 'command-log-mode-hook 'variable-pitch-mode)
+(add-hook 'which-key-mode-hook 'variable-pitch-mode)
+(add-hook 'ivy-mode-hook 'variable-pitch-mode)
+										;(Add-hook 'bs-mode-hook 'fixed-pitch-mode)
+										;(add-hook 'w3m-mode-hook 'variable-pitch-mode)
+										;(add-hook 'org-mode-hook 'variable-pitch-mode)
+(add-hook 'eww-mode-hook 'variable-pitch-mode)
 
 ;; (C-q Tab) inserts a tab space
 (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
@@ -595,16 +631,3 @@
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
   (add-to-list 'org-structure-template-alist '("js" . "src javascript")))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(auto-org-md zenburn-theme yoshi-theme yasnippet-snippets yaml-mode which-key web-mode vterm visual-fill-column use-package-ensure-system-package tide theme-changer sublime-themes srcery-theme rspec-mode robe rjsx-mode rainbow-delimiters prettier-js pdf-tools org-bullets ob-typescript ob-rust ob-go neotree moe-theme magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful gruvbox-theme go-mode general flymake-ruby exec-path-from-shell ewal-spacemacs-themes evil-collection eterm-256color enh-ruby-mode doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles cyberpunk-theme counsel-projectile company-web company-inf-ruby company-box command-log-mode color-theme-sanityinc-tomorrow bundler all-the-icons-dired add-node-modules-path ac-js2)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
