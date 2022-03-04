@@ -237,6 +237,13 @@ for evil-mode.
 	:diminish which-key-mode
 	:config
 	(which-key-mode)
+	(set-face-attribute 'which-key-local-map-description-face nil :font "Iosevka-12")
+	(set-face-attribute 'which-key-key-face nil :font "Iosevka-12")
+	(set-face-attribute 'which-key-separator-face nil :font "Iosevka-12")
+	(set-face-attribute 'which-key-note-face nil :font "Iosevka-12")
+	(set-face-attribute 'which-key-special-key-face nil :font "Iosevka-12")
+	(set-face-attribute 'which-key-group-description-face nil :font "Iosevka-12")
+	(set-face-attribute 'which-key-command-description-face nil :font "Iosevka-12")
 	(setq which-key-idle-delay 1)
 	(setq which-key-allow-imprecise-window-fit t))
 
@@ -508,51 +515,52 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 #+begin_src emacs-lisp
 
 
-  (defun bonk/lsp-mode-setup ()
-	(setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-	(lsp-headerline-breadcrumb-mode))
+	(defun bonk/lsp-mode-setup ()
+	  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+	  (lsp-headerline-breadcrumb-mode))
 
-  (use-package lsp-mode
-	:ensure t
-	:commands (lsp lsp-deferred)
-	:hook (lsp-mode . bonk/lsp-mode-setup)
-	:init
-	(setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-	:config
+	(use-package lsp-mode
+	  :ensure t
+	  :commands (lsp lsp-deferred)
+	  :hook (lsp-mode . bonk/lsp-mode-setup)
+	  :init
+	  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+	  :config
 
-	(add-hook 'typescript-mode-hook 'lsp)
-	(add-hook 'rjsx-mode-hook 'lsp)
-	(add-hook 'php-mode 'lsp)
-	(add-hook 'css-mode 'lsp)
-	(add-hook 'web-mode 'lsp)
-	(lsp-enable-which-key-integration t)
-	(setq lsp-completion-enable t)
+	  (add-hook 'typescript-mode-hook 'lsp)
+	  (add-hook 'rjsx-mode-hook 'lsp)
+	  (add-hook 'php-mode 'lsp)
+	  (add-hook 'css-mode 'lsp)
+	  (add-hook 'web-mode 'lsp)
+	  (lsp-enable-which-key-integration t)
+	  (setq lsp-completion-enable t)
 
-	(setq lsp-language-id-configuration '((java-mode . "java")
-					  (python-mode . "python")
-					  (gfm-view-mode . "markdown")
-					  (rust-mode . "rust")
-					  (css-mode . "css")
-					  (xml-mode . "xml")
-					  (c-mode . "c")
-					  (c++-mode . "cpp")
-					  (objc-mode . "objective-c")
-					  (web-mode . "html")
-					  (html-mode . "html")
-					  (sgml-mode . "html")
-					  (mhtml-mode . "html")
-					  (go-mode . "go")
-					  (haskell-mode . "haskell")
-					  (php-mode . "php")
-					  (json-mode . "json")
-					  (rjsx-mode . "javascript")
-					  (typescript-mode . "typescript")
-					  ))
+	  (setq lsp-language-id-configuration '((java-mode . "java")
+						(python-mode . "python")
+						(gfm-view-mode . "markdown")
+						(rust-mode . "rust")
+						(css-mode . "css")
+						(xml-mode . "xml")
+						(c-mode . "c")
+						(c++-mode . "cpp")
+						(objc-mode . "objective-c")
+						(web-mode . "html")
+						(html-mode . "html")
+						(sgml-mode . "html")
+						(mhtml-mode . "html")
+						(go-mode . "go")
+						(haskell-mode . "haskell")
+						(php-mode . "php")
+						(json-mode . "json")
+						(rjsx-mode . "javascript")
+						(typescript-mode . "typescript")
+						))
 
+	  (setq lsp-diagnostics-provider :none)
 
-	:custom
-	(lsp-file-watch-threshold nil)
-	(lsp-solargraph-multi-root nil))
+	  :custom
+	  (lsp-file-watch-threshold nil)
+	  (lsp-solargraph-multi-root nil))
 
 #+end_src
 

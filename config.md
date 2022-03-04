@@ -1,76 +1,76 @@
 
 # Table of Contents
 
-1.  [Basic UI config](#orgef720ac)
-    1.  [General conf](#org5c0ea53)
-    2.  [Font Configuration](#org3f69fa5)
-2.  [Package And System setup](#org504cc96)
-3.  [Keybinding Configuration](#org75fe3a5)
-4.  [UI Configuration](#org33b73c8)
-    1.  [Command Log Mode](#orga063183)
-    2.  [Color Theme](#org18d1fb9)
-    3.  [Better Modeline](#org90ddc1d)
-    4.  [Which Key](#orga98aef0)
-    5.  [Ivy and Counsel](#org9e90892)
-    6.  [Helpful Help Commands](#org50630a6)
-    7.  [Text Scaling](#org09d3ed6)
-    8.  [Rule mode](#orgb9121d9)
-    9.  [Ido (tool for buffer)](#org8bb1b2d)
-5.  [Org Mode](#org4b59c26)
-    1.  [Basic configuration](#org3f06e9e)
-    2.  [Better Font Faces](#org070e6e3)
-    3.  [Nicer Heading Bullets](#org938395c)
-    4.  [Center Org Buffers](#org5426cc3)
-    5.  [Auto-tangle Configuration FIles](#orge847365)
-    6.  [Configure Babel Languages](#orge4dc8de)
-6.  [Development](#org52e3e80)
-    1.  [General configs](#orgc549793)
-    2.  [Languages](#org3d5fe3c)
-        1.  [IDE Features with lsp-mode](#org69d7465)
-        2.  [Yasnippets](#orgc6451a8)
-        3.  [Flycheck](#org83e43e8)
-        4.  [TypeScript](#orgae55373)
-        5.  [Ruby](#orgdb781f2)
-        6.  [Golang](#orgdb77c2a)
-        7.  [Elisp](#orgee0e39b)
-        8.  [Rust](#org1fa6ad5)
-        9.  [C/C++](#orgbab5ce7)
-        10. [Javascript](#orga2eed72)
-        11. [Yaml](#orge0e060e)
-    3.  [Company Mode](#org5189f40)
-        1.  [Company Backends](#org7a19752)
-    4.  [Projectile](#orgd794538)
-    5.  [Magit](#orgd024171)
-    6.  [Rainbow Delimiters](#org1ee7f75)
-7.  [Terminals](#orgb035954)
-    1.  [Term-mode](#orgbd35005)
-        1.  [Useful key bindings:](#orgac193cb)
-        2.  [Term-mode 256color](#org3e64148)
-    2.  [Vterm](#orgb1998c6)
-        1.  [Keybindings for opening vterm in other windows with `SPACE v +options`](#org6b58a9f)
-    3.  [Shell-mode](#orgdc7d76f)
-    4.  [Eshell](#orgaba964e)
-8.  [File Management](#org1130a8e)
-    1.  [Backup-files](#orgd7e6934)
-        1.  [Configuration](#orgeec6449)
-    2.  [Dired](#org51bc302)
-        1.  [Key Bindings](#org2d8cce6)
-        2.  [Configuration](#org742ceb2)
-    3.  [NeoTree](#orgbb95484)
-        1.  [KeyBindings](#orgee42bf7)
-        2.  [Configuration](#org3a71f79)
-9.  [Structure Templates](#orgbd2b1c9)
-10. [Applications](#orgab21e20)
-    1.  [example config 'Some App'](#org6a2fa34)
+1.  [Basic UI config](#org6239ca0)
+    1.  [General conf](#orgca73ad3)
+    2.  [Font Configuration](#org7d8451a)
+2.  [Package And System setup](#org5c7847a)
+3.  [Keybinding Configuration](#org70b60cf)
+4.  [UI Configuration](#orga6866d4)
+    1.  [Command Log Mode](#orgbfe44d4)
+    2.  [Color Theme](#orgd4834b4)
+    3.  [Better Modeline](#org9086ba1)
+    4.  [Which Key](#orge2907ef)
+    5.  [Ivy and Counsel](#org8ba4a30)
+    6.  [Helpful Help Commands](#org39572cf)
+    7.  [Text Scaling](#org2b0b3cf)
+    8.  [Rule mode](#org92acb9b)
+    9.  [Ido (tool for buffer)](#org8385a92)
+5.  [Org Mode](#orgc274d4c)
+    1.  [Basic configuration](#org1bfc463)
+    2.  [Better Font Faces](#org3cf6926)
+    3.  [Nicer Heading Bullets](#orgdcbf0bf)
+    4.  [Center Org Buffers](#orgffc73ac)
+    5.  [Auto-tangle Configuration FIles](#orgb9e1c01)
+    6.  [Configure Babel Languages](#orgf0b37ea)
+6.  [Development](#orgbd5f00b)
+    1.  [General configs](#orged74f72)
+    2.  [Languages](#orgced23aa)
+        1.  [IDE Features with lsp-mode](#org925d318)
+        2.  [Yasnippets](#org7130121)
+        3.  [Flycheck](#org44a3b3a)
+        4.  [TypeScript](#org4d503e9)
+        5.  [Ruby](#org3dee510)
+        6.  [Golang](#orge0d0fde)
+        7.  [Elisp](#org931c602)
+        8.  [Rust](#orgda45c7f)
+        9.  [C/C++](#org62c8699)
+        10. [Javascript](#orgb5386f6)
+        11. [Yaml](#org90093c8)
+    3.  [Company Mode](#org3bb13f5)
+        1.  [Company Backends](#orgbb4454f)
+    4.  [Projectile](#org61de8c9)
+    5.  [Magit](#orgc6e0c15)
+    6.  [Rainbow Delimiters](#orgf339ae9)
+7.  [Terminals](#orgda877ed)
+    1.  [Term-mode](#org7ff5a45)
+        1.  [Useful key bindings:](#org1716518)
+        2.  [Term-mode 256color](#org4fb524e)
+    2.  [Vterm](#orga892b76)
+        1.  [Keybindings for opening vterm in other windows with `SPACE v +options`](#orga04ffad)
+    3.  [Shell-mode](#orgb04adae)
+    4.  [Eshell](#org1808c26)
+8.  [File Management](#orga69fcd3)
+    1.  [Backup-files](#orgb1cb48c)
+        1.  [Configuration](#orgdad8bee)
+    2.  [Dired](#orgabf5fb4)
+        1.  [Key Bindings](#org519e483)
+        2.  [Configuration](#org6e2c401)
+    3.  [NeoTree](#org832d657)
+        1.  [KeyBindings](#org8438c2b)
+        2.  [Configuration](#org395ed0a)
+9.  [Structure Templates](#org2bdd679)
+10. [Applications](#org41c0d36)
+    1.  [example config 'Some App'](#orgd1c70a9)
 
 
 
-<a id="orgef720ac"></a>
+<a id="org6239ca0"></a>
 
 # Basic UI config
 
 
-<a id="org5c0ea53"></a>
+<a id="orgca73ad3"></a>
 
 ## General conf
 
@@ -99,18 +99,55 @@
       (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 
-<a id="org3f69fa5"></a>
+<a id="org7d8451a"></a>
 
 ## Font Configuration
 
     
-    (set-face-attribute 'default nil :font "Sarasa Gothic K-12")
+    (set-face-attribute 'default nil :font  "Sarasa Gothic CL-12")
+    (set-face-font 'variable-pitch "Iosevka-12")
+    (set-face-font 'fixed-pitch "Sarasa Gothic CL-12")
+    
+    ;;============================================================
+    ;; toggle between variable pitch and fixed pitch font for 
+    ;; the current buffer
+    (defun fixed-pitch-mode ()
+      (buffer-face-mode -1))
+    
+    (defun variable-pitch-mode ()
+      (buffer-face-mode t))
+    
+    (defun toggle-pitch (&optional arg)
+      "Switch between the `fixed-pitch' face and the `variable-pitch' face"
+      (interactive)
+      (buffer-face-toggle 'variable-pitch))
+    
+    ;; enable buffer-face mode to provide buffer-local fonts
+    (buffer-face-mode)
+    
+    ;; Set the fonts to format correctly
+    (add-hook 'text-mode-hook 'fixed-pitch-mode)
+    (add-hook 'dired-mode-hook 'variable-pitch-mode)
+    (add-hook 'calendar-mode-hook 'variable-pitch-mode)
+    (add-hook 'org-agenda-mode-hook 'variable-pitch-mode)
+    (add-hook 'shell-mode-hook 'variable-pitch-mode)
+    (add-hook 'eshell-mode-hook 'variable-pitch-mode)
+    (add-hook 'neotree-mode-hook 'variable-pitch-mode)
+    (add-hook 'counsel-mode-hook 'variable-pitch-mode)
+    (add-hook 'command-log-mode-hook 'variable-pitch-mode)
+    (add-hook 'which-key-mode-hook 'variable-pitch-mode)
+    (add-hook 'ivy-mode-hook 'variable-pitch-mode)
+    (add-hook 'helpful-mode-hook 'variable-pitch-mode)
+    										;(Add-hook 'bs-mode-hook 'fixed-pitch-mode)
+    										;(add-hook 'w3m-mode-hook 'variable-pitch-mode)
+    										;(add-hook 'org-mode-hook 'variable-pitch-mode)
+    (add-hook 'eww-mode-hook 'variable-pitch-mode)
     
     ;; (C-q Tab) inserts a tab space
     (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
 
 
-<a id="org504cc96"></a>
+<a id="org5c7847a"></a>
 
 # Package And System setup
 
@@ -142,7 +179,7 @@
     (use-package use-package-ensure-system-package)
 
 
-<a id="org75fe3a5"></a>
+<a id="org70b60cf"></a>
 
 # Keybinding Configuration
 
@@ -200,12 +237,12 @@ for evil-mode.
       (evil-collection-init))
 
 
-<a id="org33b73c8"></a>
+<a id="orga6866d4"></a>
 
 # UI Configuration
 
 
-<a id="orga063183"></a>
+<a id="orgbfe44d4"></a>
 
 ## Command Log Mode
 
@@ -216,7 +253,7 @@ for evil-mode.
       :commands command-log-mode)
 
 
-<a id="org18d1fb9"></a>
+<a id="orgd4834b4"></a>
 
 ## Color Theme
 
@@ -235,7 +272,7 @@ for evil-mode.
     (use-package cyberpunk-theme)
 
 
-<a id="org90ddc1d"></a>
+<a id="org9086ba1"></a>
 
 ## Better Modeline
 
@@ -251,7 +288,7 @@ for evil-mode.
       :custom ((doom-modeline-height 15)))
 
 
-<a id="orga98aef0"></a>
+<a id="orge2907ef"></a>
 
 ## Which Key
 
@@ -263,11 +300,18 @@ for evil-mode.
       :diminish which-key-mode
       :config
       (which-key-mode)
+      (set-face-attribute 'which-key-local-map-description-face nil :font "Iosevka-12")
+      (set-face-attribute 'which-key-key-face nil :font "Iosevka-12")
+      (set-face-attribute 'which-key-separator-face nil :font "Iosevka-12")
+      (set-face-attribute 'which-key-note-face nil :font "Iosevka-12")
+      (set-face-attribute 'which-key-special-key-face nil :font "Iosevka-12")
+      (set-face-attribute 'which-key-group-description-face nil :font "Iosevka-12")
+      (set-face-attribute 'which-key-command-description-face nil :font "Iosevka-12")
       (setq which-key-idle-delay 1)
       (setq which-key-allow-imprecise-window-fit t))
 
 
-<a id="org9e90892"></a>
+<a id="org8ba4a30"></a>
 
 ## Ivy and Counsel
 
@@ -306,7 +350,7 @@ for evil-mode.
       (counsel-mode 1))
 
 
-<a id="org50630a6"></a>
+<a id="org39572cf"></a>
 
 ## Helpful Help Commands
 
@@ -325,7 +369,7 @@ for evil-mode.
       ([remap describe-key] . helpful-key))
 
 
-<a id="org09d3ed6"></a>
+<a id="org2b0b3cf"></a>
 
 ## Text Scaling
 
@@ -345,7 +389,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
       "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 
-<a id="orgb9121d9"></a>
+<a id="org92acb9b"></a>
 
 ## Rule mode
 
@@ -356,7 +400,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
     		   ;;   (ruler-mode 1))))
 
 
-<a id="org8bb1b2d"></a>
+<a id="org8385a92"></a>
 
 ## Ido (tool for buffer)
 
@@ -367,12 +411,12 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
     							 "*Messages*" "Async Shell Command")))
 
 
-<a id="org4b59c26"></a>
+<a id="orgc274d4c"></a>
 
 # Org Mode
 
 
-<a id="org3f06e9e"></a>
+<a id="org1bfc463"></a>
 
 ## Basic configuration
 
@@ -391,7 +435,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
     	(bonk/org-font-setup))
 
 
-<a id="org070e6e3"></a>
+<a id="org3cf6926"></a>
 
 ## Better Font Faces
 
@@ -425,7 +469,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
       (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
 
-<a id="org938395c"></a>
+<a id="orgdcbf0bf"></a>
 
 ## Nicer Heading Bullets
 
@@ -436,7 +480,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
       (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 
-<a id="org5426cc3"></a>
+<a id="orgffc73ac"></a>
 
 ## Center Org Buffers
 
@@ -450,7 +494,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
       :hook (org-mode . bonk/org-mode-visual-fill))
 
 
-<a id="orge847365"></a>
+<a id="orgb9e1c01"></a>
 
 ## Auto-tangle Configuration FIles
 
@@ -464,7 +508,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
       (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'bonk/org-babel-tangle-config))))
 
 
-<a id="orge4dc8de"></a>
+<a id="orgf0b37ea"></a>
 
 ## Configure Babel Languages
 
@@ -482,12 +526,12 @@ To execute or export code in `org-mode` code blocks, you'll need to set up `org-
       (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 
-<a id="org52e3e80"></a>
+<a id="orgbd5f00b"></a>
 
 # Development
 
 
-<a id="orgc549793"></a>
+<a id="orged74f72"></a>
 
 ## General configs
 
@@ -514,12 +558,12 @@ Here is the config for wether using tabs, how to indent, how many spaces, etc.
       (setq read-process-output-max (* 2048 2048)))
 
 
-<a id="org3d5fe3c"></a>
+<a id="orgced23aa"></a>
 
 ## Languages
 
 
-<a id="org69d7465"></a>
+<a id="org925d318"></a>
 
 ### IDE Features with lsp-mode
 
@@ -574,6 +618,7 @@ Here is the config for wether using tabs, how to indent, how many spaces, etc.
         					(typescript-mode . "typescript")
         					))
         
+          (setq lsp-diagnostics-provider :none)
         
           :custom
           (lsp-file-watch-threshold nil)
@@ -623,7 +668,7 @@ Here is the config for wether using tabs, how to indent, how many spaces, etc.
 5.  lsp-clients
 
 
-<a id="orgc6451a8"></a>
+<a id="org7130121"></a>
 
 ### Yasnippets
 
@@ -648,7 +693,7 @@ It predefines most of the common templates, including the dreadful `if err !\=ni
       :after yasnippet)
 
 
-<a id="org83e43e8"></a>
+<a id="org44a3b3a"></a>
 
 ### Flycheck
 
@@ -662,7 +707,7 @@ checker.
     (setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
 
 
-<a id="orgae55373"></a>
+<a id="org4d503e9"></a>
 
 ### TypeScript
 
@@ -681,7 +726,7 @@ This is a basic configuration for the TypeScript language so that `.ts` files ac
 This will install the [typescript-language-server](https://github.com/theia-ide/typescript-language-server) and the TypeScript compiler package.
 
 
-<a id="orgdb781f2"></a>
+<a id="org3dee510"></a>
 
 ### Ruby
 
@@ -725,7 +770,7 @@ This will install the [typescript-language-server](https://github.com/theia-ide/
           '(rspec-install-snippets))
 
 
-<a id="orgdb77c2a"></a>
+<a id="orge0d0fde"></a>
 
 ### Golang
 
@@ -750,22 +795,22 @@ This will install the [typescript-language-server](https://github.com/theia-ide/
       (add-hook 'go-mode-hook 'yas-minor-mode))
 
 
-<a id="orgee0e39b"></a>
+<a id="org931c602"></a>
 
 ### Elisp
 
 
-<a id="org1fa6ad5"></a>
+<a id="orgda45c7f"></a>
 
 ### Rust
 
 
-<a id="orgbab5ce7"></a>
+<a id="org62c8699"></a>
 
 ### C/C++
 
 
-<a id="orga2eed72"></a>
+<a id="orgb5386f6"></a>
 
 ### Javascript
 
@@ -815,7 +860,7 @@ This will install the [typescript-language-server](https://github.com/theia-ide/
           :hook (rjsx-mode . setup-tide-mode))
 
 
-<a id="orge0e060e"></a>
+<a id="org90093c8"></a>
 
 ### Yaml
 
@@ -828,7 +873,7 @@ This will install the [typescript-language-server](https://github.com/theia-ide/
       (add-hook 'yaml-mode-hook 'subword-mode))
 
 
-<a id="org5189f40"></a>
+<a id="org3bb13f5"></a>
 
 ## Company Mode
 
@@ -855,7 +900,7 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
       '(push 'company-robe company-backends))
 
 
-<a id="org7a19752"></a>
+<a id="orgbb4454f"></a>
 
 ### Company Backends
 
@@ -892,7 +937,7 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
         			 (push 'company-elisp company-backends)))
 
 
-<a id="orgd794538"></a>
+<a id="org61de8c9"></a>
 
 ## Projectile
 
@@ -915,7 +960,7 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
       :config (counsel-projectile-mode))
 
 
-<a id="orgd024171"></a>
+<a id="orgc6e0c15"></a>
 
 ## Magit
 
@@ -932,7 +977,7 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
     ;; (use-package forge)
 
 
-<a id="org1ee7f75"></a>
+<a id="orgf339ae9"></a>
 
 ## Rainbow Delimiters
 
@@ -943,12 +988,12 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
       :hook (prog-mode . rainbow-delimiters-mode))
 
 
-<a id="orgb035954"></a>
+<a id="orgda877ed"></a>
 
 # Terminals
 
 
-<a id="orgbd35005"></a>
+<a id="org7ff5a45"></a>
 
 ## Term-mode
 
@@ -971,7 +1016,7 @@ enter insert mode, and when escaping, you will return to `line-mode`.
 You can try running a terminal with `M-x term!`. :)
 
 
-<a id="orgac193cb"></a>
+<a id="org1716518"></a>
 
 ### Useful key bindings:
 
@@ -989,7 +1034,7 @@ You can try running a terminal with `M-x term!`. :)
       (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
 
 
-<a id="org3e64148"></a>
+<a id="org4fb524e"></a>
 
 ### Term-mode 256color
 
@@ -1005,7 +1050,7 @@ this program installed already so you may not have to do anything extra to use i
       :hook (term-mode . eterm-256color-mode))
 
 
-<a id="orgb1998c6"></a>
+<a id="orga892b76"></a>
 
 ## Vterm
 
@@ -1029,7 +1074,7 @@ successfully.
       (setq vterm-timer-delay 0.01))
 
 
-<a id="org6b58a9f"></a>
+<a id="orga04ffad"></a>
 
 ### Keybindings for opening vterm in other windows with `SPACE v +options`
 
@@ -1038,31 +1083,31 @@ successfully.
       "vb" '(vterm :which-key "open new buffer for vterm"))
 
 
-<a id="orgdc7d76f"></a>
+<a id="orgb04adae"></a>
 
 ## Shell-mode
 
 TBD (i'm pretty satisfied with vterm, but i could try this one day)
 
 
-<a id="orgaba964e"></a>
+<a id="org1808c26"></a>
 
 ## Eshell
 
 TBD (i'm pretty satisfied with vterm, but i could try this one day)
 
 
-<a id="org1130a8e"></a>
+<a id="orga69fcd3"></a>
 
 # File Management
 
 
-<a id="orgd7e6934"></a>
+<a id="orgb1cb48c"></a>
 
 ## Backup-files
 
 
-<a id="orgeec6449"></a>
+<a id="orgdad8bee"></a>
 
 ### Configuration
 
@@ -1076,12 +1121,12 @@ to commit changes on a project.
       (setq backup-directory-alist            '((".*" . "~/.Trash")))
 
 
-<a id="org51bc302"></a>
+<a id="orgabf5fb4"></a>
 
 ## Dired
 
 
-<a id="org2d8cce6"></a>
+<a id="org519e483"></a>
 
 ### Key Bindings
 
@@ -1147,7 +1192,7 @@ to commit changes on a project.
     -   `L` - Load an Emacs Lisp file into Emacs
 
 
-<a id="org742ceb2"></a>
+<a id="org6e2c401"></a>
 
 ### Configuration
 
@@ -1182,12 +1227,12 @@ to commit changes on a project.
     	"H" 'dired-hide-dotfiles-mode))
 
 
-<a id="orgbb95484"></a>
+<a id="org832d657"></a>
 
 ## NeoTree
 
 
-<a id="orgee42bf7"></a>
+<a id="org8438c2b"></a>
 
 ### KeyBindings
 
@@ -1205,7 +1250,7 @@ to commit changes on a project.
 -   `C-c C-p` Copy a file or a directory.
 
 
-<a id="org3a71f79"></a>
+<a id="org395ed0a"></a>
 
 ### Configuration
 
@@ -1215,7 +1260,7 @@ to commit changes on a project.
       (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 
-<a id="orgbd2b1c9"></a>
+<a id="org2bdd679"></a>
 
 # Structure Templates
 
@@ -1228,12 +1273,12 @@ to commit changes on a project.
       (add-to-list 'org-structure-template-alist '("js" . "src javascript")))
 
 
-<a id="orgab21e20"></a>
+<a id="org41c0d36"></a>
 
 # Applications
 
 
-<a id="org6a2fa34"></a>
+<a id="orgd1c70a9"></a>
 
 ## example config 'Some App'
 

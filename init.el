@@ -54,6 +54,7 @@
 (add-hook 'command-log-mode-hook 'variable-pitch-mode)
 (add-hook 'which-key-mode-hook 'variable-pitch-mode)
 (add-hook 'ivy-mode-hook 'variable-pitch-mode)
+(add-hook 'helpful-mode-hook 'variable-pitch-mode)
 										;(Add-hook 'bs-mode-hook 'fixed-pitch-mode)
 										;(add-hook 'w3m-mode-hook 'variable-pitch-mode)
 										;(add-hook 'org-mode-hook 'variable-pitch-mode)
@@ -161,6 +162,13 @@
   :diminish which-key-mode
   :config
   (which-key-mode)
+  (set-face-attribute 'which-key-local-map-description-face nil :font "Iosevka-12")
+  (set-face-attribute 'which-key-key-face nil :font "Iosevka-12")
+  (set-face-attribute 'which-key-separator-face nil :font "Iosevka-12")
+  (set-face-attribute 'which-key-note-face nil :font "Iosevka-12")
+  (set-face-attribute 'which-key-special-key-face nil :font "Iosevka-12")
+  (set-face-attribute 'which-key-group-description-face nil :font "Iosevka-12")
+  (set-face-attribute 'which-key-command-description-face nil :font "Iosevka-12")
   (setq which-key-idle-delay 1)
   (setq which-key-allow-imprecise-window-fit t))
 
@@ -364,6 +372,7 @@
 					(typescript-mode . "typescript")
 					))
 
+  (setq lsp-diagnostics-provider :none)
 
   :custom
   (lsp-file-watch-threshold nil)
