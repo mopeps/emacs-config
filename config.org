@@ -34,6 +34,11 @@
 ** Font Configuration
 
 #+begin_src emacs-lisp
+  ;; UTF-8 as default encoding
+  (set-language-environment "utf-8")
+  (prefer-coding-system 'utf-8)
+  (setq coding-system-for-read 'utf-8)
+  (setq coding-system-for-write 'utf-8)
 
   (set-face-attribute 'default nil :font  "Sarasa Gothic CL-12")
   (set-face-font 'variable-pitch "Iosevka-12")

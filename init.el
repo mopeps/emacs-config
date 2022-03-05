@@ -21,6 +21,12 @@
 				eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+;; UTF-8 as default encoding
+(set-language-environment "utf-8")
+(prefer-coding-system 'utf-8)
+(setq coding-system-for-read 'utf-8)
+(setq coding-system-for-write 'utf-8)
+
 (set-face-attribute 'default nil :font  "Sarasa Gothic CL-12")
 (set-face-font 'variable-pitch "Iosevka-12")
 (set-face-font 'fixed-pitch "Sarasa Gothic CL-12")
@@ -640,3 +646,16 @@
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
   (add-to-list 'org-structure-template-alist '("js" . "src javascript")))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(tramp-theme ssh tramp-term zenburn-theme yoshi-theme yasnippet-snippets yaml-mode which-key web-mode vterm visual-fill-column use-package-ensure-system-package tide sublime-themes srcery-theme rspec-mode robe rjsx-mode rainbow-delimiters prettier-js org-bullets ob-typescript ob-rust ob-go neotree moe-theme magit lsp-ui lsp-java lsp-ivy ivy-rich helpful gruvbox-theme go-mode general flymake-ruby exec-path-from-shell ewal-spacemacs-themes evil-collection eterm-256color enh-ruby-mode doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles cyberpunk-theme counsel-projectile company-web company-inf-ruby company-ctags company-box command-log-mode color-theme-sanityinc-tomorrow cmake-project all-the-icons-dired add-node-modules-path ac-js2)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:background nil)))))
