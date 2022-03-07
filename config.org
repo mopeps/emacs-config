@@ -724,6 +724,25 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 	   (eval-after-load 'rspec-mode
 		 '(rspec-install-snippets))
      #+end_src
+*** Elixir
+
+#+begin_src emacs-lisp
+(use-package elixir-mode
+  :ensure t
+  :init  
+  (add-hook 'elixir-mode-hook
+            (lambda ()
+              (push '(">=" . ?\u2265) prettify-symbols-alist)
+              (push '("<=" . ?\u2264) prettify-symbols-alist)
+              (push '("!=" . ?\u2260) prettify-symbols-alist)
+              (push '("==" . ?\u2A75) prettify-symbols-alist)
+              (push '("=~" . ?\u2245) prettify-symbols-alist)
+              (push '("<-" . ?\u2190) prettify-symbols-alist)
+              (push '("->" . ?\u2192) prettify-symbols-alist)
+              (push '("<-" . ?\u2190) prettify-symbols-alist)
+              (push '("|>" . ?\u25B7) prettify-symbols-alist))))
+#+end_src
+
 *** Golang
     
     #+begin_src emacs-lisp

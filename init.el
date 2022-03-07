@@ -450,6 +450,21 @@
 (eval-after-load 'rspec-mode
   '(rspec-install-snippets))
 
+(use-package elixir-mode
+  :ensure t
+  :init  
+  (add-hook 'elixir-mode-hook
+            (lambda ()
+              (push '(">=" . ?\u2265) prettify-symbols-alist)
+              (push '("<=" . ?\u2264) prettify-symbols-alist)
+              (push '("!=" . ?\u2260) prettify-symbols-alist)
+              (push '("==" . ?\u2A75) prettify-symbols-alist)
+              (push '("=~" . ?\u2245) prettify-symbols-alist)
+              (push '("<-" . ?\u2190) prettify-symbols-alist)
+              (push '("->" . ?\u2192) prettify-symbols-alist)
+              (push '("<-" . ?\u2190) prettify-symbols-alist)
+              (push '("|>" . ?\u25B7) prettify-symbols-alist))))
+
 (use-package go-mode
   :mode "\\.go\\'"
   :hook (go-mode . lsp-deferred)
@@ -652,7 +667,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(tramp-theme ssh tramp-term zenburn-theme yoshi-theme yasnippet-snippets yaml-mode which-key web-mode vterm visual-fill-column use-package-ensure-system-package tide sublime-themes srcery-theme rspec-mode robe rjsx-mode rainbow-delimiters prettier-js org-bullets ob-typescript ob-rust ob-go neotree moe-theme magit lsp-ui lsp-java lsp-ivy ivy-rich helpful gruvbox-theme go-mode general flymake-ruby exec-path-from-shell ewal-spacemacs-themes evil-collection eterm-256color enh-ruby-mode doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles cyberpunk-theme counsel-projectile company-web company-inf-ruby company-ctags company-box command-log-mode color-theme-sanityinc-tomorrow cmake-project all-the-icons-dired add-node-modules-path ac-js2)))
+   '(docker-api zenburn-theme yoshi-theme yasnippet-snippets yaml-mode which-key web-mode vterm visual-fill-column use-package-ensure-system-package tide theme-changer sublime-themes srcery-theme rspec-mode robe rjsx-mode rainbow-delimiters prettier-js pdf-tools org-bullets ob-typescript ob-rust ob-go neotree moe-theme magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful gruvbox-theme go-mode general flymake-ruby exec-path-from-shell ewal-spacemacs-themes evil-collection eterm-256color enh-ruby-mode elixir-mode doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles cyberpunk-theme counsel-projectile company-web company-inf-ruby company-box command-log-mode color-theme-sanityinc-tomorrow bundler auto-org-md all-the-icons-dired add-node-modules-path ac-js2)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
