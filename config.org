@@ -6,28 +6,31 @@
 ** General conf
 #+begin_src emacs-lisp
 
-	(setq inhibit-startup-message t)
-  (setq warning-minimum-level :emergency)
+		(setq inhibit-startup-message t)
+	  (setq warning-minimum-level :emergency)
 
-	(scroll-bar-mode -1) ; Disable visible scrollbar
-	(tool-bar-mode -1)   ; Disable the toolbar
-	(tooltip-mode -1)    ; Disable tooltips
-	(set-fringe-mode 10) ; Give some breathing room
+		(scroll-bar-mode -1) ; Disable visible scrollbar
+		(tool-bar-mode -1)   ; Disable the toolbar
+		(tooltip-mode -1)    ; Disable tooltips
+		(set-fringe-mode 10) ; Give some breathing room
 
-	(menu-bar-mode -1)   ; isable the menu bar
+		(menu-bar-mode -1)   ; isable the menu bar
 
-	;; Set up the visible bell
-	(setq visible-bell t)
+	;; In Emacs 27+, package initialization occurs before `user-init-file' is
+  ;; loaded, but after `early-init-file'. Doom handles package initialization, so
+  ;; we must prevent Emacs from doing it early!
+		;; Set up the visible bell
+		(setq visible-bell t)
 
-  (column-number-mode)
-  (global-display-line-numbers-mode t)
+	  (column-number-mode)
+	  (global-display-line-numbers-mode t)
 
-  ;; Disable line numbers for some modes
-  (dolist (mode '(org-mode-hook
-				  term-mode-hook
-				  shell-mode-hook
-				  eshell-mode-hook))
-	(add-hook mode (lambda () (display-line-numbers-mode 0))))
+	  ;; Disable line numbers for some modes
+	  (dolist (mode '(org-mode-hook
+					  term-mode-hook
+					  shell-mode-hook
+					  eshell-mode-hook))
+		(add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 #+end_src
 
@@ -117,6 +120,32 @@
 
 #+end_src
 
+
+** Straight.el
+#+begin_src emacs-lisp
+(setq straight-vc-git-default-clone-depth 1)
+(setq straight-recipes-gnu-elpa-use-mirror t)
+;; (setq straight-check-for-modifications '(check-on-save find-when-checking))
+(setq straight-check-for-modifications nil)
+(defvar bootstrap-version)
+(let* ((straight-repo-dir
+        (expand-file-name "straight/repos" user-emacs-directory))
+       (bootstrap-file
+        (concat straight-repo-dir "/straight.el/bootstrap.el"))
+       (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (shell-command
+     (concat
+      "mkdir -p " straight-repo-dir " && "
+      "git -C " straight-repo-dir " clone "
+      "https://github.com/raxod502/straight.el.git && "
+      "git -C " straight-repo-dir " checkout 2d407bc")))
+  (load bootstrap-file nil 'nomessage))
+(straight-use-package 'use-package)
+;; This is a variable that has been renamed but straight still refers when
+;; doing :sraight (:no-native-compile t)
+(setq comp-deferred-compilation-black-list nil)
+#+end_src
 #+RESULTS:
 
 * Keybinding Configuration
@@ -199,7 +228,7 @@ for evil-mode.
 #+begin_src emacs-lisp
 
   (use-package doom-themes
-  :init (load-theme 'doom-zenburn t))
+  :init (load-theme 'doom-gruvbox t))
   (use-package ewal-spacemacs-themes)
   (use-package moe-theme)
   (use-package zenburn-theme)
@@ -773,11 +802,29 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 
 #+begin_src emacs-lisp
   (use-package ess
-	:mode "\\.R\\"
 	:hook ((R-mode . lsp-deferred))
 	:config
 	(require 'ess-r-mode))
 
+#+end_src
+
+*** Vlang
+
+#+begin_src emacs-lisp
+(use-package v-mode
+  :straight (v-mode
+             :type git
+             :host github
+             :repo "damon-kwok/v-mode"
+             :files ("tokens" "v-mode.el"))
+  :config
+  :bind-keymap
+  ("M-z" . v-menu)
+  ("<f6>" . v-menu)
+  ("C-c C-f" . v-format-buffer)
+  :mode ("\\(\\.v?v\\|\\.vsh\\)$'" . 'v-mode))
+
+  
 #+end_src
 
 *** Elisp
