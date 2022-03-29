@@ -40,9 +40,9 @@
   (setq coding-system-for-read 'utf-8)
   (setq coding-system-for-write 'utf-8)
 
-  (set-face-attribute 'default nil :font  "Sarasa Gothic CL-14")
-  (set-face-font 'variable-pitch "Iosevka-14")
-  (set-face-font 'fixed-pitch "Sarasa Gothic CL-14")
+  (set-face-attribute 'default nil :font  "Sarasa Gothic CL-13")
+  (set-face-font 'variable-pitch "Iosevka-13")
+  (set-face-font 'fixed-pitch "Sarasa Gothic CL-13")
 
   ;;============================================================
   ;; toggle between variable pitch and fixed pitch font for 
@@ -767,7 +767,19 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 		(add-hook 'go-mode-hook 'yas-minor-mode))
 
     #+end_src
-    
+
+*** R
+**** ESS
+
+#+begin_src emacs-lisp
+  (use-package ess
+	:mode "\\.R\\"
+	:hook ((R-mode . lsp-deferred))
+	:config
+	(require 'ess-r-mode))
+
+#+end_src
+
 *** Elisp
 *** Rust
 *** C/C++
