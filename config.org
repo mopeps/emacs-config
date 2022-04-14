@@ -16,7 +16,7 @@
 
 		(menu-bar-mode -1)   ; isable the menu bar
 
-	;; In Emacs 27+, package initialization occurs before `user-init-file' is
+;; In Emacs 27+, package initialization occurs before `user-init-file' is
   ;; loaded, but after `early-init-file'. Doom handles package initialization, so
   ;; we must prevent Emacs from doing it early!
 		;; Set up the visible bell
@@ -43,9 +43,9 @@
   (setq coding-system-for-read 'utf-8)
   (setq coding-system-for-write 'utf-8)
 
-  (set-face-attribute 'default nil :font  "Sarasa Gothic CL-13")
+  (set-face-attribute 'default nil :font  "Iosevka Term-13")
   (set-face-font 'variable-pitch "Iosevka-13")
-  (set-face-font 'fixed-pitch "Sarasa Gothic CL-13")
+  (set-face-font 'fixed-pitch "Iosevka-13")
 
   ;;============================================================
   ;; toggle between variable pitch and fixed pitch font for 
@@ -106,9 +106,6 @@
   (package-initialize)
   (unless package-archive-contents
     (package-refresh-contents))
-  (use-package exec-path-from-shell)
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize))
 
   ;; Initialize use-package on non-Linux platforms
   (unless (package-installed-p 'use-package)
@@ -501,9 +498,6 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 		  'org-babel-load-languages
 		  '((emacs-lisp . t)
 			(python . t)
-			(typescript . t)
-			(go . t)
-			(rust . t)))
 
 		(push '("conf-unix" . conf-unix) org-src-lang-modes))
 #+end_src
@@ -964,30 +958,32 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
      
 ** Projectile
 
-[[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
+[[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to
+have it installed even if you don't use its commands directly.
 
 #+begin_src emacs-lisp
 
   (use-package projectile
-    :diminish projectile-mode
-    :config (projectile-mode)
-    :custom ((projectile-completion-system 'ivy))
-    :bind-keymap
-    ("C-c p" . projectile-command-map)
-    :init
-    ;; NOTE: Set this to the folder where you keep your Git repos!
-    (when (file-directory-p "~/github")
-      (setq projectile-project-search-path '("~/github")))
-    (setq projectile-switch-project-action #'projectile-dired))
+	:diminish projectile-mode
+	:config (projectile-mode)
+	:custom ((projectile-completion-system 'ivy))
+	:bind-keymap
+	("C-c p" . projectile-command-map)
+	:init
+	;; NOTE: Set this to the folder where you keep your Git repos!
+	(when (file-directory-p "~/github")
+	  (setq projectile-project-search-path '("~/github")))
+	(setq projectile-switch-project-action #'projectile-dired))
 
   (use-package counsel-projectile
-    :config (counsel-projectile-mode))
+	:config (counsel-projectile-mode))
 
 #+end_src
 
 ** Magit
 
-[[https://magit.vc/][Magit]] is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
+[[https://magit.vc/][Magit]] is the best Git interface I've ever used.  Common Git operations are easy to execute quickly
+using Magit's command panel system.
 
 #+begin_src emacs-lisp
 
@@ -1234,7 +1230,7 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 #+begin_src emacs-lisp
 
   (use-package neotree
-	:config
+	:init
 	(setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 
