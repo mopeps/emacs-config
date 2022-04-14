@@ -43,9 +43,8 @@
   (setq coding-system-for-read 'utf-8)
   (setq coding-system-for-write 'utf-8)
 
-  (set-face-attribute 'default nil :font  "Sarasa Gothic CL-13")
+  (set-face-attribute 'default nil :font  "Iosevka-15")
   (set-face-font 'variable-pitch "Iosevka-13")
-  (set-face-font 'fixed-pitch "Sarasa Gothic CL-13")
 
   ;;============================================================
   ;; toggle between variable pitch and fixed pitch font for 
