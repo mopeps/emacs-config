@@ -25,13 +25,14 @@
 	  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; UTF-8 as default encoding
+(set-face-attribute 'default nil :font  "Iosevka Nerd Font-13")
+(set-face-font 'variable-pitch "Iosevka Nerd Font-13")
+
 (set-language-environment "utf-8")
 (prefer-coding-system 'utf-8)
 (setq coding-system-for-read 'utf-8)
 (setq coding-system-for-write 'utf-8)
 
-(set-face-attribute 'default nil :font  "Sarasa Gothic CL-13")
-(set-face-font 'variable-pitch "Iosevka-13")
 
 ;;============================================================
 ;; toggle between variable pitch and fixed pitch font for 
@@ -255,12 +256,6 @@
 (bonk/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
-;; Use ruler in text-mode
-;;    (add-hook 'text-mode-hook
-   ;;       (function (lambda ()
-	   ;;	   (setq ruler-mode-show-tab-stops t)
-		   ;;   (ruler-mode 1))))
-
 (use-package ido
   :config
   (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
@@ -343,8 +338,30 @@
 
   (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
-(setq-default indent-tabs-mode t)
-(setq-default tab-width 4) ; I want tabs to be four spaces wide
+(defun bonk/infer-indent-style ()
+  ;; Honestly, This is more of a wild guess since we could be using tabs and having it wrongly
+  ;; configure on our ide
+  (let ((space-count (how-many "^ "))
+		(tab-count (how-many "^\t")))
+	(if (> space-count tab-count )
+		(setq indent-tabs-mode nil))
+	(if (> tab-count space-count)
+		(setq indent-tabs-mode t))))
+
+(defun bonk/prog-mode-settings ()
+  (setq-default tab-width 4) ; I want tabs to be four spaces wide
+  (setq standard-indent 4) ; I want indent to be four spaces wide
+  (show-paren-mode t)
+  (display-line-numbers-mode)
+  (setq whitespace-style '(face tabs tab-mark trailing))
+  (custom-set-faces
+   '(whitespace-tab ((t (:foreground "#636363")))))
+  (setq whitespace-display-mappings '((tab-mark 9 [9474 9] [92 9])))
+  (setq-local show-trailing-whitespace t)
+  (bonk/infer-indent-style)
+  (whitespace-mode))
+
+(add-hook 'prog-mode-hook 'bonk/prog-mode-settings)
 ;; Indentation levels for each lang
 (defvaralias 'js2-basic-offset 'tabwidth)
 (defvaralias 'js-indent-level 'tab-width)
@@ -606,7 +623,6 @@
 			 (push 'company-elisp company-backends)))
 
 (use-package projectile
-  :diminish projectile-mode
   :config (projectile-mode)
   :custom ((projectile-completion-system 'ivy))
   :bind-keymap
@@ -694,7 +710,7 @@
 	"H" 'dired-hide-dotfiles-mode))
 
 (use-package neotree
-  :config
+  :init
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 (with-eval-after-load 'org
