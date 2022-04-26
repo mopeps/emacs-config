@@ -1,70 +1,36 @@
 (setq inhibit-startup-message t)
-(setq warning-minimum-level :emergency)
+	(setq warning-minimum-level :emergency)
 
-  (scroll-bar-mode -1) ; Disable visible scrollbar
-  (tool-bar-mode -1)   ; Disable the toolbar
-  (tooltip-mode -1)    ; Disable tooltips
-  (set-fringe-mode 10) ; Give some breathing room
+	  (scroll-bar-mode -1) ; Disable visible scrollbar
+	  (tool-bar-mode -1)   ; Disable the toolbar
+	  (tooltip-mode -1)    ; Disable tooltips
+	  (set-fringe-mode 10) ; Give some breathing room
 
-  (menu-bar-mode -1)   ; isable the menu bar
+	  (menu-bar-mode -1)   ; isable the menu bar
 
-  ;; Set up the visible bell
-  (setq visible-bell t)
+  ;; In Emacs 27+, package initialization occurs before `user-init-file' is
+;; loaded, but after `early-init-file'. Doom handles package initialization, so
+;; we must prevent Emacs from doing it early!
+	  ;; Set up the visible bell
+	  (setq visible-bell t)
 
-(column-number-mode)
-(global-display-line-numbers-mode t)
+	(column-number-mode)
+	(global-display-line-numbers-mode t)
 
-;; Disable line numbers for some modes
-(dolist (mode '(org-mode-hook
-				term-mode-hook
-				shell-mode-hook
-				eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+	;; Disable line numbers for some modes
+	(dolist (mode '(org-mode-hook
+					term-mode-hook
+					shell-mode-hook
+					eshell-mode-hook))
+	  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; UTF-8 as default encoding
+(set-face-attribute 'default nil :font  "Iosevka Nerd Font-12")
+
 (set-language-environment "utf-8")
 (prefer-coding-system 'utf-8)
 (setq coding-system-for-read 'utf-8)
 (setq coding-system-for-write 'utf-8)
-
-(set-face-attribute 'default nil :font  "Sarasa Gothic CL-12")
-(set-face-font 'variable-pitch "Iosevka-12")
-(set-face-font 'fixed-pitch "Sarasa Gothic CL-12")
-
-;;============================================================
-;; toggle between variable pitch and fixed pitch font for 
-;; the current buffer
-(defun fixed-pitch-mode ()
-  (buffer-face-mode -1))
-
-(defun variable-pitch-mode ()
-  (buffer-face-mode t))
-
-(defun toggle-pitch (&optional arg)
-  "Switch between the `fixed-pitch' face and the `variable-pitch' face"
-  (interactive)
-  (buffer-face-toggle 'variable-pitch))
-
-;; enable buffer-face mode to provide buffer-local fonts
-(buffer-face-mode)
-
-;; Set the fonts to format correctly
-(add-hook 'text-mode-hook 'fixed-pitch-mode)
-(add-hook 'dired-mode-hook 'variable-pitch-mode)
-(add-hook 'calendar-mode-hook 'variable-pitch-mode)
-(add-hook 'org-agenda-mode-hook 'variable-pitch-mode)
-(add-hook 'shell-mode-hook 'variable-pitch-mode)
-(add-hook 'eshell-mode-hook 'variable-pitch-mode)
-(add-hook 'neotree-mode-hook 'variable-pitch-mode)
-(add-hook 'counsel-mode-hook 'variable-pitch-mode)
-(add-hook 'command-log-mode-hook 'variable-pitch-mode)
-(add-hook 'which-key-mode-hook 'variable-pitch-mode)
-(add-hook 'ivy-mode-hook 'variable-pitch-mode)
-(add-hook 'helpful-mode-hook 'variable-pitch-mode)
-										;(Add-hook 'bs-mode-hook 'fixed-pitch-mode)
-										;(add-hook 'w3m-mode-hook 'variable-pitch-mode)
-										;(add-hook 'org-mode-hook 'variable-pitch-mode)
-(add-hook 'eww-mode-hook 'variable-pitch-mode)
 
 ;; (C-q Tab) inserts a tab space
 (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
@@ -95,6 +61,29 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 (use-package use-package-ensure-system-package)
+
+(setq straight-vc-git-default-clone-depth 1)
+(setq straight-recipes-gnu-elpa-use-mirror t)
+;; (setq straight-check-for-modifications '(check-on-save find-when-checking))
+(setq straight-check-for-modifications nil)
+(defvar bootstrap-version)
+(let* ((straight-repo-dir
+        (expand-file-name "straight/repos" user-emacs-directory))
+       (bootstrap-file
+        (concat straight-repo-dir "/straight.el/bootstrap.el"))
+       (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (shell-command
+     (concat
+      "mkdir -p " straight-repo-dir " && "
+      "git -C " straight-repo-dir " clone "
+      "https://github.com/raxod502/straight.el.git && "
+      "git -C " straight-repo-dir " checkout 2d407bc")))
+  (load bootstrap-file nil 'nomessage))
+(straight-use-package 'use-package)
+;; This is a variable that has been renamed but straight still refers when
+;; doing :sraight (:no-native-compile t)
+(setq comp-deferred-compilation-black-list nil)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -147,7 +136,7 @@
   :commands command-log-mode)
 
 (use-package doom-themes
-:init (load-theme 'doom-zenburn t))
+:init (load-theme 'doom-gruvbox t))
 (use-package ewal-spacemacs-themes)
 (use-package moe-theme)
 (use-package zenburn-theme)
@@ -229,12 +218,6 @@
 
 (bonk/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
-
-;; Use ruler in text-mode
-;;    (add-hook 'text-mode-hook
-   ;;       (function (lambda ()
-	   ;;	   (setq ruler-mode-show-tab-stops t)
-		   ;;   (ruler-mode 1))))
 
 (use-package ido
   :config
@@ -318,8 +301,30 @@
 
   (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
-(setq-default indent-tabs-mode t)
-(setq-default tab-width 4) ; I want tabs to be four spaces wide
+(defun bonk/infer-indent-style ()
+  ;; Honestly, This is more of a wild guess since we could be using tabs and having it wrongly
+  ;; configure on our ide
+  (let ((space-count (how-many "^ "))
+		(tab-count (how-many "^\t")))
+	(if (> space-count tab-count )
+		(setq indent-tabs-mode nil))
+	(if (> tab-count space-count)
+		(setq indent-tabs-mode t))))
+
+(defun bonk/prog-mode-settings ()
+  (setq-default tab-width 4) ; I want tabs to be four spaces wide
+  (setq standard-indent 4) ; I want indent to be four spaces wide
+  (show-paren-mode t)
+  (display-line-numbers-mode)
+  (setq whitespace-style '(face tabs tab-mark trailing))
+  (custom-set-faces
+   '(whitespace-tab ((t (:foreground "#636363")))))
+  (setq whitespace-display-mappings '((tab-mark 9 [9474 9] [92 9])))
+  (setq-local show-trailing-whitespace t)
+  (bonk/infer-indent-style)
+  (whitespace-mode))
+
+(add-hook 'prog-mode-hook 'bonk/prog-mode-settings)
 ;; Indentation levels for each lang
 (defvaralias 'js2-basic-offset 'tabwidth)
 (defvaralias 'js-indent-level 'tab-width)
@@ -485,6 +490,24 @@
   (add-hook 'go-mode-hook 'lsp-deferred)
   (add-hook 'go-mode-hook 'yas-minor-mode))
 
+(use-package ess
+  :hook ((R-mode . lsp-deferred))
+  :config
+  (require 'ess-r-mode))
+
+(use-package v-mode
+  :straight (v-mode
+             :type git
+             :host github
+             :repo "damon-kwok/v-mode"
+             :files ("tokens" "v-mode.el"))
+  :config
+  :bind-keymap
+  ("M-z" . v-menu)
+  ("<f6>" . v-menu)
+  ("C-c C-f" . v-format-buffer)
+  :mode ("\\(\\.v?v\\|\\.vsh\\)$'" . 'v-mode))
+
 (use-package web-mode
   :mode "\\.html$'" "\\.jsx$" "\\.tsx$"
   :init 
@@ -563,7 +586,6 @@
 			 (push 'company-elisp company-backends)))
 
 (use-package projectile
-  :diminish projectile-mode
   :config (projectile-mode)
   :custom ((projectile-completion-system 'ivy))
   :bind-keymap
@@ -651,7 +673,7 @@
 	"H" 'dired-hide-dotfiles-mode))
 
 (use-package neotree
-  :config
+  :init
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 (with-eval-after-load 'org
@@ -661,16 +683,3 @@
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
   (add-to-list 'org-structure-template-alist '("js" . "src javascript")))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(docker-api zenburn-theme yoshi-theme yasnippet-snippets yaml-mode which-key web-mode vterm visual-fill-column use-package-ensure-system-package tide theme-changer sublime-themes srcery-theme rspec-mode robe rjsx-mode rainbow-delimiters prettier-js pdf-tools org-bullets ob-typescript ob-rust ob-go neotree moe-theme magit lsp-ui lsp-treemacs lsp-ivy ivy-rich helpful gruvbox-theme go-mode general flymake-ruby exec-path-from-shell ewal-spacemacs-themes evil-collection eterm-256color enh-ruby-mode elixir-mode doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles cyberpunk-theme counsel-projectile company-web company-inf-ruby company-box command-log-mode color-theme-sanityinc-tomorrow bundler auto-org-md all-the-icons-dired add-node-modules-path ac-js2)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
