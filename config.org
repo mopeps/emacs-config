@@ -38,49 +38,12 @@
 
 #+begin_src emacs-lisp
   ;; UTF-8 as default encoding
-  (set-face-attribute 'default nil :font  "Iosevka Nerd Font-13")
-  (set-face-font 'variable-pitch "Iosevka Nerd Font-13")
+  (set-face-attribute 'default nil :font  "Iosevka Nerd Font-12")
 
   (set-language-environment "utf-8")
   (prefer-coding-system 'utf-8)
   (setq coding-system-for-read 'utf-8)
   (setq coding-system-for-write 'utf-8)
-
-
-  ;;============================================================
-  ;; toggle between variable pitch and fixed pitch font for 
-  ;; the current buffer
-  (defun fixed-pitch-mode ()
-	(buffer-face-mode -1))
-
-  (defun variable-pitch-mode ()
-	(buffer-face-mode t))
-
-  (defun toggle-pitch (&optional arg)
-	"Switch between the `fixed-pitch' face and the `variable-pitch' face"
-	(interactive)
-	(buffer-face-toggle 'variable-pitch))
-
-  ;; enable buffer-face mode to provide buffer-local fonts
-  (buffer-face-mode)
-
-  ;; Set the fonts to format correctly
-  (add-hook 'text-mode-hook 'fixed-pitch-mode)
-  (add-hook 'dired-mode-hook 'variable-pitch-mode)
-  (add-hook 'calendar-mode-hook 'variable-pitch-mode)
-  (add-hook 'org-agenda-mode-hook 'variable-pitch-mode)
-  (add-hook 'shell-mode-hook 'variable-pitch-mode)
-  (add-hook 'eshell-mode-hook 'variable-pitch-mode)
-  (add-hook 'neotree-mode-hook 'variable-pitch-mode)
-  (add-hook 'counsel-mode-hook 'variable-pitch-mode)
-  (add-hook 'command-log-mode-hook 'variable-pitch-mode)
-  (add-hook 'which-key-mode-hook 'variable-pitch-mode)
-  (add-hook 'ivy-mode-hook 'variable-pitch-mode)
-  (add-hook 'helpful-mode-hook 'variable-pitch-mode)
-										  ;(Add-hook 'bs-mode-hook 'fixed-pitch-mode)
-										  ;(add-hook 'w3m-mode-hook 'variable-pitch-mode)
-										  ;(add-hook 'org-mode-hook 'variable-pitch-mode)
-  (add-hook 'eww-mode-hook 'variable-pitch-mode)
 
   ;; (C-q Tab) inserts a tab space
   (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
