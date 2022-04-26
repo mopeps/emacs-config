@@ -823,13 +823,82 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 #+end_src
 
 *** Elisp
+#+begin_src emacs-lisp
+(add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
+(add-hook 'emacs-lisp-mode-hook 'company-mode)
+
+(use-package slime
+  :ensure t
+  :config
+  (setq inferior-lisp-program "/usr/bin/sbcl")
+  (setq slime-contribs '(slime-fancy)))
+
+(use-package slime-company
+  :ensure t
+  :init
+    (require 'company)
+    (slime-setup '(slime-fancy slime-company)))
+#+end_src
+
 *** Rust
 *** C/C++
 #+begin_src emacs-lisp
-(use-package ccls
-  :hook ((c-mode c++-mode objc-mode cuda-mode) .
-         (lambda () (require 'ccls) (lsp))))
+  (use-package ccls
+	:hook ((c-mode c++-mode objc-mode cuda-mode) .
+		   (lambda () (require 'ccls) (lsp))))
+  (use-package flycheck-clang-analyzer
+	:ensure t
+	:config
+	(with-eval-after-load 'flycheck
+	  (require 'flycheck-clang-analyzer)
+	   (flycheck-clang-analyzer-setup)))
 
+  (with-eval-after-load 'company
+	(add-hook 'c++-mode-hook 'company-mode)
+	(add-hook 'c-mode-hook 'company-mode))
+
+  (use-package company-c-headers
+	:ensure t)
+
+  (use-package company-irony
+	:ensure t
+	:config
+	(setq company-backends '((company-c-headers
+							  company-dabbrev-code
+							  company-irony))))
+
+  (use-package irony
+	:ensure t
+	:config
+	(add-hook 'c++-mode-hook 'irony-mode)
+	(add-hook 'c-mode-hook 'irony-mode)
+	(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+
+#+end_src
+
+*** Python
+#+begin_src emacs-lisp
+(add-hook 'python-mode-hook 'flycheck-mode)
+
+(with-eval-after-load 'company
+    (add-hook 'python-mode-hook 'company-mode))
+
+(use-package company-jedi
+  :ensure t
+  :config
+    (require 'company)
+    (add-to-list 'company-backends 'company-jedi))
+
+(defun python-mode-company-init ()
+  (setq-local company-backends '((company-jedi
+                                  company-etags
+                                  company-dabbrev-code))))
+
+(use-package company-jedi
+  :ensure t
+  :config
+    (require 'company)
+    (add-hook 'python-mode-hook 'python-mode-company-init))
 #+end_src
 
 *** Javascript
