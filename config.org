@@ -465,6 +465,17 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 
    Here is the config for wether using tabs, how to indent, how many spaces, etc.
 *** Prog-mode
+***** Commenting Lines
+#+begin_src emacs-lisp
+(use-package evil-nerd-commenter
+  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
+#+end_src
+
+***** Folding with Origami
+#+begin_src emacs-lisp
+  (use-package origami
+	:hook (yaml-mode . origami-mode))
+#+end_src
 
 ***** Infer Indent Style
 
@@ -483,8 +494,6 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 #+end_src
 
 ***** Configuration
-
-
    #+begin_src emacs-lisp
 			   (defun bonk/prog-mode-settings ()
 				 (setq-default tab-width 4) ; I want tabs to be four spaces wide
@@ -517,6 +526,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 				 ;; New in Emacs 27
 				 (setq read-process-output-max (* 2048 2048)))
    #+end_src
+
 ** Languages
 
 *** IDE Features with lsp-mode
@@ -674,10 +684,12 @@ Try these commands with =M-x=:
 This is a basic configuration for the TypeScript language so that =.ts= files activate =typescript-mode= when opened.  We're also adding a hook to =typescript-mode-hook= to call =lsp-deferred= so that we activate =lsp-mode= to get LSP features every time we edit TypeScript code.
 
 #+begin_src emacs-lisp
+  (use-package nvm
+	:defer t)
 
   (use-package typescript-mode
-    :mode "\\.ts\\'"
-    :hook (typescript-mode . lsp-deferred))
+	:mode "\\.ts\\'"
+	:hook (typescript-mode . lsp-deferred))
 
 #+end_src
 
@@ -813,6 +825,13 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 *** Elisp
 *** Rust
 *** C/C++
+#+begin_src emacs-lisp
+(use-package ccls
+  :hook ((c-mode c++-mode objc-mode cuda-mode) .
+         (lambda () (require 'ccls) (lsp))))
+
+#+end_src
+
 *** Javascript
 ***** Web Mode
 #+begin_src emacs-lisp
@@ -1191,6 +1210,29 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 	:config
 	(evil-collection-define-key 'normal 'dired-mode-map
 	  "H" 'dired-hide-dotfiles-mode))
+ (use-package dired-rainbow
+    :defer 2
+    :config
+    (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+    (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+    (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+    (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+    (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+    (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+    (dired-rainbow-define media "#de751f" ("mp3" "mp4" "mkv" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+    (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+    (dired-rainbow-define log "#c17d11" ("log"))
+    (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+    (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+    (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+    (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+    (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+    (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+    (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+    (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+    (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+    (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+    (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*"))
 
 #+end_src
 
@@ -1220,6 +1262,69 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 	(setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 
+#+end_src
+
+* Org-Roam
+* Chats
+** Tracking
+Necessary for stuff like telegram and some chat clients
+#+begin_src emacs-lisp
+
+(use-package tracking
+  :defer t
+  :config
+  (setq tracking-faces-priorities '(all-the-icons-pink
+                                    all-the-icons-lgreen
+                                    all-the-icons-lblue))
+  (setq tracking-frame-behavior nil))
+#+end_src
+
+** Telegram
+#+begin_src emacs-lisp
+
+;; Add faces for specific people in the modeline.  There must
+;; be a better way to do this.
+(defun bonk/around-tracking-add-buffer (original-func buffer &optional faces)
+  (let* ((name (buffer-name buffer))
+         (face (cond ((s-contains? "Maria" name) '(all-the-icons-pink))
+                     ((s-contains? "Alex " name) '(all-the-icons-lgreen))
+                     ((s-contains? "Steve" name) '(all-the-icons-lblue))))
+         (result (apply original-func buffer (list face))))
+    result))
+
+(advice-add 'tracking-add-buffer :around #'bonk/around-tracking-add-buffer)
+(advice-add 'tracking-remove-buffer :after #'bonk/after-tracking-remove-buffer)
+(advice-remove 'tracking-remove-buffer #'bonk/around-tracking-remove-buffer)
+
+(use-package telega
+  :commands telega
+  :config
+  (setq telega-user-use-avatars nil
+        telega-use-tracking-for '(any pin unread)
+        telega-chat-use-markdown-formatting t
+        telega-emoji-use-images t
+        telega-completing-read-function #'ivy-completing-read
+        telega-msg-rainbow-title nil
+        telega-chat-fill-column 75))
+#+end_src
+
+** Discord
+#+begin_src emacs-lisp
+
+(use-package elcord
+  :straight t
+  :custom
+  (elcord-display-buffer-details nil)
+  :config
+  (elcord-mode))
+#+end_src
+
+** Mastodon
+#+begin_src emacs-lisp
+(use-package mastodon
+  :defer t
+  :config
+  (setq mastodon-instance-url "https://mastodon.social"))
 #+end_src
 
 * Structure Templates

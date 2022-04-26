@@ -301,6 +301,12 @@
 
   (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
+(use-package evil-nerd-commenter
+  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
+
+(use-package origami
+  :hook (yaml-mode . origami-mode))
+
 (defun bonk/infer-indent-style ()
   ;; Honestly, This is more of a wild guess since we could be using tabs and having it wrongly
   ;; configure on our ide
@@ -422,6 +428,9 @@
   :after company)
 (setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
 
+(use-package nvm
+  :defer t)
+
 (use-package typescript-mode
   :mode "\\.ts\\'"
   :hook (typescript-mode . lsp-deferred))
@@ -507,6 +516,10 @@
   ("<f6>" . v-menu)
   ("C-c C-f" . v-format-buffer)
   :mode ("\\(\\.v?v\\|\\.vsh\\)$'" . 'v-mode))
+
+(use-package ccls
+  :hook ((c-mode c++-mode objc-mode cuda-mode) .
+         (lambda () (require 'ccls) (lsp))))
 
 (use-package web-mode
   :mode "\\.html$'" "\\.jsx$" "\\.tsx$"
@@ -644,37 +657,105 @@
   (setq backup-directory-alist            '((".*" . "~/.Trash")))
 
 (use-package dired
-  :ensure nil
-  :commands (dired dired-jump)
-  :bind (("C-x C-j" . dired-jump))
-  :custom ((setq insert-directory-program "gls" dired-use-ls-dired t)
-		   (setq dired-listing-switches "-al --group-directories-first"))
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-	"h" 'dired-single-up-directory
-	"l" 'dired-single-buffer))
+   :ensure nil
+   :commands (dired dired-jump)
+   :bind (("C-x C-j" . dired-jump))
+   :custom ((setq insert-directory-program "gls" dired-use-ls-dired t)
+			(setq dired-listing-switches "-al --group-directories-first"))
+   :config
+   (evil-collection-define-key 'normal 'dired-mode-map
+	 "h" 'dired-single-up-directory
+	 "l" 'dired-single-buffer))
 
-(use-package dired-single)
+ (use-package dired-single)
 
-(use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode))
+ (use-package all-the-icons-dired
+   :hook (dired-mode . all-the-icons-dired-mode))
 
-(use-package dired-open
-  :config
-  ;; Doesn't work as expected!
-  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-  (setq dired-open-extensions '(("png" . "feh")
-								("mkv" . "mpv"))))
+ (use-package dired-open
+   :config
+   ;; Doesn't work as expected!
+   ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+   (setq dired-open-extensions '(("png" . "feh")
+								 ("mkv" . "mpv"))))
 
-(use-package dired-hide-dotfiles
-  :hook (dired-mode . dired-hide-dotfiles-mode)
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-	"H" 'dired-hide-dotfiles-mode))
+ (use-package dired-hide-dotfiles
+   :hook (dired-mode . dired-hide-dotfiles-mode)
+   :config
+   (evil-collection-define-key 'normal 'dired-mode-map
+	 "H" 'dired-hide-dotfiles-mode))
+(use-package dired-rainbow
+   :defer 2
+   :config
+   (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+   (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+   (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+   (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+   (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+   (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+   (dired-rainbow-define media "#de751f" ("mp3" "mp4" "mkv" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+   (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+   (dired-rainbow-define log "#c17d11" ("log"))
+   (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+   (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+   (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+   (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+   (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+   (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+   (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+   (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+   (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+   (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+   (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*"))
 
 (use-package neotree
   :init
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+
+(use-package tracking
+  :defer t
+  :config
+  (setq tracking-faces-priorities '(all-the-icons-pink
+                                    all-the-icons-lgreen
+                                    all-the-icons-lblue))
+  (setq tracking-frame-behavior nil))
+
+;; Add faces for specific people in the modeline.  There must
+;; be a better way to do this.
+(defun bonk/around-tracking-add-buffer (original-func buffer &optional faces)
+  (let* ((name (buffer-name buffer))
+         (face (cond ((s-contains? "Maria" name) '(all-the-icons-pink))
+                     ((s-contains? "Alex " name) '(all-the-icons-lgreen))
+                     ((s-contains? "Steve" name) '(all-the-icons-lblue))))
+         (result (apply original-func buffer (list face))))
+    result))
+
+(advice-add 'tracking-add-buffer :around #'bonk/around-tracking-add-buffer)
+(advice-add 'tracking-remove-buffer :after #'bonk/after-tracking-remove-buffer)
+(advice-remove 'tracking-remove-buffer #'bonk/around-tracking-remove-buffer)
+
+(use-package telega
+  :commands telega
+  :config
+  (setq telega-user-use-avatars nil
+        telega-use-tracking-for '(any pin unread)
+        telega-chat-use-markdown-formatting t
+        telega-emoji-use-images t
+        telega-completing-read-function #'ivy-completing-read
+        telega-msg-rainbow-title nil
+        telega-chat-fill-column 75))
+
+(use-package elcord
+  :straight t
+  :custom
+  (elcord-display-buffer-details nil)
+  :config
+  (elcord-mode))
+
+(use-package mastodon
+  :defer t
+  :config
+  (setq mastodon-instance-url "https://mastodon.social"))
 
 (with-eval-after-load 'org
 	(require 'org-tempo)
