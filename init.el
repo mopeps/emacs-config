@@ -305,6 +305,9 @@
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
 (use-package origami
+  :hook (c-mode . origami-mode)
+  :hook (elisp-mode . origami-mode)
+  :hook (go-mode . origami-mode)
   :hook (yaml-mode . origami-mode))
 
 (defun bonk/infer-indent-style ()

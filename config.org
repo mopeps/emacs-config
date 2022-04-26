@@ -474,6 +474,9 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 ***** Folding with Origami
 #+begin_src emacs-lisp
   (use-package origami
+	:hook (c-mode . origami-mode)
+	:hook (elisp-mode . origami-mode)
+	:hook (go-mode . origami-mode)
 	:hook (yaml-mode . origami-mode))
 #+end_src
 
