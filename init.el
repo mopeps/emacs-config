@@ -107,6 +107,13 @@
 	"DD" '(kill-this-buffer :which "kills the current buffer")
 	"vcc" '(vterm-send-C-c :which "kills current vterm process")
 	"nn" '(neotree-toggle :which "toggles neotree")
+  ;; Origami options
+	"oon" '(origami-open-node :which "opens current origami node")
+	"ooc" '(origami-close-node :which "closes current origami node")
+	"oO" '(origami-open-all-nodes :which "opens all origami node")
+	"oC" '(origami-close-all-nodes :which "closes all origami node")
+	"orO" '(origami-open-node-recursively :which "opens all origami node below recursively")
+	"orC" '(origami-close-node-recursively :which "closes all origami node below recursively")
 	)
 
 (use-package evil
@@ -135,8 +142,10 @@
 (use-package command-log-mode
   :commands command-log-mode)
 
+
+
 (use-package doom-themes
-:init (load-theme 'doom-gruvbox t))
+:init (load-theme 'doom-gruvbox hard t))
 (use-package ewal-spacemacs-themes)
 (use-package moe-theme)
 (use-package zenburn-theme)

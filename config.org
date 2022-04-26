@@ -142,6 +142,13 @@ for evil-mode.
 	  "DD" '(kill-this-buffer :which "kills the current buffer")
 	  "vcc" '(vterm-send-C-c :which "kills current vterm process")
 	  "nn" '(neotree-toggle :which "toggles neotree")
+	;; Origami options
+	  "oon" '(origami-open-node :which "opens current origami node")
+	  "ooc" '(origami-close-node :which "closes current origami node")
+	  "oO" '(origami-open-all-nodes :which "opens all origami node")
+	  "oC" '(origami-close-all-nodes :which "closes all origami node")
+	  "orO" '(origami-open-node-recursively :which "opens all origami node below recursively")
+	  "orC" '(origami-close-node-recursively :which "closes all origami node below recursively")
 	  )
 
   (use-package evil
@@ -185,13 +192,18 @@ for evil-mode.
 #+RESULTS:
 
 ** Color Theme
+*** Custom Color_theme
+#+begin_src emacs-lisp
 
+#+end_src
+
+*** downloaded_themes
 [[https://github.com/hlissner/emacs-doom-themes][doom-themes]] is a great set of themes with a lot of variety and support for many different Emacs modes.  Taking a look at the [[https://github.com/hlissner/emacs-doom-themes/tree/screenshots][screenshots]] might help you decide which one you like best.  You can also run =M-x counsel-load-theme= to choose between them easily.
 
 #+begin_src emacs-lisp
 
   (use-package doom-themes
-  :init (load-theme 'doom-gruvbox t))
+  :init (load-theme 'doom-gruvbox hard t))
   (use-package ewal-spacemacs-themes)
   (use-package moe-theme)
   (use-package zenburn-theme)
