@@ -1,39 +1,64 @@
 (setq inhibit-startup-message t)
-	(setq warning-minimum-level :emergency)
+	  (setq warning-minimum-level :emergency)
 
-	  (scroll-bar-mode -1) ; Disable visible scrollbar
-	  (tool-bar-mode -1)   ; Disable the toolbar
-	  (tooltip-mode -1)    ; Disable tooltips
-	  (set-fringe-mode 10) ; Give some breathing room
+		(scroll-bar-mode -1) ; Disable visible scrollbar
+		(tool-bar-mode -1)   ; Disable the toolbar
+		(tooltip-mode -1)    ; Disable tooltips
+		(set-fringe-mode 10) ; Give some breathing room
 
-	  (menu-bar-mode -1)   ; isable the menu bar
+		(menu-bar-mode -1)   ; isable the menu bar
 
-  ;; In Emacs 27+, package initialization occurs before `user-init-file' is
-;; loaded, but after `early-init-file'. Doom handles package initialization, so
-;; we must prevent Emacs from doing it early!
-	  ;; Set up the visible bell
-	  (setq visible-bell t)
+;; In Emacs 27+, package initialization occurs before `user-init-file' is
+  ;; loaded, but after `early-init-file'. Doom handles package initialization, so
+  ;; we must prevent Emacs from doing it early!
+  		;; Set up the visible bell
+		(setq visible-bell t)
+	  (column-number-mode)
+	  (global-display-line-numbers-mode t)
 
-	(column-number-mode)
-	(global-display-line-numbers-mode t)
-
-	;; Disable line numbers for some modes
-	(dolist (mode '(org-mode-hook
-					term-mode-hook
-					shell-mode-hook
-					eshell-mode-hook))
-	  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+	  ;; Disable line numbers for some modes
+	  (dolist (mode '(org-mode-hook
+					  term-mode-hook
+					  shell-mode-hook
+					  eshell-mode-hook))
+		(add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; UTF-8 as default encoding
-(set-face-attribute 'default nil :font  "Iosevka Nerd Font-12")
+  (set-face-attribute 'default nil :font  "fira code-13")
 
-(set-language-environment "utf-8")
-(prefer-coding-system 'utf-8)
-(setq coding-system-for-read 'utf-8)
-(setq coding-system-for-write 'utf-8)
+  (set-language-environment "utf-8")
+  (prefer-coding-system 'utf-8)
+  (setq coding-system-for-read 'utf-8)
+  (setq coding-system-for-write 'utf-8)
 
-;; (C-q Tab) inserts a tab space
-(add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
+  ;; (C-q Tab) inserts a tab space
+  (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
+(load-file "./ligature.el")
+(use-package ligature
+  :load-path "."
+  :config
+  ;; Enable the "www" ligature in every possible major mode
+  (ligature-set-ligatures 't '("www"))
+  ;; Enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  ;; Enable all Cascadia Code ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+									   ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+									   "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+									   "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+									   "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+									   "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+									   "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+									   "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+									   ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+									   "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+									   "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+									   "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+									   "\\\\" "://"))
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t))
 
 ;; Initialize package sources
 (require 'package)
@@ -144,16 +169,17 @@
 
 
 
-(use-package doom-themes
-:init (load-theme 'doom-gruvbox hard t))
-(use-package ewal-spacemacs-themes)
-(use-package moe-theme)
-(use-package zenburn-theme)
-(use-package yoshi-theme)
-(use-package sublime-themes)
-(use-package gruvbox-theme)
-(use-package color-theme-sanityinc-tomorrow)
-(use-package cyberpunk-theme)
+(use-package doom-themes)
+  (use-package ewal-spacemacs-themes)
+  (use-package moe-theme)
+  (use-package zenburn-theme)
+  (use-package yoshi-theme)
+  (use-package sublime-themes)
+  (use-package gruvbox-theme)
+  (use-package nord-theme)
+  (use-package color-theme-sanityinc-tomorrow)
+  (use-package cyberpunk-theme)
+(load-theme 'nord t)
 
 (use-package all-the-icons)
 
@@ -315,7 +341,7 @@
 
 (use-package origami
   :hook (c-mode . origami-mode)
-  :hook (elisp-mode . origami-mode)
+  :hook (emacs-lisp-mode . origami-mode)
   :hook (go-mode . origami-mode)
   :hook (yaml-mode . origami-mode))
 
@@ -688,9 +714,9 @@
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
 
-(use-package magit
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+;; (use-package magit
+  ;; :custom
+  ;; (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 ;; NOTE: Make sure to configure a GitHub token before using this package!
 ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
@@ -870,31 +896,6 @@
                                     all-the-icons-lgreen
                                     all-the-icons-lblue))
   (setq tracking-frame-behavior nil))
-
-;; Add faces for specific people in the modeline.  There must
-;; be a better way to do this.
-(defun bonk/around-tracking-add-buffer (original-func buffer &optional faces)
-  (let* ((name (buffer-name buffer))
-         (face (cond ((s-contains? "Maria" name) '(all-the-icons-pink))
-                     ((s-contains? "Alex " name) '(all-the-icons-lgreen))
-                     ((s-contains? "Steve" name) '(all-the-icons-lblue))))
-         (result (apply original-func buffer (list face))))
-    result))
-
-(advice-add 'tracking-add-buffer :around #'bonk/around-tracking-add-buffer)
-(advice-add 'tracking-remove-buffer :after #'bonk/after-tracking-remove-buffer)
-(advice-remove 'tracking-remove-buffer #'bonk/around-tracking-remove-buffer)
-
-(use-package telega
-  :commands telega
-  :config
-  (setq telega-user-use-avatars nil
-        telega-use-tracking-for '(any pin unread)
-        telega-chat-use-markdown-formatting t
-        telega-emoji-use-images t
-        telega-completing-read-function #'ivy-completing-read
-        telega-msg-rainbow-title nil
-        telega-chat-fill-column 75))
 
 (use-package elcord
   :straight t
