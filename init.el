@@ -169,17 +169,18 @@
 
 
 
-(use-package doom-themes)
-  (use-package ewal-spacemacs-themes)
-  (use-package moe-theme)
-  (use-package zenburn-theme)
-  (use-package yoshi-theme)
-  (use-package sublime-themes)
-  (use-package gruvbox-theme)
-  (use-package nord-theme)
-  (use-package color-theme-sanityinc-tomorrow)
-  (use-package cyberpunk-theme)
-(load-theme 'nord t)
+(use-package base16-theme)
+	(use-package doom-themes)
+	(use-package ewal-spacemacs-themes)
+	(use-package moe-theme)
+	(use-package zenburn-theme)
+	(use-package yoshi-theme)
+	(use-package sublime-themes)
+	(use-package gruvbox-theme)
+	(use-package nord-theme)
+	(use-package color-theme-sanityinc-tomorrow)
+	(use-package cyberpunk-theme)
+  (load-theme 'nord t)
 
 (use-package all-the-icons)
 
@@ -360,9 +361,9 @@
   (setq standard-indent 4) ; I want indent to be four spaces wide
   (show-paren-mode t)
   (display-line-numbers-mode)
-  (setq whitespace-style '(face tabs tab-mark trailing))
+  (setq whitespace-style '(face tab-mark trailing))
   (custom-set-faces
-   '(whitespace-tab ((t (:foreground "#636363")))))
+	'(whitespace-tab ((t (:foreground "#636363")))))
   (setq whitespace-display-mappings '((tab-mark 9 [9474 9] [92 9])))
   (setq-local show-trailing-whitespace t)
   (bonk/infer-indent-style)
@@ -815,6 +816,7 @@
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 (use-package org-roam
+  :after org-mode
   :straight t
   :hook
   (after-init . org-roam-mode)
@@ -823,79 +825,71 @@
   (org-roam-completion-everywhere t)
   (org-roam-completion-system 'default)
   (org-roam-capture-templates
-    '(("d" "default" plain
-       #'org-roam-capture--get-point
-       "%?"
-       :file-name "%<%Y%m%d%H%M%S>-${slug}"
-       :head "#+title: ${title}\n"
-       :unnarrowed t)
-      ("ll" "link note" plain
-       #'org-roam-capture--get-point
-       "* %^{Link}"
-       :file-name "Inbox"
-       :olp ("Links")
-       :unnarrowed t
-       :immediate-finish)
-      ("lt" "link task" entry
-       #'org-roam-capture--get-point
-       "* TODO %^{Link}"
-       :file-name "Inbox"
-       :olp ("Tasks")
-       :unnarrowed t
-       :immediate-finish)))
+	'(("d" "default" plain
+	   #'org-roam-capture--get-point
+	   "%?"
+	   :file-name "%<%Y%m%d%H%M%S>-${slug}"
+	   :head "#+title: ${title}\n"
+	   :unnarrowed t)
+	  ("ll" "link note" plain
+	   #'org-roam-capture--get-point
+	   "* %^{Link}"
+	   :file-name "Inbox"
+	   :olp ("Links")
+	   :unnarrowed t
+	   :immediate-finish)
+	  ("lt" "link task" entry
+	   #'org-roam-capture--get-point
+	   "* TODO %^{Link}"
+	   :file-name "Inbox"
+	   :olp ("Tasks")
+	   :unnarrowed t
+	   :immediate-finish)))
   (org-roam-dailies-directory "Journal/")
   (org-roam-dailies-capture-templates
-    '(("d" "default" entry
-       #'org-roam-capture--get-point
-       "* %?"
-       :file-name "Journal/%<%Y-%m-%d>"
-       :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
-      ("t" "Task" entry
-       #'org-roam-capture--get-point
-       "* TODO %?\n  %U\n  %a\n  %i"
-       :file-name "Journal/%<%Y-%m-%d>"
-       :olp ("Tasks")
-       :empty-lines 1
-       :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
-      ("j" "journal" entry
-       #'org-roam-capture--get-point
-       "* %<%I:%M %p> - Journal  :journal:\n\n%?\n\n"
-       :file-name "Journal/%<%Y-%m-%d>"
-       :olp ("Log")
-       :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
-      ("l" "log entry" entry
-       #'org-roam-capture--get-point
-       "* %<%I:%M %p> - %?"
-       :file-name "Journal/%<%Y-%m-%d>"
-       :olp ("Log")
-       :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
-      ("m" "meeting" entry
-       #'org-roam-capture--get-point
-       "* %<%I:%M %p> - %^{Meeting Title}  :meetings:\n\n%?\n\n"
-       :file-name "Journal/%<%Y-%m-%d>"
-       :olp ("Log")
-       :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")))
+	'(("d" "default" entry
+	   #'org-roam-capture--get-point
+	   "* %?"
+	   :file-name "Journal/%<%Y-%m-%d>"
+	   :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+	  ("t" "Task" entry
+	   #'org-roam-capture--get-point
+	   "* TODO %?\n  %U\n  %a\n  %i"
+	   :file-name "Journal/%<%Y-%m-%d>"
+	   :olp ("Tasks")
+	   :empty-lines 1
+	   :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+	  ("j" "journal" entry
+	   #'org-roam-capture--get-point
+	   "* %<%I:%M %p> - Journal  :journal:\n\n%?\n\n"
+	   :file-name "Journal/%<%Y-%m-%d>"
+	   :olp ("Log")
+	   :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+	  ("l" "log entry" entry
+	   #'org-roam-capture--get-point
+	   "* %<%I:%M %p> - %?"
+	   :file-name "Journal/%<%Y-%m-%d>"
+	   :olp ("Log")
+	   :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+	  ("m" "meeting" entry
+	   #'org-roam-capture--get-point
+	   "* %<%I:%M %p> - %^{Meeting Title}  :meetings:\n\n%?\n\n"
+	   :file-name "Journal/%<%Y-%m-%d>"
+	   :olp ("Log")
+	   :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")))
   :bind (:map org-roam-mode-map
-          (("C-c n l"   . org-roam)
-           ("C-c n f"   . org-roam-find-file)
-           ("C-c n d"   . org-roam-dailies-find-date)
-           ("C-c n c"   . org-roam-dailies-capture-today)
-           ("C-c n C r" . org-roam-dailies-capture-tomorrow)
-           ("C-c n t"   . org-roam-dailies-find-today)
-           ("C-c n y"   . org-roam-dailies-find-yesterday)
-           ("C-c n r"   . org-roam-dailies-find-tomorrow)
-           ("C-c n g"   . org-roam-graph))
-         :map org-mode-map
-         (("C-c n i" . org-roam-insert))
-         (("C-c n I" . org-roam-insert-immediate))))
-
-(use-package tracking
-  :defer t
-  :config
-  (setq tracking-faces-priorities '(all-the-icons-pink
-                                    all-the-icons-lgreen
-                                    all-the-icons-lblue))
-  (setq tracking-frame-behavior nil))
+		  (("C-c n l"   . org-roam)
+		   ("C-c n f"   . org-roam-find-file)
+		   ("C-c n d"   . org-roam-dailies-find-date)
+		   ("C-c n c"   . org-roam-dailies-capture-today)
+		   ("C-c n C r" . org-roam-dailies-capture-tomorrow)
+		   ("C-c n t"   . org-roam-dailies-find-today)
+		   ("C-c n y"   . org-roam-dailies-find-yesterday)
+		   ("C-c n r"   . org-roam-dailies-find-tomorrow)
+		   ("C-c n g"   . org-roam-graph))
+		 :map org-mode-map
+		 (("C-c n i" . org-roam-insert))
+		 (("C-c n I" . org-roam-insert-immediate))))
 
 (use-package elcord
   :straight t
@@ -903,11 +897,6 @@
   (elcord-display-buffer-details nil)
   :config
   (elcord-mode))
-
-(use-package mastodon
-  :defer t
-  :config
-  (setq mastodon-instance-url "https://mastodon.social"))
 
 (with-eval-after-load 'org
 	(require 'org-tempo)

@@ -225,18 +225,18 @@ for evil-mode.
 [[https://github.com/hlissner/emacs-doom-themes][doom-themes]] is a great set of themes with a lot of variety and support for many different Emacs modes.  Taking a look at the [[https://github.com/hlissner/emacs-doom-themes/tree/screenshots][screenshots]] might help you decide which one you like best.  You can also run =M-x counsel-load-theme= to choose between them easily.
 
 #+begin_src emacs-lisp
-
-	(use-package doom-themes)
-	(use-package ewal-spacemacs-themes)
-	(use-package moe-theme)
-	(use-package zenburn-theme)
-	(use-package yoshi-theme)
-	(use-package sublime-themes)
-	(use-package gruvbox-theme)
-	(use-package nord-theme)
-	(use-package color-theme-sanityinc-tomorrow)
-	(use-package cyberpunk-theme)
-  (load-theme 'nord t)
+  (use-package base16-theme)
+	  (use-package doom-themes)
+	  (use-package ewal-spacemacs-themes)
+	  (use-package moe-theme)
+	  (use-package zenburn-theme)
+	  (use-package yoshi-theme)
+	  (use-package sublime-themes)
+	  (use-package gruvbox-theme)
+	  (use-package nord-theme)
+	  (use-package color-theme-sanityinc-tomorrow)
+	  (use-package cyberpunk-theme)
+	(load-theme 'nord t)
 
 #+end_src
 
@@ -540,9 +540,9 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 				 (setq standard-indent 4) ; I want indent to be four spaces wide
 				 (show-paren-mode t)
 				 (display-line-numbers-mode)
-				 (setq whitespace-style '(face tabs tab-mark trailing))
+				 (setq whitespace-style '(face tab-mark trailing))
 				 (custom-set-faces
-				  '(whitespace-tab ((t (:foreground "#636363")))))
+				   '(whitespace-tab ((t (:foreground "#636363")))))
 				 (setq whitespace-display-mappings '((tab-mark 9 [9474 9] [92 9])))
 				 (setq-local show-trailing-whitespace t)
 				 (bonk/infer-indent-style)
@@ -1375,95 +1375,96 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 
 * Org-Roam
 #+begin_src emacs-lisp
-(use-package org-roam
-  :straight t
-  :hook
-  (after-init . org-roam-mode)
-  :custom
-  (org-roam-directory "~/Notes/Roam/")
-  (org-roam-completion-everywhere t)
-  (org-roam-completion-system 'default)
-  (org-roam-capture-templates
-    '(("d" "default" plain
-       #'org-roam-capture--get-point
-       "%?"
-       :file-name "%<%Y%m%d%H%M%S>-${slug}"
-       :head "#+title: ${title}\n"
-       :unnarrowed t)
-      ("ll" "link note" plain
-       #'org-roam-capture--get-point
-       "* %^{Link}"
-       :file-name "Inbox"
-       :olp ("Links")
-       :unnarrowed t
-       :immediate-finish)
-      ("lt" "link task" entry
-       #'org-roam-capture--get-point
-       "* TODO %^{Link}"
-       :file-name "Inbox"
-       :olp ("Tasks")
-       :unnarrowed t
-       :immediate-finish)))
-  (org-roam-dailies-directory "Journal/")
-  (org-roam-dailies-capture-templates
-    '(("d" "default" entry
-       #'org-roam-capture--get-point
-       "* %?"
-       :file-name "Journal/%<%Y-%m-%d>"
-       :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
-      ("t" "Task" entry
-       #'org-roam-capture--get-point
-       "* TODO %?\n  %U\n  %a\n  %i"
-       :file-name "Journal/%<%Y-%m-%d>"
-       :olp ("Tasks")
-       :empty-lines 1
-       :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
-      ("j" "journal" entry
-       #'org-roam-capture--get-point
-       "* %<%I:%M %p> - Journal  :journal:\n\n%?\n\n"
-       :file-name "Journal/%<%Y-%m-%d>"
-       :olp ("Log")
-       :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
-      ("l" "log entry" entry
-       #'org-roam-capture--get-point
-       "* %<%I:%M %p> - %?"
-       :file-name "Journal/%<%Y-%m-%d>"
-       :olp ("Log")
-       :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
-      ("m" "meeting" entry
-       #'org-roam-capture--get-point
-       "* %<%I:%M %p> - %^{Meeting Title}  :meetings:\n\n%?\n\n"
-       :file-name "Journal/%<%Y-%m-%d>"
-       :olp ("Log")
-       :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")))
-  :bind (:map org-roam-mode-map
-          (("C-c n l"   . org-roam)
-           ("C-c n f"   . org-roam-find-file)
-           ("C-c n d"   . org-roam-dailies-find-date)
-           ("C-c n c"   . org-roam-dailies-capture-today)
-           ("C-c n C r" . org-roam-dailies-capture-tomorrow)
-           ("C-c n t"   . org-roam-dailies-find-today)
-           ("C-c n y"   . org-roam-dailies-find-yesterday)
-           ("C-c n r"   . org-roam-dailies-find-tomorrow)
-           ("C-c n g"   . org-roam-graph))
-         :map org-mode-map
-         (("C-c n i" . org-roam-insert))
-         (("C-c n I" . org-roam-insert-immediate))))
+  (use-package org-roam
+	:after org-mode
+	:straight t
+	:hook
+	(after-init . org-roam-mode)
+	:custom
+	(org-roam-directory "~/Notes/Roam/")
+	(org-roam-completion-everywhere t)
+	(org-roam-completion-system 'default)
+	(org-roam-capture-templates
+	  '(("d" "default" plain
+		 #'org-roam-capture--get-point
+		 "%?"
+		 :file-name "%<%Y%m%d%H%M%S>-${slug}"
+		 :head "#+title: ${title}\n"
+		 :unnarrowed t)
+		("ll" "link note" plain
+		 #'org-roam-capture--get-point
+		 "* %^{Link}"
+		 :file-name "Inbox"
+		 :olp ("Links")
+		 :unnarrowed t
+		 :immediate-finish)
+		("lt" "link task" entry
+		 #'org-roam-capture--get-point
+		 "* TODO %^{Link}"
+		 :file-name "Inbox"
+		 :olp ("Tasks")
+		 :unnarrowed t
+		 :immediate-finish)))
+	(org-roam-dailies-directory "Journal/")
+	(org-roam-dailies-capture-templates
+	  '(("d" "default" entry
+		 #'org-roam-capture--get-point
+		 "* %?"
+		 :file-name "Journal/%<%Y-%m-%d>"
+		 :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+		("t" "Task" entry
+		 #'org-roam-capture--get-point
+		 "* TODO %?\n  %U\n  %a\n  %i"
+		 :file-name "Journal/%<%Y-%m-%d>"
+		 :olp ("Tasks")
+		 :empty-lines 1
+		 :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+		("j" "journal" entry
+		 #'org-roam-capture--get-point
+		 "* %<%I:%M %p> - Journal  :journal:\n\n%?\n\n"
+		 :file-name "Journal/%<%Y-%m-%d>"
+		 :olp ("Log")
+		 :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+		("l" "log entry" entry
+		 #'org-roam-capture--get-point
+		 "* %<%I:%M %p> - %?"
+		 :file-name "Journal/%<%Y-%m-%d>"
+		 :olp ("Log")
+		 :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+		("m" "meeting" entry
+		 #'org-roam-capture--get-point
+		 "* %<%I:%M %p> - %^{Meeting Title}  :meetings:\n\n%?\n\n"
+		 :file-name "Journal/%<%Y-%m-%d>"
+		 :olp ("Log")
+		 :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")))
+	:bind (:map org-roam-mode-map
+			(("C-c n l"   . org-roam)
+			 ("C-c n f"   . org-roam-find-file)
+			 ("C-c n d"   . org-roam-dailies-find-date)
+			 ("C-c n c"   . org-roam-dailies-capture-today)
+			 ("C-c n C r" . org-roam-dailies-capture-tomorrow)
+			 ("C-c n t"   . org-roam-dailies-find-today)
+			 ("C-c n y"   . org-roam-dailies-find-yesterday)
+			 ("C-c n r"   . org-roam-dailies-find-tomorrow)
+			 ("C-c n g"   . org-roam-graph))
+		   :map org-mode-map
+		   (("C-c n i" . org-roam-insert))
+		   (("C-c n I" . org-roam-insert-immediate))))
 #+end_src
 
 * Chats
-** Tracking
-Necessary for stuff like telegram and some chat clients
-#+begin_src emacs-lisp
+# ** Tracking
+# Necessary for stuff like telegram and some chat clients
+# #+begin_src emacs-lisp
 
-(use-package tracking
-  :defer t
-  :config
-  (setq tracking-faces-priorities '(all-the-icons-pink
-                                    all-the-icons-lgreen
-                                    all-the-icons-lblue))
-  (setq tracking-frame-behavior nil))
-#+end_src
+# (use-package tracking
+#   :defer t
+#   :config
+#   (setq tracking-faces-priorities '(all-the-icons-pink
+#                                     all-the-icons-lgreen
+#                                     all-the-icons-lblue))
+#   (setq tracking-frame-behavior nil))
+# #+end_src
 
 
 ** Discord
@@ -1477,13 +1478,13 @@ Necessary for stuff like telegram and some chat clients
   (elcord-mode))
 #+end_src
 
-** Mastodon
-#+begin_src emacs-lisp
-(use-package mastodon
-  :defer t
-  :config
-  (setq mastodon-instance-url "https://mastodon.social"))
-#+end_src
+# ** Mastodon
+# #+begin_src emacs-lisp
+# (use-package mastodon
+#   :defer t
+#   :config
+#   (setq mastodon-instance-url "https://mastodon.social"))
+# #+end_src
 
 * Structure Templates
 #+begin_src emacs-lisp
