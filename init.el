@@ -40,7 +40,7 @@
   (set-face-attribute 'mode-line nil
 					  :font "cascadia code-11"
 					  :weight 'normal)
-	  (load-theme 'base16-nord t))
+	  (load-theme 'base16-gruvbox-dark-soft t))
 
 (if (daemonp)
 	(add-hook 'after-make-frame-functions
@@ -829,6 +829,7 @@
    (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*"))
 
 (use-package neotree
+  :defer t
   :init
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 

@@ -53,7 +53,7 @@
 	(set-face-attribute 'mode-line nil
 						:font "cascadia code-11"
 						:weight 'normal)
-		(load-theme 'base16-nord t))
+		(load-theme 'base16-gruvbox-dark-soft t))
 
   (if (daemonp)
 	  (add-hook 'after-make-frame-functions
@@ -400,7 +400,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
    #+end_src
 
    #+RESULTS:
-
+   
 * Org Mode
 
 ** Basic configuration
@@ -1384,6 +1384,7 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 #+begin_src emacs-lisp
 
   (use-package neotree
+	:defer t
 	:init
 	(setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 

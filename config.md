@@ -1,153 +1,177 @@
 
 # Table of Contents
 
-1.  [Basic UI config](#org6239ca0)
-    1.  [General conf](#orgca73ad3)
-    2.  [Font Configuration](#org7d8451a)
-2.  [Package And System setup](#org5c7847a)
-3.  [Keybinding Configuration](#org70b60cf)
-4.  [UI Configuration](#orga6866d4)
-    1.  [Command Log Mode](#orgbfe44d4)
-    2.  [Color Theme](#orgd4834b4)
-    3.  [Better Modeline](#org9086ba1)
-    4.  [Which Key](#orge2907ef)
-    5.  [Ivy and Counsel](#org8ba4a30)
-    6.  [Helpful Help Commands](#org39572cf)
-    7.  [Text Scaling](#org2b0b3cf)
-    8.  [Rule mode](#org92acb9b)
-    9.  [Ido (tool for buffer)](#org8385a92)
-5.  [Org Mode](#orgc274d4c)
-    1.  [Basic configuration](#org1bfc463)
-    2.  [Better Font Faces](#org3cf6926)
-    3.  [Nicer Heading Bullets](#orgdcbf0bf)
-    4.  [Center Org Buffers](#orgffc73ac)
-    5.  [Auto-tangle Configuration FIles](#orgb9e1c01)
-    6.  [Configure Babel Languages](#orgf0b37ea)
-6.  [Development](#orgbd5f00b)
-    1.  [General configs](#orged74f72)
-    2.  [Languages](#orgced23aa)
-        1.  [IDE Features with lsp-mode](#org925d318)
-        2.  [Yasnippets](#org7130121)
-        3.  [Flycheck](#org44a3b3a)
-        4.  [TypeScript](#org4d503e9)
-        5.  [Ruby](#org3dee510)
-        6.  [Golang](#orge0d0fde)
-        7.  [Elisp](#org931c602)
-        8.  [Rust](#orgda45c7f)
-        9.  [C/C++](#org62c8699)
-        10. [Javascript](#orgb5386f6)
-        11. [Yaml](#org90093c8)
-    3.  [Company Mode](#org3bb13f5)
-        1.  [Company Backends](#orgbb4454f)
-    4.  [Projectile](#org61de8c9)
-    5.  [Magit](#orgc6e0c15)
-    6.  [Rainbow Delimiters](#orgf339ae9)
-7.  [Terminals](#orgda877ed)
-    1.  [Term-mode](#org7ff5a45)
-        1.  [Useful key bindings:](#org1716518)
-        2.  [Term-mode 256color](#org4fb524e)
-    2.  [Vterm](#orga892b76)
-        1.  [Keybindings for opening vterm in other windows with `SPACE v +options`](#orga04ffad)
-    3.  [Shell-mode](#orgb04adae)
-    4.  [Eshell](#org1808c26)
-8.  [File Management](#orga69fcd3)
-    1.  [Backup-files](#orgb1cb48c)
-        1.  [Configuration](#orgdad8bee)
-    2.  [Dired](#orgabf5fb4)
-        1.  [Key Bindings](#org519e483)
-        2.  [Configuration](#org6e2c401)
-    3.  [NeoTree](#org832d657)
-        1.  [KeyBindings](#org8438c2b)
-        2.  [Configuration](#org395ed0a)
-9.  [Structure Templates](#org2bdd679)
-10. [Applications](#org41c0d36)
-    1.  [example config 'Some App'](#orgd1c70a9)
+1.  [Basic UI config](#orgb97517e)
+    1.  [General conf](#orgc3b9a3c)
+    2.  [Font Configuration](#org96107cf)
+2.  [Package And System setup](#orga217f8e)
+    1.  [Straight.el](#orgb428ec1)
+3.  [Keybinding Configuration](#orgb58bae3)
+4.  [UI Configuration](#org5467b53)
+    1.  [Command Log Mode](#org92b29f0)
+    2.  [Color Theme](#org3da96a1)
+        1.  [Custom Color<sub>theme</sub>](#org34eaf2b)
+        2.  [downloaded<sub>themes</sub>](#orge5ad5b0)
+    3.  [Better Modeline](#orge590a7e)
+    4.  [Which Key](#org139f177)
+    5.  [Ivy and Counsel](#org51bf206)
+    6.  [Helpful Help Commands](#orgfc4847b)
+    7.  [Text Scaling](#orga9c68c3)
+    8.  [Ido (tool for buffer)](#org7718405)
+5.  [Org Mode](#orgbb6af28)
+    1.  [Basic configuration](#org22f91d8)
+    2.  [Better Font Faces](#orgbcbf6ff)
+    3.  [Nicer Heading Bullets](#orgdf3c44e)
+    4.  [Center Org Buffers](#org3d0abb3)
+    5.  [Auto-tangle Configuration FIles](#org08c3d10)
+    6.  [Configure Babel Languages](#org6170bf6)
+6.  [Development](#org137331f)
+    1.  [General configs](#orgec72bf1)
+        1.  [Prog-mode](#org7544ef5)
+    2.  [Languages](#org42a8d4b)
+        1.  [IDE Features with lsp-mode](#orge2eb9f4)
+        2.  [Yasnippets](#org3b2b410)
+        3.  [Flycheck](#org5aa0ea0)
+        4.  [TypeScript](#org75b63f2)
+        5.  [Ruby](#orgd607710)
+        6.  [Elixir](#orgdce23cf)
+        7.  [Golang](#orgadb2e9a)
+        8.  [R](#orgd395102)
+        9.  [Vlang](#orgfbb908b)
+        10. [Elisp](#org3fe4306)
+        11. [Rust](#org6d085c4)
+        12. [C/C++](#org8c053d2)
+        13. [Python](#orga64b0c4)
+        14. [Javascript](#org354ff1f)
+        15. [Yaml](#orgbd613ae)
+    3.  [Company Mode](#org6cfb9e4)
+        1.  [Company Backends](#orgeece2bf)
+    4.  [Projectile](#orgdaadd8b)
+    5.  [Magit](#org3f430c0)
+    6.  [Rainbow Delimiters](#org32db232)
+7.  [Terminals](#org06dfd18)
+    1.  [Term-mode](#orge4b1824)
+        1.  [Useful key bindings:](#org6278d35)
+        2.  [Term-mode 256color](#org6eb9877)
+    2.  [Vterm](#orgedb66b4)
+        1.  [Keybindings for opening vterm in other windows with `SPACE v +options`](#org066edae)
+    3.  [Shell-mode](#orgaee86da)
+    4.  [Eshell](#org5f14010)
+8.  [File Management](#org08dd248)
+    1.  [Backup-files](#orgaf7ce2d)
+        1.  [Configuration](#orgabb640d)
+    2.  [Dired](#org26966f3)
+        1.  [Key Bindings](#orgdac9ac1)
+        2.  [Configuration](#orgf9705ef)
+    3.  [NeoTree](#org8e8aeff)
+        1.  [KeyBindings](#orga79a9cb)
+        2.  [Configuration](#org07cddfa)
+9.  [Org-Roam](#org8e085a0)
+10. [Chats](#org8b0c683)
+    1.  [Discord](#org20d452e)
+11. [Structure Templates](#orgc4ef220)
+12. [Applications](#orgd34bfa2)
+    1.  [example config 'Some App'](#orgdeddbca)
 
 
 
-<a id="org6239ca0"></a>
+<a id="orgb97517e"></a>
 
 # Basic UI config
 
 
-<a id="orgca73ad3"></a>
+<a id="orgc3b9a3c"></a>
 
 ## General conf
 
     
-      (setq inhibit-startup-message t)
-    (setq warning-minimum-level :emergency)
+    		(setq inhibit-startup-message t)
+    	  (setq warning-minimum-level :emergency)
     
-      (scroll-bar-mode -1) ; Disable visible scrollbar
-      (tool-bar-mode -1)   ; Disable the toolbar
-      (tooltip-mode -1)    ; Disable tooltips
-      (set-fringe-mode 10) ; Give some breathing room
+    		(scroll-bar-mode -1) ; Disable visible scrollbar
+    		(tool-bar-mode -1)   ; Disable the toolbar
+    		(tooltip-mode -1)    ; Disable tooltips
+    		(set-fringe-mode 10) ; Give some breathing room
     
-      (menu-bar-mode -1)   ; isable the menu bar
+    		(menu-bar-mode -1)   ; isable the menu bar
     
-      ;; Set up the visible bell
-      (setq visible-bell t)
+    ;; In Emacs 27+, package initialization occurs before `user-init-file' is
+      ;; loaded, but after `early-init-file'. Doom handles package initialization, so
+      ;; we must prevent Emacs from doing it early!
+    		;; Set up the visible bell
+    		(setq visible-bell t)
+    	  (column-number-mode)
+    	  (global-display-line-numbers-mode t)
     
-    (column-number-mode)
-    (global-display-line-numbers-mode t)
-    
-    ;; Disable line numbers for some modes
-    (dolist (mode '(org-mode-hook
-    				term-mode-hook
-    				shell-mode-hook
-    				eshell-mode-hook))
-      (add-hook mode (lambda () (display-line-numbers-mode 0))))
+    	  ;; Disable line numbers for some modes
+    	  (dolist (mode '(org-mode-hook
+    					  term-mode-hook
+    					  shell-mode-hook
+    					  eshell-mode-hook))
+    		(add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 
-<a id="org7d8451a"></a>
+<a id="org96107cf"></a>
 
 ## Font Configuration
 
+    	  ;; UTF-8 as default encoding
     
-    (set-face-attribute 'default nil :font  "Sarasa Gothic CL-12")
-    (set-face-font 'variable-pitch "Iosevka-12")
-    (set-face-font 'fixed-pitch "Sarasa Gothic CL-12")
+    	  (set-language-environment "utf-8")
+    	  (prefer-coding-system 'utf-8)
+    	  (setq coding-system-for-read 'utf-8)
+    	  (setq coding-system-for-write 'utf-8)
     
-    ;;============================================================
-    ;; toggle between variable pitch and fixed pitch font for 
-    ;; the current buffer
-    (defun fixed-pitch-mode ()
-      (buffer-face-mode -1))
+    (defun set-font-to-fira-code ()
+      (set-face-attribute 'default nil
+    					  :font "fira code-12"))
+    (defun my-frame-init ()
+      ;; eg.
+      (set-face-attribute 'default nil
+    					  :font  "fira code-12")
+      (set-face-attribute 'mode-line nil
+    					  :font "cascadia code-11"
+    					  :weight 'normal)
+    	  (load-theme 'base16-gruvbox-dark-soft t))
     
-    (defun variable-pitch-mode ()
-      (buffer-face-mode t))
+    (if (daemonp)
+    	(add-hook 'after-make-frame-functions
+    			  (lambda (frame)
+    				(select-frame frame)
+    				(my-frame-init)))
+      (my-frame-init))
     
-    (defun toggle-pitch (&optional arg)
-      "Switch between the `fixed-pitch' face and the `variable-pitch' face"
-      (interactive)
-      (buffer-face-toggle 'variable-pitch))
-    
-    ;; enable buffer-face mode to provide buffer-local fonts
-    (buffer-face-mode)
-    
-    ;; Set the fonts to format correctly
-    (add-hook 'text-mode-hook 'fixed-pitch-mode)
-    (add-hook 'dired-mode-hook 'variable-pitch-mode)
-    (add-hook 'calendar-mode-hook 'variable-pitch-mode)
-    (add-hook 'org-agenda-mode-hook 'variable-pitch-mode)
-    (add-hook 'shell-mode-hook 'variable-pitch-mode)
-    (add-hook 'eshell-mode-hook 'variable-pitch-mode)
-    (add-hook 'neotree-mode-hook 'variable-pitch-mode)
-    (add-hook 'counsel-mode-hook 'variable-pitch-mode)
-    (add-hook 'command-log-mode-hook 'variable-pitch-mode)
-    (add-hook 'which-key-mode-hook 'variable-pitch-mode)
-    (add-hook 'ivy-mode-hook 'variable-pitch-mode)
-    (add-hook 'helpful-mode-hook 'variable-pitch-mode)
-    										;(Add-hook 'bs-mode-hook 'fixed-pitch-mode)
-    										;(add-hook 'w3m-mode-hook 'variable-pitch-mode)
-    										;(add-hook 'org-mode-hook 'variable-pitch-mode)
-    (add-hook 'eww-mode-hook 'variable-pitch-mode)
-    
-    ;; (C-q Tab) inserts a tab space
-    (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
+    	  ;; (C-q Tab) inserts a tab space
+    	  (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
+    	(load-file "./ligature.el")
+    	(use-package ligature
+    	  :load-path "."
+    	  :config
+    	  ;; Enable the "www" ligature in every possible major mode
+    	  (ligature-set-ligatures 't '("www"))
+    	  ;; Enable traditional ligature support in eww-mode, if the
+    	  ;; `variable-pitch' face supports it
+    	  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+    	  ;; Enable all Cascadia Code ligatures in programming modes
+    	  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+    										   ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+    										   "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+    										   "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+    										   "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+    										   "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+    										   "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+    										   "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+    										   ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+    										   "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+    										   "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+    										   "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+    										   "\\\\" "://"))
+    	  ;; Enables ligature checks globally in all buffers. You can also do it
+    	  ;; per mode with `ligature-mode'.
+    	  (global-ligature-mode t))
 
 
-<a id="org5c7847a"></a>
+<a id="orga217f8e"></a>
 
 # Package And System setup
 
@@ -179,7 +203,35 @@
     (use-package use-package-ensure-system-package)
 
 
-<a id="org70b60cf"></a>
+<a id="orgb428ec1"></a>
+
+## Straight.el
+
+    (setq straight-vc-git-default-clone-depth 1)
+    (setq straight-recipes-gnu-elpa-use-mirror t)
+    ;; (setq straight-check-for-modifications '(check-on-save find-when-checking))
+    (setq straight-check-for-modifications nil)
+    (defvar bootstrap-version)
+    (let* ((straight-repo-dir
+    		(expand-file-name "straight/repos" user-emacs-directory))
+    	   (bootstrap-file
+    		(concat straight-repo-dir "/straight.el/bootstrap.el"))
+    	   (bootstrap-version 5))
+      (unless (file-exists-p bootstrap-file)
+    	(shell-command
+    	 (concat
+    	  "mkdir -p " straight-repo-dir " && "
+    	  "git -C " straight-repo-dir " clone "
+    	  "https://github.com/raxod502/straight.el.git && "
+    	  "git -C " straight-repo-dir " checkout 2d407bc")))
+      (load bootstrap-file nil 'nomessage))
+    (straight-use-package 'use-package)
+    ;; This is a variable that has been renamed but straight still refers when
+    ;; doing :sraight (:no-native-compile t)
+    (setq comp-deferred-compilation-black-list nil)
+
+
+<a id="orgb58bae3"></a>
 
 # Keybinding Configuration
 
@@ -211,6 +263,13 @@ for evil-mode.
     	"DD" '(kill-this-buffer :which "kills the current buffer")
     	"vcc" '(vterm-send-C-c :which "kills current vterm process")
     	"nn" '(neotree-toggle :which "toggles neotree")
+      ;; Origami options
+    	"oon" '(origami-open-node :which "opens current origami node")
+    	"ooc" '(origami-close-node :which "closes current origami node")
+    	"oO" '(origami-open-all-nodes :which "opens all origami node")
+    	"oC" '(origami-close-all-nodes :which "closes all origami node")
+    	"orO" '(origami-open-node-recursively :which "opens all origami node below recursively")
+    	"orC" '(origami-close-node-recursively :which "closes all origami node below recursively")
     	)
     
     (use-package evil
@@ -237,12 +296,12 @@ for evil-mode.
       (evil-collection-init))
 
 
-<a id="orga6866d4"></a>
+<a id="org5467b53"></a>
 
 # UI Configuration
 
 
-<a id="orgbfe44d4"></a>
+<a id="org92b29f0"></a>
 
 ## Command Log Mode
 
@@ -253,26 +312,36 @@ for evil-mode.
       :commands command-log-mode)
 
 
-<a id="orgd4834b4"></a>
+<a id="org3da96a1"></a>
 
 ## Color Theme
 
+
+<a id="org34eaf2b"></a>
+
+### Custom Color<sub>theme</sub>
+
+
+<a id="orge5ad5b0"></a>
+
+### downloaded<sub>themes</sub>
+
 [doom-themes](https://github.com/hlissner/emacs-doom-themes) is a great set of themes with a lot of variety and support for many different Emacs modes.  Taking a look at the [screenshots](https://github.com/hlissner/emacs-doom-themes/tree/screenshots) might help you decide which one you like best.  You can also run `M-x counsel-load-theme` to choose between them easily.
 
-    
-    (use-package doom-themes
-    :init (load-theme 'doom-zenburn t))
-    (use-package ewal-spacemacs-themes)
-    (use-package moe-theme)
-    (use-package zenburn-theme)
-    (use-package yoshi-theme)
-    (use-package sublime-themes)
-    (use-package gruvbox-theme)
-    (use-package color-theme-sanityinc-tomorrow)
-    (use-package cyberpunk-theme)
+    (use-package base16-theme)
+    	(use-package doom-themes)
+    	(use-package ewal-spacemacs-themes)
+    	(use-package moe-theme)
+    	(use-package zenburn-theme)
+    	(use-package yoshi-theme)
+    	(use-package sublime-themes)
+    	(use-package gruvbox-theme)
+    	(use-package nord-theme)
+    	(use-package color-theme-sanityinc-tomorrow)
+    	(use-package cyberpunk-theme)
 
 
-<a id="org9086ba1"></a>
+<a id="orge590a7e"></a>
 
 ## Better Modeline
 
@@ -288,7 +357,7 @@ for evil-mode.
       :custom ((doom-modeline-height 15)))
 
 
-<a id="orge2907ef"></a>
+<a id="org139f177"></a>
 
 ## Which Key
 
@@ -311,7 +380,7 @@ for evil-mode.
       (setq which-key-allow-imprecise-window-fit t))
 
 
-<a id="org8ba4a30"></a>
+<a id="org51bf206"></a>
 
 ## Ivy and Counsel
 
@@ -350,7 +419,7 @@ for evil-mode.
       (counsel-mode 1))
 
 
-<a id="org39572cf"></a>
+<a id="orgfc4847b"></a>
 
 ## Helpful Help Commands
 
@@ -369,7 +438,7 @@ for evil-mode.
       ([remap describe-key] . helpful-key))
 
 
-<a id="org2b0b3cf"></a>
+<a id="orga9c68c3"></a>
 
 ## Text Scaling
 
@@ -389,18 +458,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
       "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 
-<a id="org92acb9b"></a>
-
-## Rule mode
-
-    	;; Use ruler in text-mode
-    ;;    (add-hook 'text-mode-hook
-       ;;       (function (lambda ()
-    	   ;;	   (setq ruler-mode-show-tab-stops t)
-    		   ;;   (ruler-mode 1))))
-
-
-<a id="org8385a92"></a>
+<a id="org7718405"></a>
 
 ## Ido (tool for buffer)
 
@@ -411,12 +469,12 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
     							 "*Messages*" "Async Shell Command")))
 
 
-<a id="orgc274d4c"></a>
+<a id="orgbb6af28"></a>
 
 # Org Mode
 
 
-<a id="org1bfc463"></a>
+<a id="org22f91d8"></a>
 
 ## Basic configuration
 
@@ -435,7 +493,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
     	(bonk/org-font-setup))
 
 
-<a id="org3cf6926"></a>
+<a id="orgbcbf6ff"></a>
 
 ## Better Font Faces
 
@@ -469,7 +527,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
       (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
 
-<a id="orgdcbf0bf"></a>
+<a id="orgdf3c44e"></a>
 
 ## Nicer Heading Bullets
 
@@ -480,7 +538,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
       (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 
-<a id="orgffc73ac"></a>
+<a id="org3d0abb3"></a>
 
 ## Center Org Buffers
 
@@ -494,7 +552,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
       :hook (org-mode . bonk/org-mode-visual-fill))
 
 
-<a id="orgb9e1c01"></a>
+<a id="org08c3d10"></a>
 
 ## Auto-tangle Configuration FIles
 
@@ -508,7 +566,7 @@ This is an example of using [Hydra](https://github.com/abo-abo/hydra) to design 
       (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'bonk/org-babel-tangle-config))))
 
 
-<a id="orgf0b37ea"></a>
+<a id="org6170bf6"></a>
 
 ## Configure Babel Languages
 
@@ -526,44 +584,88 @@ To execute or export code in `org-mode` code blocks, you'll need to set up `org-
       (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 
-<a id="orgbd5f00b"></a>
+<a id="org137331f"></a>
 
 # Development
 
 
-<a id="orged74f72"></a>
+<a id="orgec72bf1"></a>
 
 ## General configs
 
 Here is the config for wether using tabs, how to indent, how many spaces, etc.
 
-    
-    (setq-default indent-tabs-mode t)
-    (setq-default tab-width 4) ; I want tabs to be four spaces wide
-    ;; Indentation levels for each lang
-    (defvaralias 'js2-basic-offset 'tabwidth)
-    (defvaralias 'js-indent-level 'tab-width)
-    (defvaralias 'js-indent-level 'tab-width)
-    (defvaralias 'rjsx-indent-level 'tab-width)
-    (defvaralias 'rjsx-mode-markup-indent-offset 'tab-width)
-    (defvaralias 'rjsx-mode-code-indent-offset 'tab-width)
-    (defvaralias 'web-mode-css-indent-offset 'tab-width)
-    (defvaralias 'js2-indent-level 'tab-width)
-    
-    ;; Increase for better lsp-mode performance; see
-    ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-    (setq gc-cons-threshold 100000000)
-    (when (boundp 'read-process-output-max)
-      ;; New in Emacs 27
-      (setq read-process-output-max (* 2048 2048)))
+
+<a id="org7544ef5"></a>
+
+### Prog-mode
+
+1.  Commenting Lines
+
+        (use-package evil-nerd-commenter
+          :bind ("M-/" . evilnc-comment-or-uncomment-lines))
+
+2.  Folding with Origami
+
+        (use-package origami
+          :hook (c-mode . origami-mode)
+          :hook (emacs-lisp-mode . origami-mode)
+          :hook (go-mode . origami-mode)
+          :hook (yaml-mode . origami-mode))
+
+3.  Infer Indent Style
+
+        
+        (defun bonk/infer-indent-style ()
+          ;; Honestly, This is more of a wild guess since we could be using tabs and having it wrongly
+          ;; configure on our ide
+          (let ((space-count (how-many "^ "))
+        		(tab-count (how-many "^\t")))
+        	(if (> space-count tab-count )
+        		(setq indent-tabs-mode nil))
+        	(if (> tab-count space-count)
+        		(setq indent-tabs-mode t))))
+
+4.  Configuration
+
+        (defun bonk/prog-mode-settings ()
+          (setq-default tab-width 4) ; I want tabs to be four spaces wide
+          (setq standard-indent 4) ; I want indent to be four spaces wide
+          (show-paren-mode t)
+          (display-line-numbers-mode)
+          (setq whitespace-style '(face tab-mark trailing))
+          (custom-set-faces
+        	'(whitespace-tab ((t (:foreground "#636363")))))
+          (setq whitespace-display-mappings '((tab-mark 9 [9474 9] [92 9])))
+          (setq-local show-trailing-whitespace t)
+          (bonk/infer-indent-style)
+          (whitespace-mode))
+        
+        (add-hook 'prog-mode-hook 'bonk/prog-mode-settings)
+        ;; Indentation levels for each lang
+        (defvaralias 'js2-basic-offset 'tabwidth)
+        (defvaralias 'js-indent-level 'tab-width)
+        (defvaralias 'js-indent-level 'tab-width)
+        (defvaralias 'rjsx-indent-level 'tab-width)
+        (defvaralias 'rjsx-mode-markup-indent-offset 'tab-width)
+        (defvaralias 'rjsx-mode-code-indent-offset 'tab-width)
+        (defvaralias 'web-mode-css-indent-offset 'tab-width)
+        (defvaralias 'js2-indent-level 'tab-width)
+        
+        ;; Increase for better lsp-mode performance; see
+        ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+        (setq gc-cons-threshold 100000000)
+        (when (boundp 'read-process-output-max)
+          ;; New in Emacs 27
+          (setq read-process-output-max (* 2048 2048)))
 
 
-<a id="orgced23aa"></a>
+<a id="org42a8d4b"></a>
 
 ## Languages
 
 
-<a id="org925d318"></a>
+<a id="orge2eb9f4"></a>
 
 ### IDE Features with lsp-mode
 
@@ -668,7 +770,7 @@ Here is the config for wether using tabs, how to indent, how many spaces, etc.
 5.  lsp-clients
 
 
-<a id="org7130121"></a>
+<a id="org3b2b410"></a>
 
 ### Yasnippets
 
@@ -693,7 +795,7 @@ It predefines most of the common templates, including the dreadful `if err !\=ni
       :after yasnippet)
 
 
-<a id="org44a3b3a"></a>
+<a id="org5aa0ea0"></a>
 
 ### Flycheck
 
@@ -707,12 +809,14 @@ checker.
     (setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
 
 
-<a id="org4d503e9"></a>
+<a id="org75b63f2"></a>
 
 ### TypeScript
 
 This is a basic configuration for the TypeScript language so that `.ts` files activate `typescript-mode` when opened.  We're also adding a hook to `typescript-mode-hook` to call `lsp-deferred` so that we activate `lsp-mode` to get LSP features every time we edit TypeScript code.
 
+    (use-package nvm
+      :defer t)
     
     (use-package typescript-mode
       :mode "\\.ts\\'"
@@ -726,7 +830,7 @@ This is a basic configuration for the TypeScript language so that `.ts` files ac
 This will install the [typescript-language-server](https://github.com/theia-ide/typescript-language-server) and the TypeScript compiler package.
 
 
-<a id="org3dee510"></a>
+<a id="orgd607710"></a>
 
 ### Ruby
 
@@ -770,7 +874,27 @@ This will install the [typescript-language-server](https://github.com/theia-ide/
           '(rspec-install-snippets))
 
 
-<a id="orge0d0fde"></a>
+<a id="orgdce23cf"></a>
+
+### Elixir
+
+    (use-package elixir-mode
+      :ensure t
+      :init  
+      (add-hook 'elixir-mode-hook
+    			(lambda ()
+    			  (push '(">=" . ?\u2265) prettify-symbols-alist)
+    			  (push '("<=" . ?\u2264) prettify-symbols-alist)
+    			  (push '("!=" . ?\u2260) prettify-symbols-alist)
+    			  (push '("==" . ?\u2A75) prettify-symbols-alist)
+    			  (push '("=~" . ?\u2245) prettify-symbols-alist)
+    			  (push '("<-" . ?\u2190) prettify-symbols-alist)
+    			  (push '("->" . ?\u2192) prettify-symbols-alist)
+    			  (push '("<-" . ?\u2190) prettify-symbols-alist)
+    			  (push '("|>" . ?\u25B7) prettify-symbols-alist))))
+
+
+<a id="orgadb2e9a"></a>
 
 ### Golang
 
@@ -795,22 +919,125 @@ This will install the [typescript-language-server](https://github.com/theia-ide/
       (add-hook 'go-mode-hook 'yas-minor-mode))
 
 
-<a id="org931c602"></a>
+<a id="orgd395102"></a>
+
+### R
+
+1.  ESS
+
+        (use-package ess
+          :hook ((R-mode . lsp-deferred))
+          :config
+          (require 'ess-r-mode))
+
+
+<a id="orgfbb908b"></a>
+
+### Vlang
+
+    (use-package v-mode
+      :straight (v-mode
+    			 :type git
+    			 :host github
+    			 :repo "damon-kwok/v-mode"
+    			 :files ("tokens" "v-mode.el"))
+      :config
+      :bind-keymap
+      ("M-z" . v-menu)
+      ("<f6>" . v-menu)
+      ("C-c C-f" . v-format-buffer)
+      :mode ("\\(\\.v?v\\|\\.vsh\\)$'" . 'v-mode))
+
+
+<a id="org3fe4306"></a>
 
 ### Elisp
 
+    (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
+    (add-hook 'emacs-lisp-mode-hook 'company-mode)
+    
+    (use-package slime
+      :ensure t
+      :config
+      (setq inferior-lisp-program "/usr/bin/sbcl")
+      (setq slime-contribs '(slime-fancy)))
+    
+    (use-package slime-company
+      :ensure t
+      :init
+    	(require 'company)
+    	(slime-setup '(slime-fancy slime-company)))
 
-<a id="orgda45c7f"></a>
+
+<a id="org6d085c4"></a>
 
 ### Rust
 
 
-<a id="org62c8699"></a>
+<a id="org8c053d2"></a>
 
 ### C/C++
 
+    (use-package ccls
+      :hook ((c-mode c++-mode objc-mode cuda-mode) .
+    		 (lambda () (require 'ccls) (lsp))))
+    (use-package flycheck-clang-analyzer
+      :ensure t
+      :config
+      (with-eval-after-load 'flycheck
+    	(require 'flycheck-clang-analyzer)
+    	 (flycheck-clang-analyzer-setup)))
+    
+    (with-eval-after-load 'company
+      (add-hook 'c++-mode-hook 'company-mode)
+      (add-hook 'c-mode-hook 'company-mode))
+    
+    (use-package company-c-headers
+      :ensure t)
+    
+    (use-package company-irony
+      :ensure t
+      :config
+      (setq company-backends '((company-c-headers
+    							company-dabbrev-code
+    							company-irony))))
+    
+    (use-package irony
+      :ensure t
+      :config
+      (add-hook 'c++-mode-hook 'irony-mode)
+      (add-hook 'c-mode-hook 'irony-mode)
+      (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
 
-<a id="orgb5386f6"></a>
+
+<a id="orga64b0c4"></a>
+
+### Python
+
+    (add-hook 'python-mode-hook 'flycheck-mode)
+    
+    (with-eval-after-load 'company
+    	(add-hook 'python-mode-hook 'company-mode))
+    
+    (use-package company-jedi
+      :ensure t
+      :config
+    	(require 'company)
+    	(add-to-list 'company-backends 'company-jedi))
+    
+    (defun python-mode-company-init ()
+      (setq-local company-backends '((company-jedi
+    								  company-etags
+    								  company-dabbrev-code))))
+    
+    (use-package company-jedi
+      :ensure t
+      :config
+    	(require 'company)
+    	(add-hook 'python-mode-hook 'python-mode-company-init))
+
+
+<a id="org354ff1f"></a>
 
 ### Javascript
 
@@ -860,7 +1087,7 @@ This will install the [typescript-language-server](https://github.com/theia-ide/
           :hook (rjsx-mode . setup-tide-mode))
 
 
-<a id="org90093c8"></a>
+<a id="orgbd613ae"></a>
 
 ### Yaml
 
@@ -873,7 +1100,7 @@ This will install the [typescript-language-server](https://github.com/theia-ide/
       (add-hook 'yaml-mode-hook 'subword-mode))
 
 
-<a id="org3bb13f5"></a>
+<a id="org6cfb9e4"></a>
 
 ## Company Mode
 
@@ -900,7 +1127,7 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
       '(push 'company-robe company-backends))
 
 
-<a id="orgbb4454f"></a>
+<a id="orgeece2bf"></a>
 
 ### Company Backends
 
@@ -937,7 +1164,7 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
         			 (push 'company-elisp company-backends)))
 
 
-<a id="org61de8c9"></a>
+<a id="orgdaadd8b"></a>
 
 ## Projectile
 
@@ -945,7 +1172,6 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
 
     
     (use-package projectile
-      :diminish projectile-mode
       :config (projectile-mode)
       :custom ((projectile-completion-system 'ivy))
       :bind-keymap
@@ -960,16 +1186,16 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
       :config (counsel-projectile-mode))
 
 
-<a id="orgc6e0c15"></a>
+<a id="org3f430c0"></a>
 
 ## Magit
 
 [Magit](https://magit.vc/) is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
 
     
-    (use-package magit
-      :custom
-      (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+    ;; (use-package magit
+      ;; :custom
+      ;; (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
     
     ;; NOTE: Make sure to configure a GitHub token before using this package!
     ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
@@ -977,7 +1203,7 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
     ;; (use-package forge)
 
 
-<a id="orgf339ae9"></a>
+<a id="org32db232"></a>
 
 ## Rainbow Delimiters
 
@@ -988,12 +1214,12 @@ We also use [company-box](https://github.com/sebastiencs/company-box) to further
       :hook (prog-mode . rainbow-delimiters-mode))
 
 
-<a id="orgda877ed"></a>
+<a id="org06dfd18"></a>
 
 # Terminals
 
 
-<a id="org7ff5a45"></a>
+<a id="orge4b1824"></a>
 
 ## Term-mode
 
@@ -1016,7 +1242,7 @@ enter insert mode, and when escaping, you will return to `line-mode`.
 You can try running a terminal with `M-x term!`. :)
 
 
-<a id="org1716518"></a>
+<a id="org6278d35"></a>
 
 ### Useful key bindings:
 
@@ -1034,7 +1260,7 @@ You can try running a terminal with `M-x term!`. :)
       (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
 
 
-<a id="org4fb524e"></a>
+<a id="org6eb9877"></a>
 
 ### Term-mode 256color
 
@@ -1050,7 +1276,7 @@ this program installed already so you may not have to do anything extra to use i
       :hook (term-mode . eterm-256color-mode))
 
 
-<a id="orga892b76"></a>
+<a id="orgedb66b4"></a>
 
 ## Vterm
 
@@ -1074,7 +1300,7 @@ successfully.
       (setq vterm-timer-delay 0.01))
 
 
-<a id="orga04ffad"></a>
+<a id="org066edae"></a>
 
 ### Keybindings for opening vterm in other windows with `SPACE v +options`
 
@@ -1083,31 +1309,31 @@ successfully.
       "vb" '(vterm :which-key "open new buffer for vterm"))
 
 
-<a id="orgb04adae"></a>
+<a id="orgaee86da"></a>
 
 ## Shell-mode
 
 TBD (i'm pretty satisfied with vterm, but i could try this one day)
 
 
-<a id="org1808c26"></a>
+<a id="org5f14010"></a>
 
 ## Eshell
 
 TBD (i'm pretty satisfied with vterm, but i could try this one day)
 
 
-<a id="orga69fcd3"></a>
+<a id="org08dd248"></a>
 
 # File Management
 
 
-<a id="orgb1cb48c"></a>
+<a id="orgaf7ce2d"></a>
 
 ## Backup-files
 
 
-<a id="orgdad8bee"></a>
+<a id="orgabb640d"></a>
 
 ### Configuration
 
@@ -1121,12 +1347,12 @@ to commit changes on a project.
       (setq backup-directory-alist            '((".*" . "~/.Trash")))
 
 
-<a id="orgabf5fb4"></a>
+<a id="org26966f3"></a>
 
 ## Dired
 
 
-<a id="org519e483"></a>
+<a id="orgdac9ac1"></a>
 
 ### Key Bindings
 
@@ -1192,47 +1418,70 @@ to commit changes on a project.
     -   `L` - Load an Emacs Lisp file into Emacs
 
 
-<a id="org6e2c401"></a>
+<a id="orgf9705ef"></a>
 
 ### Configuration
 
     
-    (use-package dired
-      :ensure nil
-      :commands (dired dired-jump)
-      :bind (("C-x C-j" . dired-jump))
-      :custom ((setq insert-directory-program "gls" dired-use-ls-dired t)
-    		   (setq dired-listing-switches "-al --group-directories-first"))
-      :config
-      (evil-collection-define-key 'normal 'dired-mode-map
-    	"h" 'dired-single-up-directory
-    	"l" 'dired-single-buffer))
+     (use-package dired
+       :ensure nil
+       :commands (dired dired-jump)
+       :bind (("C-x C-j" . dired-jump))
+       :custom ((setq insert-directory-program "gls" dired-use-ls-dired t)
+    			(setq dired-listing-switches "-al --group-directories-first"))
+       :config
+       (evil-collection-define-key 'normal 'dired-mode-map
+    	 "h" 'dired-single-up-directory
+    	 "l" 'dired-single-buffer))
     
-    (use-package dired-single)
+     (use-package dired-single)
     
-    (use-package all-the-icons-dired
-      :hook (dired-mode . all-the-icons-dired-mode))
+     (use-package all-the-icons-dired
+       :hook (dired-mode . all-the-icons-dired-mode))
     
-    (use-package dired-open
-      :config
-      ;; Doesn't work as expected!
-      ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-      (setq dired-open-extensions '(("png" . "feh")
-    								("mkv" . "mpv"))))
+     (use-package dired-open
+       :config
+       ;; Doesn't work as expected!
+       ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+       (setq dired-open-extensions '(("png" . "feh")
+    								 ("mkv" . "mpv"))))
     
-    (use-package dired-hide-dotfiles
-      :hook (dired-mode . dired-hide-dotfiles-mode)
-      :config
-      (evil-collection-define-key 'normal 'dired-mode-map
-    	"H" 'dired-hide-dotfiles-mode))
+     (use-package dired-hide-dotfiles
+       :hook (dired-mode . dired-hide-dotfiles-mode)
+       :config
+       (evil-collection-define-key 'normal 'dired-mode-map
+    	 "H" 'dired-hide-dotfiles-mode))
+    (use-package dired-rainbow
+       :defer 2
+       :config
+       (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+       (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+       (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+       (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+       (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+       (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+       (dired-rainbow-define media "#de751f" ("mp3" "mp4" "mkv" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+       (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+       (dired-rainbow-define log "#c17d11" ("log"))
+       (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+       (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+       (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+       (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+       (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+       (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+       (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+       (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+       (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+       (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+       (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*"))
 
 
-<a id="org832d657"></a>
+<a id="org8e8aeff"></a>
 
 ## NeoTree
 
 
-<a id="org8438c2b"></a>
+<a id="orga79a9cb"></a>
 
 ### KeyBindings
 
@@ -1250,17 +1499,117 @@ to commit changes on a project.
 -   `C-c C-p` Copy a file or a directory.
 
 
-<a id="org395ed0a"></a>
+<a id="org07cddfa"></a>
 
 ### Configuration
 
     
     (use-package neotree
-      :config
+      :defer t
+      :init
       (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 
-<a id="org2bdd679"></a>
+<a id="org8e085a0"></a>
+
+# Org-Roam
+
+    (use-package org-roam
+      :after org-mode
+      :straight t
+      :hook
+      (after-init . org-roam-mode)
+      :custom
+      (org-roam-directory "~/Notes/Roam/")
+      (org-roam-completion-everywhere t)
+      (org-roam-completion-system 'default)
+      (org-roam-capture-templates
+    	'(("d" "default" plain
+    	   #'org-roam-capture--get-point
+    	   "%?"
+    	   :file-name "%<%Y%m%d%H%M%S>-${slug}"
+    	   :head "#+title: ${title}\n"
+    	   :unnarrowed t)
+    	  ("ll" "link note" plain
+    	   #'org-roam-capture--get-point
+    	   "* %^{Link}"
+    	   :file-name "Inbox"
+    	   :olp ("Links")
+    	   :unnarrowed t
+    	   :immediate-finish)
+    	  ("lt" "link task" entry
+    	   #'org-roam-capture--get-point
+    	   "* TODO %^{Link}"
+    	   :file-name "Inbox"
+    	   :olp ("Tasks")
+    	   :unnarrowed t
+    	   :immediate-finish)))
+      (org-roam-dailies-directory "Journal/")
+      (org-roam-dailies-capture-templates
+    	'(("d" "default" entry
+    	   #'org-roam-capture--get-point
+    	   "* %?"
+    	   :file-name "Journal/%<%Y-%m-%d>"
+    	   :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+    	  ("t" "Task" entry
+    	   #'org-roam-capture--get-point
+    	   "* TODO %?\n  %U\n  %a\n  %i"
+    	   :file-name "Journal/%<%Y-%m-%d>"
+    	   :olp ("Tasks")
+    	   :empty-lines 1
+    	   :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+    	  ("j" "journal" entry
+    	   #'org-roam-capture--get-point
+    	   "* %<%I:%M %p> - Journal  :journal:\n\n%?\n\n"
+    	   :file-name "Journal/%<%Y-%m-%d>"
+    	   :olp ("Log")
+    	   :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+    	  ("l" "log entry" entry
+    	   #'org-roam-capture--get-point
+    	   "* %<%I:%M %p> - %?"
+    	   :file-name "Journal/%<%Y-%m-%d>"
+    	   :olp ("Log")
+    	   :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")
+    	  ("m" "meeting" entry
+    	   #'org-roam-capture--get-point
+    	   "* %<%I:%M %p> - %^{Meeting Title}  :meetings:\n\n%?\n\n"
+    	   :file-name "Journal/%<%Y-%m-%d>"
+    	   :olp ("Log")
+    	   :head "#+title: %<%Y-%m-%d %a>\n\n[[roam:%<%Y-%B>]]\n\n")))
+      :bind (:map org-roam-mode-map
+    		  (("C-c n l"   . org-roam)
+    		   ("C-c n f"   . org-roam-find-file)
+    		   ("C-c n d"   . org-roam-dailies-find-date)
+    		   ("C-c n c"   . org-roam-dailies-capture-today)
+    		   ("C-c n C r" . org-roam-dailies-capture-tomorrow)
+    		   ("C-c n t"   . org-roam-dailies-find-today)
+    		   ("C-c n y"   . org-roam-dailies-find-yesterday)
+    		   ("C-c n r"   . org-roam-dailies-find-tomorrow)
+    		   ("C-c n g"   . org-roam-graph))
+    		 :map org-mode-map
+    		 (("C-c n i" . org-roam-insert))
+    		 (("C-c n I" . org-roam-insert-immediate))))
+
+
+<a id="org8b0c683"></a>
+
+# Chats
+
+
+<a id="org20d452e"></a>
+
+## Discord
+
+    
+    (use-package elcord
+      :straight t
+      :custom
+      (elcord-display-buffer-details nil)
+      :config
+      (elcord-mode))
+
+
+<a id="orgc4ef220"></a>
 
 # Structure Templates
 
@@ -1273,12 +1622,12 @@ to commit changes on a project.
       (add-to-list 'org-structure-template-alist '("js" . "src javascript")))
 
 
-<a id="org41c0d36"></a>
+<a id="orgd34bfa2"></a>
 
 # Applications
 
 
-<a id="orgd1c70a9"></a>
+<a id="orgdeddbca"></a>
 
 ## example config 'Some App'
 
