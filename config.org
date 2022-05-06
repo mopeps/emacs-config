@@ -502,16 +502,19 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use.  [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
 
 #+begin_src emacs-lisp
-	  (with-eval-after-load 'org
-		(org-babel-do-load-languages
-		  'org-babel-load-languages
-		  '((emacs-lisp . t)
-			(python . t)
-			(typescript . t)
-			(go . t)
-			(rust . t)))
+  (use-package ob-rust)
+  (use-package ob-go)
+  (use-package ob-typescript)
+  (with-eval-after-load 'org
+	(org-babel-do-load-languages
+	  'org-babel-load-languages
+	  '((emacs-lisp . t)
+		(python . t)
+		(typescript . t)
+		(go . t)
+		(rust . t)))
 
-		(push '("conf-unix" . conf-unix) org-src-lang-modes))
+	(push '("conf-unix" . conf-unix) org-src-lang-modes))
 #+end_src
 
 * Development
@@ -599,52 +602,61 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 #+begin_src emacs-lisp
 
 
-	(defun bonk/lsp-mode-setup ()
-	  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-	  (lsp-headerline-breadcrumb-mode))
+  (defun bonk/lsp-mode-setup ()
+	(setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+	(lsp-headerline-breadcrumb-mode))
 
-	(use-package lsp-mode
-	  :ensure t
-	  :commands (lsp lsp-deferred)
-	  :hook (lsp-mode . bonk/lsp-mode-setup)
-	  :init
-	  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-	  :config
+  (use-package lsp-mode
+	:ensure t
+	:commands (lsp lsp-deferred)
+	:hook (lsp-mode . bonk/lsp-mode-setup)
+	:init
+	(setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+	:config
 
-	  (add-hook 'typescript-mode-hook 'lsp)
-	  (add-hook 'rjsx-mode-hook 'lsp)
-	  (add-hook 'php-mode 'lsp)
-	  (add-hook 'css-mode 'lsp)
-	  (add-hook 'web-mode 'lsp)
-	  (lsp-enable-which-key-integration t)
-	  (setq lsp-completion-enable t)
+	(add-hook 'typescript-mode-hook 'lsp)
+	(add-hook 'rjsx-mode-hook 'lsp)
+	(add-hook 'php-mode 'lsp)
+	(add-hook 'css-mode 'lsp)
+	(add-hook 'web-mode 'lsp)
+	(lsp-enable-which-key-integration t)
+	(setq lsp-completion-enable t)
 
-	  (setq lsp-language-id-configuration '((java-mode . "java")
-						(python-mode . "python")
-						(gfm-view-mode . "markdown")
-						(rust-mode . "rust")
-						(css-mode . "css")
-						(xml-mode . "xml")
-						(c-mode . "c")
-						(c++-mode . "cpp")
-						(objc-mode . "objective-c")
-						(web-mode . "html")
-						(html-mode . "html")
-						(sgml-mode . "html")
-						(mhtml-mode . "html")
-						(go-mode . "go")
-						(haskell-mode . "haskell")
-						(php-mode . "php")
-						(json-mode . "json")
-						(rjsx-mode . "javascript")
-						(typescript-mode . "typescript")
-						))
+	(setq lsp-language-id-configuration '((java-mode . "java")
+										  (python-mode . "python")
+										  (gfm-view-mode . "markdown")
+										  (rust-mode . "rust")
+										  (css-mode . "css")
+										  (xml-mode . "xml")
+										  (c-mode . "c")
+										  (c++-mode . "cpp")
+										  (objc-mode . "objective-c")
+										  (web-mode . "html")
+										  (html-mode . "html")
+										  (sgml-mode . "html")
+										  (mhtml-mode . "html")
+										  (go-mode . "go")
+										  (haskell-mode . "haskell")
+										  (php-mode . "php")
+										  (json-mode . "json")
+										  (rjsx-mode . "javascript")
+										  (typescript-mode . "typescript")
+										  ))
 
-	  (setq lsp-diagnostics-provider :none)
+	(setq lsp-diagnostics-provider :none)
 
-	  :custom
-	  (lsp-file-watch-threshold nil)
-	  (lsp-solargraph-multi-root nil))
+	:custom
+	(lsp-file-watch-threshold nil)
+	(lsp-solargraph-multi-root nil)
+	;; enable / disable the hints as you prefer:
+	(lsp-rust-analyzer-server-display-inlay-hints t)
+	(lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+	(lsp-rust-analyzer-display-chaining-hints t)
+	(lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+	(lsp-rust-analyzer-display-closure-return-type-hints t)
+	(lsp-rust-analyzer-display-parameter-hints nil)
+	(lsp-rust-analyzer-display-reborrow-hints nil)
+	)
 
 #+end_src
 
@@ -657,9 +669,11 @@ of this paragraph) to see examples of what it can do.
 #+begin_src emacs-lisp
 
   (use-package lsp-ui
-    :hook (lsp-mode . lsp-ui-mode)
-    :custom
-    (lsp-ui-doc-position 'bottom))
+	:hook (lsp-mode . lsp-ui-mode)
+	:custom
+	(lsp-ui-peek-always-show t)
+  (lsp-ui-sideline-show-hover t)
+	(lsp-ui-doc-position 'bottom))
 
 #+end_src
 
@@ -898,8 +912,100 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 #+end_src
 
 *** Rust
+
+**** PreRequisites
+First of all, you'll need rust installed (obviously). Afterwards, it would be a good idea to have the
+rust-analyzer server running on background. You can install it by doing the following
+
+#+begin_src shell
+
+	$ git clone https://github.com/rust-analyzer.git
+  $ cd rust-analyzer
+  $ cargo xtask install --server # will install rust-analyzer into $HOME/.cargo/bin
+
+#+end_src
+
+By the way, it would be a good idea to check the changelog before cloning the HEAD of the repo, since
+some versions might not work for every machine.
+
+**** Config
+
+#+begin_src emacs-lisp
+  (use-package rustic
+	:ensure
+	:bind (:map rustic-mode-map
+				("M-j" . lsp-ui-imenu)
+				("M-?" . lsp-find-references)
+				("C-c C-c l" . flycheck-list-errors)
+				("C-c C-c a" . lsp-execute-code-action)
+				("C-c C-c r" . lsp-rename)
+				("C-c C-c q" . lsp-workspace-restart)
+				("C-c C-c Q" . lsp-workspace-shutdown)
+				("C-c C-c s" . lsp-rust-analyzer-status)
+				("C-c C-c e" . lsp-rust-analyzer-expand-macro)
+				("C-c C-c d" . dap-hydra)
+				("C-c C-c h" . lsp-ui-doc-glance))
+	:config
+	;; uncomment for less flashiness
+	;; (setq lsp-eldoc-hook nil)
+	;; (setq lsp-enable-symbol-highlighting nil)
+	;; (setq lsp-signature-auto-activate nil)
+
+	;; comment to disable rustfmt on save
+	(setq rustic-format-on-save t)
+	(add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+
+  (defun rk/rustic-mode-hook ()
+	;; so that run C-c C-c C-r works without having to confirm, but don't try to
+	;; save rust buffers that are not file visiting. Once
+	;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
+	;; no longer be necessary.
+	(when buffer-file-name
+	  (setq-local buffer-save-without-query t)));; Create / cleanup rust scratch projects quickly
+
+  (use-package rust-playground :ensure)
+
+
+  ;; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  ;; for Cargo.toml and other config files
+
+  (use-package toml-mode :ensure)
+
+
+  ;; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  ;; setting up debugging support with dap-mode (dap-mode is mainly used
+  ;; for debugging in emacs, not only rust)
+
+  (use-package exec-path-from-shell
+	:ensure
+	:init (exec-path-from-shell-initialize))
+
+  (when (executable-find "lldb-mi")
+	(use-package dap-mode
+	  :ensure
+	  :config
+	  (dap-ui-mode)
+	  (dap-ui-controls-mode 1)
+
+	  (require 'dap-lldb)
+	  (require 'dap-gdb-lldb)
+	  ;; installs .extension/vscode
+	  (dap-gdb-lldb-setup)
+	  (dap-register-debug-template
+	   "Rust::LLDB Run Configuration"
+	   (list :type "lldb"
+			 :request "launch"
+			 :name "LLDB::Run"
+		 :gdbpath "rust-lldb"
+			 ;; uncomment if lldb-mi is not in PATH
+			 ;; :lldbmipath "path/to/lldb-mi"
+			 ))))
+#+end_src
+
+
 *** C/C++
 #+begin_src emacs-lisp
+  (use-package cuda-mode)
   (use-package ccls
 	:hook ((c-mode c++-mode objc-mode cuda-mode) .
 		   (lambda () (require 'ccls) (lsp))))
@@ -1385,7 +1491,7 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 
   (use-package neotree
 	:defer t
-	:init
+	:custom
 	(setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 

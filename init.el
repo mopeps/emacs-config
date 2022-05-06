@@ -343,6 +343,9 @@
       (org-babel-tangle)))
   (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'bonk/org-babel-tangle-config))))
 
+(use-package ob-rust)
+(use-package ob-go)
+(use-package ob-typescript)
 (with-eval-after-load 'org
   (org-babel-do-load-languages
 	'org-babel-load-languages
@@ -425,35 +428,46 @@
   (setq lsp-completion-enable t)
 
   (setq lsp-language-id-configuration '((java-mode . "java")
-					(python-mode . "python")
-					(gfm-view-mode . "markdown")
-					(rust-mode . "rust")
-					(css-mode . "css")
-					(xml-mode . "xml")
-					(c-mode . "c")
-					(c++-mode . "cpp")
-					(objc-mode . "objective-c")
-					(web-mode . "html")
-					(html-mode . "html")
-					(sgml-mode . "html")
-					(mhtml-mode . "html")
-					(go-mode . "go")
-					(haskell-mode . "haskell")
-					(php-mode . "php")
-					(json-mode . "json")
-					(rjsx-mode . "javascript")
-					(typescript-mode . "typescript")
-					))
+										(python-mode . "python")
+										(gfm-view-mode . "markdown")
+										(rust-mode . "rust")
+										(css-mode . "css")
+										(xml-mode . "xml")
+										(c-mode . "c")
+										(c++-mode . "cpp")
+										(objc-mode . "objective-c")
+										(web-mode . "html")
+										(html-mode . "html")
+										(sgml-mode . "html")
+										(mhtml-mode . "html")
+										(go-mode . "go")
+										(haskell-mode . "haskell")
+										(php-mode . "php")
+										(json-mode . "json")
+										(rjsx-mode . "javascript")
+										(typescript-mode . "typescript")
+										))
 
   (setq lsp-diagnostics-provider :none)
 
   :custom
   (lsp-file-watch-threshold nil)
-  (lsp-solargraph-multi-root nil))
+  (lsp-solargraph-multi-root nil)
+  ;; enable / disable the hints as you prefer:
+  (lsp-rust-analyzer-server-display-inlay-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+  (lsp-rust-analyzer-display-chaining-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+  (lsp-rust-analyzer-display-closure-return-type-hints t)
+  (lsp-rust-analyzer-display-parameter-hints nil)
+  (lsp-rust-analyzer-display-reborrow-hints nil)
+  )
 
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
   :custom
+  (lsp-ui-peek-always-show t)
+(lsp-ui-sideline-show-hover t)
   (lsp-ui-doc-position 'bottom))
 
 (use-package lsp-treemacs
@@ -588,6 +602,77 @@
     (require 'company)
     (slime-setup '(slime-fancy slime-company)))
 
+(use-package rustic
+  :ensure
+  :bind (:map rustic-mode-map
+			  ("M-j" . lsp-ui-imenu)
+			  ("M-?" . lsp-find-references)
+			  ("C-c C-c l" . flycheck-list-errors)
+			  ("C-c C-c a" . lsp-execute-code-action)
+			  ("C-c C-c r" . lsp-rename)
+			  ("C-c C-c q" . lsp-workspace-restart)
+			  ("C-c C-c Q" . lsp-workspace-shutdown)
+			  ("C-c C-c s" . lsp-rust-analyzer-status)
+			  ("C-c C-c e" . lsp-rust-analyzer-expand-macro)
+			  ("C-c C-c d" . dap-hydra)
+			  ("C-c C-c h" . lsp-ui-doc-glance))
+  :config
+  ;; uncomment for less flashiness
+  ;; (setq lsp-eldoc-hook nil)
+  ;; (setq lsp-enable-symbol-highlighting nil)
+  ;; (setq lsp-signature-auto-activate nil)
+
+  ;; comment to disable rustfmt on save
+  (setq rustic-format-on-save t)
+  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+
+(defun rk/rustic-mode-hook ()
+  ;; so that run C-c C-c C-r works without having to confirm, but don't try to
+  ;; save rust buffers that are not file visiting. Once
+  ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
+  ;; no longer be necessary.
+  (when buffer-file-name
+	(setq-local buffer-save-without-query t)));; Create / cleanup rust scratch projects quickly
+
+(use-package rust-playground :ensure)
+
+
+;; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+;; for Cargo.toml and other config files
+
+(use-package toml-mode :ensure)
+
+
+;; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+;; setting up debugging support with dap-mode (dap-mode is mainly used
+;; for debugging in emacs, not only rust)
+
+(use-package exec-path-from-shell
+  :ensure
+  :init (exec-path-from-shell-initialize))
+
+(when (executable-find "lldb-mi")
+  (use-package dap-mode
+	:ensure
+	:config
+	(dap-ui-mode)
+	(dap-ui-controls-mode 1)
+
+	(require 'dap-lldb)
+	(require 'dap-gdb-lldb)
+	;; installs .extension/vscode
+	(dap-gdb-lldb-setup)
+	(dap-register-debug-template
+	 "Rust::LLDB Run Configuration"
+	 (list :type "lldb"
+		   :request "launch"
+		   :name "LLDB::Run"
+	   :gdbpath "rust-lldb"
+		   ;; uncomment if lldb-mi is not in PATH
+		   ;; :lldbmipath "path/to/lldb-mi"
+		   ))))
+
+(use-package cuda-mode)
 (use-package ccls
   :hook ((c-mode c++-mode objc-mode cuda-mode) .
 		 (lambda () (require 'ccls) (lsp))))
@@ -830,7 +915,7 @@
 
 (use-package neotree
   :defer t
-  :init
+  :custom
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 (use-package org-roam
