@@ -49,7 +49,7 @@
   (defun my-frame-init ()
 	;; eg.
 	(set-face-attribute 'default nil
-						:font  "fira code-12")
+						:font  "fira code-13")
 	(set-face-attribute 'mode-line nil
 						:font "cascadia code-11"
 						:weight 'normal)
@@ -410,15 +410,18 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
   (defun bonk/org-no-line-number ()
 	(global-display-line-numbers-mode 0))
 
-	(use-package org
-	  :pin org
-	  :commands (org-capture org-agenda)
-	  :hook
-	  (org-mode . bonk/org-mode-setup)
-	   (org-mode . bonk/org-no-line-number)
-	  :config
-	  (setq org-ellipsis " ▾")
-	  (bonk/org-font-setup))
+(use-package org
+  :straight (:no-native-compile t)
+  :demand t
+  :load-path "~/.emacs.d/elpa/org-9.5/"
+    :pin org
+	:commands (org-capture org-agenda)
+	:hook
+	(org-mode . bonk/org-mode-setup)
+	 (org-mode . bonk/org-no-line-number)
+	:config
+	(setq org-ellipsis " ▾")
+	(bonk/org-font-setup))
 
 
 #+end_src

@@ -279,10 +279,13 @@
 							 "*Messages*" "Async Shell Command")))
 
 (defun bonk/org-no-line-number ()
-  (global-display-line-numbers-mode 0))
+	(global-display-line-numbers-mode 0))
 
-  (use-package org
-	:pin org
+(use-package org
+  :straight (:no-native-compile t)
+  :demand t
+  :load-path "~/.emacs.d/elpa/org-9.5/"
+    :pin org
 	:commands (org-capture org-agenda)
 	:hook
 	(org-mode . bonk/org-mode-setup)
