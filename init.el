@@ -36,11 +36,11 @@
 (defun my-frame-init ()
   ;; eg.
   (set-face-attribute 'default nil
-					  :font  "fira code-12")
+					  :font  "cascadia code-13")
   (set-face-attribute 'mode-line nil
 					  :font "cascadia code-11"
 					  :weight 'normal)
-	  (load-theme 'base16-gruvbox-dark-soft t))
+	  (load-theme 'base16-nord t))
 
 (if (daemonp)
 	(add-hook 'after-make-frame-functions
@@ -470,7 +470,8 @@
   :hook (lsp-mode . lsp-ui-mode)
   :custom
   (lsp-ui-peek-always-show t)
-(lsp-ui-sideline-show-hover t)
+(lsp-ui-sideline-show-hover nil)
+(lsp-ui-doc-enable t)
   (lsp-ui-doc-position 'bottom))
 
 (use-package lsp-treemacs
@@ -676,9 +677,6 @@
 		   ))))
 
 (use-package cuda-mode)
-(use-package ccls
-  :hook ((c-mode c++-mode objc-mode cuda-mode) .
-		 (lambda () (require 'ccls) (lsp))))
 (use-package flycheck-clang-analyzer
   :ensure t
   :config
