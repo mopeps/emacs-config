@@ -279,7 +279,7 @@
 							 "*Messages*" "Async Shell Command")))
 
 (defun bonk/org-no-line-number ()
-	(global-display-line-numbers-mode 0))
+	(display-line-numbers-mode 0))
 
 (use-package org
   :straight (:no-native-compile t)
@@ -493,7 +493,7 @@
 	(setq yas-snippt-dirs '(yasnippet-snippets-dir)))
 
   (yas-reload-all)
-  (yas-global-mode))
+  (yas-global-mode 1))
 
 (use-package yasnippet-snippets         ; Collection of snippets
   :after yasnippet)

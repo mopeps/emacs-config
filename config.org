@@ -408,7 +408,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 #+begin_src emacs-lisp
 
   (defun bonk/org-no-line-number ()
-	(global-display-line-numbers-mode 0))
+	(display-line-numbers-mode 0))
 
 (use-package org
   :straight (:no-native-compile t)
@@ -736,7 +736,7 @@ Try these commands with =M-x=:
 		  (setq yas-snippt-dirs '(yasnippet-snippets-dir)))
 
 		(yas-reload-all)
-		(yas-global-mode))
+		(yas-global-mode 1))
 
 	  (use-package yasnippet-snippets         ; Collection of snippets
 		:after yasnippet)

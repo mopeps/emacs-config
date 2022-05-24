@@ -1,0 +1,22 @@
+#+title: Plan to bring Bonk's emacs to life
+
+* TODO BONK's EMACS
+:PROPERTIES:
+:ORDERED: t
+:END: 
+
+** TODO Core lib
+*** TODO Main file (package manager installation and choice, system configs and tweaks, etc)
+*** TODO Package install macro
+*** TODO Set a list of predefined packages with a given config (probs the ones installed)
+*** TODO Configure the prog-mode and file management
+*** TODO Configure The default UI for this emacs config
+*** TODO Predefine keybindings
+*** TODO Optimize the crap out of all packages and default emacs settings
+*** TODO Test the different files
+
+** TODO Refactor Config.org
+** TODO Makefile for all org-files
+** TODO Optimize code (AKA Make it nice to read for other people)
+** TODO ?????
+** TODO Profit ? :)
