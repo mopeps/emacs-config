@@ -33,6 +33,8 @@
 
 #+end_src
 
+#+RESULTS:
+
 ** Font Configuration
 
 #+begin_src emacs-lisp
@@ -53,7 +55,7 @@
 	(set-face-attribute 'mode-line nil
 						:font "cascadia code-11"
 						:weight 'normal)
-		(load-theme 'base16-nord t))
+		(load-theme 'base16-onedark t))
 
   (if (daemonp)
 	  (add-hook 'after-make-frame-functions
@@ -93,6 +95,9 @@
 
   #+end_src
 
+  #+RESULTS:
+  : t
+
 * Package And System setup
 
 #+begin_src emacs-lisp
@@ -124,6 +129,8 @@
   (use-package use-package-ensure-system-package)
 
 #+end_src
+
+#+RESULTS:
 
 
 ** Straight.el
@@ -1010,12 +1017,15 @@ some versions might not work for every machine.
 *** C/C++
 #+begin_src emacs-lisp
   (use-package cuda-mode)
+  (add-hook 'c-mode-hook 'lsp)
+  (add-hook 'c++-mode-hook 'lsp)
+
   (use-package flycheck-clang-analyzer
 	:ensure t
 	:config
 	(with-eval-after-load 'flycheck
 	  (require 'flycheck-clang-analyzer)
-	   (flycheck-clang-analyzer-setup)))
+	  (flycheck-clang-analyzer-setup)))
 
   (with-eval-after-load 'company
 	(add-hook 'c++-mode-hook 'company-mode)
@@ -1619,7 +1629,8 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 	(add-to-list 'org-structure-template-alist '("py" . "src python"))
 	(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 	(add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
-	(add-to-list 'org-structure-template-alist '("js" . "src javascript")))
+	(add-to-list 'org-structure-template-alist '("js" . "src javascript"))
+	(add-to-list 'org-structure-template-alist '("cpp" . "src C++")))
 
 #+end_src
 

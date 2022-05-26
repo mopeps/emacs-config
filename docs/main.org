@@ -1,0 +1,49 @@
+#+title: Main file
+#+OPTIONS: toc:t
+#+PROPERTY: header-args:emacs-lisp :tangle ./../core/main.el :mkdirp yes
+
+
+* Preface
+
+It's been a while since i wanted to write a properly documented and organized emacs configuration.
+Looking at other popular configurations i found out that the documentation of most of them consists
+of 3/4 lines of comments over some functions.imo, this kind of sucks, since it makes reallyyy hard
+to replicate or understand whats really going on under the hood, unless of course, you are some kind
+of elisp guru.
+Basically the objective of =Bonk Emacs= is to mantain a minimalistic, optimized and well documented
+configuration which can be easily replicated and understood. To be honest, i'm probably gonna do some
+stuff which has already been done on other configs,and by that, i mean, i'm probably gonna reuse a lot
+of  the code they use.
+
+This was a really good opportunity for me to learn more about lisp.
+
+keep bonking mates.
+
+* Main-file
+
+** Version
+
+** Package and System Setup
+
+Let's start by setting up some basic package and system stuff.
+
+#+begin_src emacs-lisp
+  (require 'main-lib)
+
+  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			   ("org" . "https://orgmode.org/elpa/")
+			   ("elpa" . "https://elpa.gnu.org/packages/")))
+
+
+  (setq package-check-signature nil)
+  ;; probably not necessary yet, but i will probably turn it on later
+
+#+end_src
+
+As you can see, i'm requiring the main-lib, which is a custom lib made exclusively for bonk emacs.
+In there, you'll find helper functions, definition of syntactic sugar and the common libraries being
+used.
+
+
+** Some optimizations
+

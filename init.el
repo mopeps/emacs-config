@@ -40,7 +40,7 @@
   (set-face-attribute 'mode-line nil
 					  :font "cascadia code-11"
 					  :weight 'normal)
-	  (load-theme 'base16-nord t))
+	  (load-theme 'base16-onedark t))
 
 (if (daemonp)
 	(add-hook 'after-make-frame-functions
@@ -677,12 +677,15 @@
 		   ))))
 
 (use-package cuda-mode)
+(add-hook 'c-mode-hook 'lsp)
+(add-hook 'c++-mode-hook 'lsp)
+
 (use-package flycheck-clang-analyzer
   :ensure t
   :config
   (with-eval-after-load 'flycheck
 	(require 'flycheck-clang-analyzer)
-	 (flycheck-clang-analyzer-setup)))
+	(flycheck-clang-analyzer-setup)))
 
 (with-eval-after-load 'company
   (add-hook 'c++-mode-hook 'company-mode)
@@ -1008,4 +1011,5 @@
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
-  (add-to-list 'org-structure-template-alist '("js" . "src javascript")))
+  (add-to-list 'org-structure-template-alist '("js" . "src javascript"))
+  (add-to-list 'org-structure-template-alist '("cpp" . "src C++")))
