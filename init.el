@@ -288,11 +288,10 @@
     :pin org
 	:commands (org-capture org-agenda)
 	:hook
-	(org-mode . bonk/org-mode-setup)
 	 (org-mode . bonk/org-no-line-number)
 	:config
 	(setq org-ellipsis " ▾")
-	(bonk/org-font-setup))
+	)
 
 (defun bonk/org-font-setup ()
   ;; Replace list hyphen with dot
@@ -408,7 +407,8 @@
 (setq gc-cons-threshold 100000000)
 (when (boundp 'read-process-output-max)
   ;; New in Emacs 27
-  (setq read-process-output-max (* 2048 2048)))
+  (setq read-process-output-max (* 2048 2048))
+  (load-file "./magit.el"))
 
 (defun bonk/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))

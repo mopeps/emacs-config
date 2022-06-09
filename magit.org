@@ -1,0 +1,17 @@
+#+Title: Magit Conf
+#+OPTIONS: toc:t
+#+PROPERTY: header-args:emacs-lisp :tangle ./magit.el
+
+* Basic conf
+
+#+begin_src emacs-lisp
+
+  (use-package magit
+  :commands magit-status
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+  (use-package forge
+	:after magit)
+
+#+end_src
