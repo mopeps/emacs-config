@@ -1,3 +1,4 @@
+
 #+title: Bonk's emacs config
 #+OPTIONS: toc:t
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
@@ -35,69 +36,6 @@
 
 #+RESULTS:
 
-** Font Configuration
-
-#+begin_src emacs-lisp
-		;; UTF-8 as default encoding
-
-		(set-language-environment "utf-8")
-		(prefer-coding-system 'utf-8)
-		(setq coding-system-for-read 'utf-8)
-		(setq coding-system-for-write 'utf-8)
-
-  (defun set-font-to-fira-code ()
-	(set-face-attribute 'default nil
-						:font "fira code-12"))
-  (defun my-frame-init ()
-	;; eg.
-	(set-face-attribute 'default nil
-						:font  "cascadia code-13")
-	(set-face-attribute 'mode-line nil
-						:font "cascadia code-11"
-						:weight 'normal)
-		(load-theme 'base16-onedark t))
-
-  (if (daemonp)
-	  (add-hook 'after-make-frame-functions
-				(lambda (frame)
-				  (select-frame frame)
-				  (my-frame-init)))
-	(my-frame-init))
-
-		;; (C-q Tab) inserts a tab space
-		(add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
-	  (load-file "./ligature.el")
-	  (use-package ligature
-		:load-path "."
-		:config
-		;; Enable the "www" ligature in every possible major mode
-		(ligature-set-ligatures 't '("www"))
-		;; Enable traditional ligature support in eww-mode, if the
-		;; `variable-pitch' face supports it
-		(ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-		;; Enable all Cascadia Code ligatures in programming modes
-		(ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-											 ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-											 "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-											 "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-											 "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-											 "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-											 "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-											 "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-											 ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-											 "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-											 "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-											 "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-											 "\\\\" "://"))
-		;; Enables ligature checks globally in all buffers. You can also do it
-		;; per mode with `ligature-mode'.
-		(global-ligature-mode t))
-
-  #+end_src
-
-  #+RESULTS:
-  : t
-
 * Package And System setup
 
 #+begin_src emacs-lisp
@@ -116,7 +54,6 @@
   (package-initialize)
   (unless package-archive-contents
     (package-refresh-contents))
-  (use-package exec-path-from-shell)
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize))
 
@@ -183,13 +120,22 @@ for evil-mode.
 	  "t"  '(:ignore t :which-key "toggles")
 	  "tt" '(counsel-load-theme :which-key "choose theme")
 	;; Window navigation
-	  "H" '(windmove-left :which-key "move to left window")
-	  "L" '(windmove-right :which-key "move to right window")
-	  "J" '(windmove-down :which-key "move to below window")
-	  "K" '(windmove-up :which-key "move to above window")
+	  "h" '(evil-window-left :which-key "move to left window")
+	  "l" '(evil-window-right :which-key "move to right window")
+	  "j" '(evil-window-down :which-key "move to below window")
+	  "k" '(evil-window-up :which-key "move to above window")
+
+	  "H" '(evil-window-far-left :which-key "move to left window")
+	  "L" '(evil-window-far-right :which-key "move to right window")
+	  "J" '(evil-window-very-bottom :which-key "move to below window")
+	  "K" '(evil-window-very-top :which-key "move to above window")
+	;; Window Splitting
+	  "v" '(evil-window-vsplit :which-key "vertical window split")
+	  "s" '(evil-window-split :which-key "window split")
+	  "c" '(evil-window-delete :which-key "close current window")
 	;; Buffer options
 	  "DD" '(kill-this-buffer :which "kills the current buffer")
-	  "vcc" '(vterm-send-C-c :which "kills current vterm process")
+	  "Vcc" '(vterm-send-C-c :which "kills current vterm process")
 	  "nn" '(neotree-toggle :which "toggles neotree")
 	;; Origami options
 	  "oon" '(origami-open-node :which "opens current origami node")
@@ -226,6 +172,69 @@ for evil-mode.
 #+end_src
 
 * UI Configuration
+
+** Font Configuration
+
+#+begin_src emacs-lisp
+		;; UTF-8 as default encoding
+
+		(set-language-environment "utf-8")
+		(prefer-coding-system 'utf-8)
+		(setq coding-system-for-read 'utf-8)
+		(setq coding-system-for-write 'utf-8)
+
+  (defun set-font-to-fira-code ()
+	(set-face-attribute 'default nil
+						:font "fira code-12"))
+  (defun my-frame-init ()
+	;; eg.
+	(set-face-attribute 'default nil
+						:font "Cascadia Code-13")
+	(set-face-attribute 'mode-line nil
+						:font "Fira Code-11"
+						:weight 'normal)
+		(load-theme 'base16-onedark t))
+
+  (if (daemonp)
+	  (add-hook 'after-make-frame-functions
+				(lambda (frame)
+				  (select-frame frame)
+				  (my-frame-init)))
+	(my-frame-init))
+
+		;; (C-q Tab) inserts a tab space
+		(add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
+	  (load-file "./ligature.el")
+	  (use-package ligature
+		:load-path "."
+		:config
+		;; Enable the "www" ligature in every possible major mode
+		(ligature-set-ligatures 't '("www"))
+		;; Enable traditional ligature support in eww-mode, if the
+		;; `variable-pitch' face supports it
+		(ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+		;; Enable all Cascadia Code ligatures in programming modes
+		(ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+											 ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+											 "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+											 "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+											 "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+											 "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+											 "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+											 "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+											 ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+											 "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+											 "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+											 "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+											 "\\\\" "://"))
+		;; Enables ligature checks globally in all buffers. You can also do it
+		;; per mode with `ligature-mode'.
+		(global-ligature-mode t))
+
+  #+end_src
+
+  #+RESULTS:
+  : t
 
 ** Command Log Mode
 
@@ -816,20 +825,25 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 					 (eval-after-load 'company
 					   '(push 'company-robe company-backends))
      #+end_src
+
+     #+RESULTS:
      
 **** Flymake
      #+begin_src emacs-lisp
-		 (require 'flymake-ruby)
+		 (use-package flymake-ruby)
 		 (add-hook 'ruby-mode-hook 'flymake-ruby-load)
      #+end_src
 
 **** rspec-mode
      #+begin_src emacs-lisp
-	   (use-package rspec-mode
-		 :after ruby-mode)
-	   (eval-after-load 'rspec-mode
-		 '(rspec-install-snippets))
+			  (use-package rspec-mode
+				:after ruby-mode)
+				(setq rspec-use-rvm t)
      #+end_src
+
+     #+RESULTS:
+     : t
+
 *** Elixir
 
 #+begin_src emacs-lisp
@@ -1336,8 +1350,8 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+begin_src emacs-lisp
 	(bonk/leader-keys
-	  "vt" '(vterm-other-window :which-key "vterm in new window")
-	  "vb" '(vterm :which-key "open new buffer for vterm"))
+	  "Vt" '(vterm-other-window :which-key "vterm in new window")
+	  "Vb" '(vterm :which-key "open new buffer for vterm"))
 
 #+end_src
 
