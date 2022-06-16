@@ -1,4 +1,3 @@
-
 #+title: Bonk's emacs config
 #+OPTIONS: toc:t
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
@@ -97,6 +96,11 @@
 #+end_src
 #+RESULTS:
 
+* EXWM
+#+begin_example emacs-lisp
+(server-start)
+(load-file "./exwm.el")
+#+end_example
 * Keybinding Configuration
 
 This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil-mode]] for a Vi-like modal editing experience.
@@ -176,60 +180,62 @@ for evil-mode.
 ** Font Configuration
 
 #+begin_src emacs-lisp
-		;; UTF-8 as default encoding
+			;; UTF-8 as default encoding
 
-		(set-language-environment "utf-8")
-		(prefer-coding-system 'utf-8)
-		(setq coding-system-for-read 'utf-8)
-		(setq coding-system-for-write 'utf-8)
+			(set-language-environment "utf-8")
+			(prefer-coding-system 'utf-8)
+			(setq coding-system-for-read 'utf-8)
+			(setq coding-system-for-write 'utf-8)
 
-  (defun set-font-to-fira-code ()
-	(set-face-attribute 'default nil
-						:font "fira code-12"))
-  (defun my-frame-init ()
-	;; eg.
-	(set-face-attribute 'default nil
-						:font "Cascadia Code-13")
-	(set-face-attribute 'mode-line nil
-						:font "Fira Code-11"
-						:weight 'normal)
-		(load-theme 'base16-onedark t))
+	  (defun set-font-to-fira-code ()
+		(set-face-attribute 'default nil
+							:font "fira code-11"))
+	  (defun my-frame-init ()
+		;; eg.
+		(set-face-attribute 'default nil
+							:font "Mononoki Nerd Font-15"
+							:slant 'italic)
+		(set-face-attribute 'mode-line nil
+							:font "Fira Code-11"
+							:weight 'normal
+							:slant 'italic)
+			(load-theme 'base16-onedark t))
 
-  (if (daemonp)
-	  (add-hook 'after-make-frame-functions
-				(lambda (frame)
-				  (select-frame frame)
-				  (my-frame-init)))
-	(my-frame-init))
+	  (if (daemonp)
+		  (add-hook 'after-make-frame-functions
+					(lambda (frame)
+					  (select-frame frame)
+					  (my-frame-init)))
+		(my-frame-init))
 
-		;; (C-q Tab) inserts a tab space
-		(add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
-	  (load-file "./ligature.el")
-	  (use-package ligature
-		:load-path "."
-		:config
-		;; Enable the "www" ligature in every possible major mode
-		(ligature-set-ligatures 't '("www"))
-		;; Enable traditional ligature support in eww-mode, if the
-		;; `variable-pitch' face supports it
-		(ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-		;; Enable all Cascadia Code ligatures in programming modes
-		(ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-											 ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-											 "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-											 "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-											 "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-											 "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-											 "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-											 "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-											 ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-											 "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-											 "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-											 "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-											 "\\\\" "://"))
-		;; Enables ligature checks globally in all buffers. You can also do it
-		;; per mode with `ligature-mode'.
-		(global-ligature-mode t))
+			;; (C-q Tab) inserts a tab space
+			(add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
+		  (load-file "./ligature.el")
+		  (use-package ligature
+			:load-path "."
+			:config
+			;; Enable the "www" ligature in every possible major mode
+			(ligature-set-ligatures 't '("www"))
+			;; Enable traditional ligature support in eww-mode, if the
+			;; `variable-pitch' face supports it
+			(ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+			;; Enable all Cascadia Code ligatures in programming modes
+			(ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+												 ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+												 "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+												 "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+												 "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+												 "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+												 "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+												 "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+												 ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+												 "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+												 "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+												 "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+												 "\\\\" "://"))
+			;; Enables ligature checks globally in all buffers. You can also do it
+			;; per mode with `ligature-mode'.
+			(global-ligature-mode t))
 
   #+end_src
 
@@ -304,13 +310,13 @@ for evil-mode.
 	:diminish which-key-mode
 	:config
 	(which-key-mode)
-	(set-face-attribute 'which-key-local-map-description-face nil :font "Iosevka-12")
-	(set-face-attribute 'which-key-key-face nil :font "Iosevka-12")
-	(set-face-attribute 'which-key-separator-face nil :font "Iosevka-12")
-	(set-face-attribute 'which-key-note-face nil :font "Iosevka-12")
-	(set-face-attribute 'which-key-special-key-face nil :font "Iosevka-12")
-	(set-face-attribute 'which-key-group-description-face nil :font "Iosevka-12")
-	(set-face-attribute 'which-key-command-description-face nil :font "Iosevka-12")
+	(set-face-attribute 'which-key-local-map-description-face nil :font "fira code-10")
+	(set-face-attribute 'which-key-key-face nil :font "fira code-10")
+	(set-face-attribute 'which-key-separator-face nil :font "fira code-10")
+	(set-face-attribute 'which-key-note-face nil :font "fira code-10")
+	(set-face-attribute 'which-key-special-key-face nil :font "fira code-10")
+	(set-face-attribute 'which-key-group-description-face nil :font "fira code-10")
+	(set-face-attribute 'which-key-command-description-face nil :font "fira code-10")
 	(setq which-key-idle-delay 1)
 	(setq which-key-allow-imprecise-window-fit t))
 
@@ -770,6 +776,7 @@ Try these commands with =M-x=:
 			(setq flycheck-disabled-checkers '(ruby ruby-reek ruby-rubocop ruby-rubylint yaml-ruby))
 
     #+end_src
+
 *** TypeScript
 
 This is a basic configuration for the TypeScript language so that =.ts= files activate =typescript-mode= when opened.  We're also adding a hook to =typescript-mode-hook= to call =lsp-deferred= so that we activate =lsp-mode= to get LSP features every time we edit TypeScript code.
@@ -918,22 +925,23 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
   
 #+end_src
 
-*** Elisp
+*** Lispy languages
 #+begin_src emacs-lisp
-(add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
-(add-hook 'emacs-lisp-mode-hook 'company-mode)
+  (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
+  (add-hook 'emacs-lisp-mode-hook 'company-mode)
 
-(use-package slime
-  :ensure t
-  :config
-  (setq inferior-lisp-program "/usr/bin/sbcl")
-  (setq slime-contribs '(slime-fancy)))
+  (use-package slime
+	:ensure t
+	:config
+	(setq inferior-lisp-program "/usr/bin/sbcl")
+	(setq slime-contribs '(slime-fancy)))
 
-(use-package slime-company
-  :ensure t
-  :init
-    (require 'company)
-    (slime-setup '(slime-fancy slime-company)))
+  (use-package slime-company
+	:ensure t
+	:init
+	  (require 'company)
+	  (slime-setup '(slime-fancy slime-company)))
+
 #+end_src
 
 *** Rust
@@ -953,7 +961,7 @@ rust-analyzer server running on background. You can install it by doing the foll
 By the way, it would be a good idea to check the changelog before cloning the HEAD of the repo, since
 some versions might not work for every machine.
 
-**** Config
+**** COMMENT Config
 
 #+begin_src emacs-lisp
   (use-package rustic
@@ -1026,8 +1034,7 @@ some versions might not work for every machine.
 			 ;; :lldbmipath "path/to/lldb-mi"
 			 ))))
 #+end_src
-
-
+ 
 *** C/C++
 #+begin_src emacs-lisp
   (use-package cuda-mode)
@@ -1358,7 +1365,151 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 ** Shell-mode
    TBD (i'm pretty satisfied with vterm, but i could try this one day)
 ** Eshell
-   TBD (i'm pretty satisfied with vterm, but i could try this one day)
+
+Eshell is a shell-like command interpreter implemented in Emacs Lisp. It invokes no external
+processes except for those requested by the user. It is intended to be an alternative to the IELM
+(see Emacs Lisp Interaction in The Emacs Editor) REPL for Emacs and with an interface similar to
+command shells such as bash, zsh, rc, or 4dos.
+
+~I took daviwil's eshell config and just changed a few details~ I actually like his content a lot and
+i use his streams to learn more about emacs.
+** Eshell Helpers
+
+#+begin_src emacs-lisp
+  (defun read-file (file-path)
+	(with-temp-buffer
+	  (insert-file-contents file-path)
+	  (buffer-string)))
+
+  (defun get-current-package-version ()
+	(interactive)
+	(let ((package-json-file (concat (eshell/pwd) "/package.json")))
+	  (when (file-exists-p package-json-file)
+		(let* ((package-json-contents (read-file package-json-file))
+			   (package-json (ignore-errors (json-parse-string package-json-contents))))
+		  (when package-json
+			(ignore-errors (gethash "version" package-json)))))))
+  (defun map-line-to-status-char (line)
+	(cond ((string-match "^?\\? " line) "?")))
+
+  (defun get-git-status-prompt ()
+	(let ((status-lines (cdr (process-lines "git" "status" "--porcelain" "-b"))))
+	  (seq-uniq (seq-filter 'identity (mapcar 'map-line-to-status-char status-lines)))))
+
+  (defun get-prompt-path ()
+	(let* ((current-path (eshell/pwd))
+		   (git-output (shell-command-to-string "git rev-parse --show-toplevel"))
+		   (has-path (not (string-match "^fatal" git-output))))
+	  (if (not has-path)
+		  (abbreviate-file-name current-path)
+		(string-remove-prefix (file-name-directory git-output) current-path))))
+#+end_src
+
+#+RESULTS:
+: get-prompt-path
+
+** Eshell Prompt
+
+#+begin_src emacs-lisp
+;; This prompt function mostly replicates my custom zsh prompt setup
+;; that is powered by github.com/denysdovhan/spaceship-prompt.
+(defun eshell-prompt ()
+  (let ((current-branch (magit-get-current-branch))
+        (package-version (get-current-package-version)))
+    (concat
+     "\n"
+     (propertize (system-name) 'face `(:foreground "#62aeed"))
+     (propertize " at " 'face `(:foreground "white"))
+     (propertize (get-prompt-path) 'face `(:foreground "#82cfd3"))
+     (when current-branch
+       (concat
+        (propertize " • " 'face `(:foreground "white"))
+        (propertize (concat " " current-branch) 'face `(:foreground "#c475f0"))))
+     (when package-version
+       (concat
+        (propertize " @ " 'face `(:foreground "white"))
+        (propertize package-version 'face `(:foreground "#e8a206"))))
+     (propertize " • " 'face `(:foreground "white"))
+     (propertize (format-time-string "%I:%M:%S %p") 'face `(:foreground "#5a5b7f"))
+     (if (= (user-uid) 0)
+         (propertize "\n#" 'face `(:foreground "red2"))
+       (propertize "\nλ" 'face `(:foreground "#aece4a")))
+     (propertize " " 'face `(:foreground "white")))))
+#+end_src
+
+#+RESULTS:
+: eshell-prompt
+
+** Config
+
+#+begin_src emacs-lisp
+
+  (defun bonks/configure-eshell ()
+	;; Make sure magit is loaded
+	(require 'magit)
+
+	(require 'evil-collection-eshell)
+	(evil-collection-eshell-setup)
+
+	(use-package xterm-color)
+
+	(push 'eshell-tramp eshell-modules-list)
+	(push 'xterm-color-filter eshell-preoutput-filter-functions)
+	(delq 'eshell-handle-ansi-color eshell-output-filter-functions)
+
+	;; Save command history when commands are entered
+	(add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+	(add-hook 'eshell-before-prompt-hook
+			  (lambda ()
+				(setq xterm-color-preserve-properties t)))
+
+	;; Truncate buffer for performance
+	(add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+	;; We want to use xterm-256color when running interactive commands
+	;; in eshell but not during other times when we might be launching
+	;; a shell command to gather its output.
+	(add-hook 'eshell-pre-command-hook
+			  (lambda () (setenv "TERM" "xterm-256color")))
+	(add-hook 'eshell-post-command-hook
+			  (lambda () (setenv "TERM" "dumb")))
+
+	;; Use completion-at-point to provide completions in eshell
+	(define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
+
+	;; Initialize the shell history
+	(eshell-hist-initialize)
+
+	(evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'consult-history)
+	(evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+	(evil-normalize-keymaps)
+
+	(setenv "PAGER" "cat")
+
+	(setq eshell-prompt-function      'eshell-prompt
+		  eshell-prompt-regexp        "^λ "
+		  eshell-history-size         10000
+		  eshell-buffer-maximum-lines 10000
+		  eshell-hist-ignoredups t
+		  eshell-highlight-prompt t
+		  eshell-scroll-to-bottom-on-input t
+		  eshell-prefer-lisp-functions nil))
+
+  (use-package eshell
+	:hook (eshell-first-time-mode . bonks/configure-eshell)
+	:config
+
+	(with-eval-after-load 'esh-opt
+	  (setq eshell-destroy-buffer-when-process-dies t)
+	  (setq eshell-visual-commands '("htop" "zsh" "vim" "nvim"))))
+
+
+#+end_src
+
+#+RESULTS:
+| bonks/configure-eshell |
+
 * File Management
 ** Backup-files
 *** Configuration
@@ -1373,6 +1524,9 @@ to commit changes on a project.
 	`((".*" ,temporary-file-directory t)))
   (setq backup-directory-alist            '((".*" . "~/.Trash")))
 #+end_src
+
+#+RESULTS:
+: ((.* . ~/.Trash))
 
 ** Dired
 *** Key Bindings
@@ -1493,6 +1647,9 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 
 #+end_src
 
+#+RESULTS:
+: t
+
 ** NeoTree
 *** KeyBindings
 
@@ -1521,6 +1678,8 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 
 
 #+end_src
+
+#+RESULTS:
 
 * Org-Roam
 #+begin_src emacs-lisp
@@ -1601,30 +1760,19 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 		   (("C-c n I" . org-roam-insert-immediate))))
 #+end_src
 
+#+RESULTS:
+
 * Chats
-# ** Tracking
-# Necessary for stuff like telegram and some chat clients
-# #+begin_src emacs-lisp
-
-# (use-package tracking
-#   :defer t
-#   :config
-#   (setq tracking-faces-priorities '(all-the-icons-pink
-#                                     all-the-icons-lgreen
-#                                     all-the-icons-lblue))
-#   (setq tracking-frame-behavior nil))
-# #+end_src
-
-
 ** Discord
 #+begin_src emacs-lisp
 
-(use-package elcord
-  :straight t
-  :custom
-  (elcord-display-buffer-details nil)
-  :config
-  (elcord-mode))
+  ;; (use-package elcord
+  ;; :ensure nil
+  ;; 	:straight t
+  ;; 	:custom
+  ;; 	(elcord-display-buffer-details nil)
+  ;; 	:config
+  ;; 	(elcord-mode))
 #+end_src
 
 # ** Mastodon
@@ -1634,6 +1782,17 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 #   :config
 #   (setq mastodon-instance-url "https://mastodon.social"))
 # #+end_src
+
+* Mail Config
+
+#+begin_src emacs-lisp
+ ;; Comment this line if you don't have a email setup or if you don't want to set up any email
+  (load-file "./email.el")
+
+#+end_src
+
+#+RESULTS:
+: t
 
 * Structure Templates
 #+begin_src emacs-lisp
