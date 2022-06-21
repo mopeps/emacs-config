@@ -1012,7 +1012,8 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 	:init
 	  (require 'company)
 	  (slime-setup '(slime-fancy slime-company)))
-
+(use-package geiser)
+  (set-variable (quote scheme-program-name) "guile")
 #+end_src
 
 **** Geiser
