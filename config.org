@@ -429,20 +429,22 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 #+begin_src emacs-lisp
 
-  (defun bonk/org-no-line-number ()
-	(display-line-numbers-mode 0))
+	(defun bonk/org-no-line-number ()
+	  (display-line-numbers-mode 0))
 
-(use-package org
-  :straight (:no-native-compile t)
-  :demand t
-  :load-path "~/.emacs.d/elpa/org-9.5/"
-    :pin org
-	:commands (org-capture org-agenda)
-	:hook
-	 (org-mode . bonk/org-no-line-number)
-	:config
-	(setq org-ellipsis " ▾")
-	)
+  (use-package org
+	:straight (:no-native-compile t)
+	:demand t
+	:load-path "~/.emacs.d/elpa/org-9.5/"
+	  :pin org
+	  :commands (org-capture org-agenda)
+	  :hook
+	   (org-mode . bonk/org-no-line-number)
+	  :config
+	  (setq org-ellipsis " ▾")
+	  (setq org-hide-emphasis-markers t org-emphasis-alist '((\"\$\" bold)))
+	  (setq org-hide-emphasis-markers t) ;; Perhaps a bit redundant but still
+	  )
 
 
 #+end_src
@@ -536,6 +538,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 		(python . t)
 		(typescript . t)
 		(go . t)
+		(scheme . t)
 		(rust . t)))
 
 	(push '("conf-unix" . conf-unix) org-src-lang-modes))
@@ -845,7 +848,6 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
      #+begin_src emacs-lisp
 			  (use-package rspec-mode
 				:after ruby-mode)
-				(setq rspec-use-rvm t)
      #+end_src
 
      #+RESULTS:
@@ -944,6 +946,11 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 
 #+end_src
 
+**** Geiser
+#+begin_src emacs-lisp
+  (use-package geiser-guile
+	:ensure t)
+#+end_src
 *** Rust
 
 **** PreRequisites
@@ -1803,6 +1810,7 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 	(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 	(add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
 	(add-to-list 'org-structure-template-alist '("js" . "src javascript"))
+	(add-to-list 'org-structure-template-alist '("scm" . "src scheme"))
 	(add-to-list 'org-structure-template-alist '("cpp" . "src C++")))
 
 #+end_src

@@ -295,12 +295,14 @@
   :straight (:no-native-compile t)
   :demand t
   :load-path "~/.emacs.d/elpa/org-9.5/"
-    :pin org
+	:pin org
 	:commands (org-capture org-agenda)
 	:hook
 	 (org-mode . bonk/org-no-line-number)
 	:config
 	(setq org-ellipsis " ▾")
+	(setq org-hide-emphasis-markers t org-emphasis-alist '((\"\$\" bold)))
+	(setq org-hide-emphasis-markers t) ;; Perhaps a bit redundant but still
 	)
 
 (defun bonk/org-font-setup ()
@@ -365,6 +367,7 @@
 	  (python . t)
 	  (typescript . t)
 	  (go . t)
+	  (scheme . t)
 	  (rust . t)))
 
   (push '("conf-unix" . conf-unix) org-src-lang-modes))
@@ -545,7 +548,6 @@
 
 (use-package rspec-mode
   :after ruby-mode)
-  (setq rspec-use-rvm t)
 
 (use-package elixir-mode
   :ensure t
@@ -614,6 +616,9 @@
   :init
 	(require 'company)
 	(slime-setup '(slime-fancy slime-company)))
+
+(use-package geiser-guile
+  :ensure t)
 
 (use-package cuda-mode)
 (add-hook 'c-mode-hook 'lsp)
@@ -1068,4 +1073,5 @@
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
   (add-to-list 'org-structure-template-alist '("js" . "src javascript"))
+  (add-to-list 'org-structure-template-alist '("scm" . "src scheme"))
   (add-to-list 'org-structure-template-alist '("cpp" . "src C++")))
