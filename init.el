@@ -423,6 +423,47 @@
   (setq read-process-output-max (* 2048 2048))
   (load-file "./magit.el"))
 
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+	  ("<tab>" . company-complete-selection))
+  (:map lsp-mode-map
+	("<tab>" . company-indent-or-complete-common))
+  :config
+(setq company-lsp-cache-candidates 'auto)
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.15))
+
+(global-company-mode t)
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+(eval-after-load 'company
+  '(push 'company-robe company-backends))
+
+
+
+(use-package company-inf-ruby
+:after (company ruby-mode)
+:config (add-to-list 'company-backends 'company-inf-ruby))
+
+(use-package ac-js2
+:after (company tide js2-mode web-mode)
+:config (add-to-list 'company-backends 'ac-js2))
+
+;; HTML company backend
+       (use-package company-web
+	 :after (company web-mode)
+	 :config (add-to-list 'company-backends 'company-web))
+;; WIP missing CSS backend
+
+;; Add `company-elisp' backend for elisp.
+(add-hook 'emacs-lisp-mode-hook
+		  '(lambda ()
+			 (require 'company-elisp)
+			 (push 'company-elisp company-backends)))
+
 (defun bonk/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))
@@ -461,7 +502,6 @@
 										(php-mode . "php")
 										(json-mode . "json")
 										(rjsx-mode . "javascript")
-										(typescript-mode . "typescript")
 										))
 
   (setq lsp-diagnostics-provider :none)
@@ -493,14 +533,13 @@
 (use-package lsp-ivy
   :after lsp)
 
-
-
 (use-package yasnippet                  ; Snippets
   :after company
   :config
   (setq
    yas-verbosity 1                      ; No need to be so verbose
    yas-wrap-around-region t)
+  (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
 
   (with-eval-after-load 'yasnippet
 	(setq yas-snippt-dirs '(yasnippet-snippets-dir)))
@@ -676,11 +715,10 @@
 
 (use-package web-mode
   :mode "\\.html$'" "\\.jsx$" "\\.tsx$"
-  :init 
+  :init
   (setq web-mode-markup-indent-offset 4)
   (setq web-mode-css-indent-offset 4)
-  (setq web-mode-code-indent-offset 4)
-  )
+  (setq web-mode-code-indent-offset 4))
 
 (use-package rjsx-mode
   :mode "\\.js\\'"
@@ -689,20 +727,25 @@
   (setq indent-tabs-mode t)
   (setq js2-basic-offset 4))
 
+(use-package add-node-modules-path
+  :defer t
+  :hook ( rjsx-mode . add-node-modules-path))
+
 (defun setup-tide-mode()
   "Setup function for tide."
   (interactive)
   (tide-setup)
   (flycheck-mode +1)
+  (setq tide-format-options '(:tabSize 4 :indentSize 4))
   (setq flycheck-check-syntax-automatically '(save mode-enabled)))
 
   (use-package tide
 	:after (rjsx-mode company flycheck)
 	:hook (rjsx-mode . setup-tide-mode))
 
-(use-package prettier-js
-  :after (rjsx-mode)
-  :hook (rjsx-mode . setup-tide-mode))
+;; (use-package prettier-js
+;;   :after (rjsx-mode)
+;;   :hook (rjsx-mode . prettier-js-mode))
 
 ;; yaml-mode doesn't derive from prog-mode, but we can at least enable
 ;; whitespace-mode and apply cleanup.
@@ -711,45 +754,6 @@
   :config
   (add-hook 'yaml-mode-hook 'whitespace-mode)
   (add-hook 'yaml-mode-hook 'subword-mode))
-
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :bind (:map company-active-map
-	  ("<tab>" . company-complete-selection))
-  (:map lsp-mode-map
-	("<tab>" . company-indent-or-complete-common))
-  :custom
-  (company-minimum-prefix-length 1)
-  (company-idle-delay 0.2))
-
-(global-company-mode t)
-(use-package company-box
-  :hook (company-mode . company-box-mode))
-(eval-after-load 'company
-  '(push 'company-robe company-backends))
-
-
-
-(use-package company-inf-ruby
-:after (company ruby-mode)
-:config (add-to-list 'company-backends 'company-inf-ruby))
-
-(use-package ac-js2
-:after (company tide js2-mode web-mode)
-:config (add-to-list 'company-backends 'ac-js2))
-
-;; HTML company backend
-       (use-package company-web
-	 :after (company web-mode)
-	 :config (add-to-list 'company-backends 'company-web))
-;; WIP missing CSS backend
-
-;; Add `company-elisp' backend for elisp.
-(add-hook 'emacs-lisp-mode-hook
-		  '(lambda ()
-			 (require 'company-elisp)
-			 (push 'company-elisp company-backends)))
 
 (use-package projectile
   :config (projectile-mode)

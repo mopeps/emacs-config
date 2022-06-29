@@ -615,6 +615,79 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 					  (load-file "./magit.el"))
    #+end_src
 
+   #+RESULTS:
+   : t
+
+** Company Mode
+
+[[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
+
+We also use [[https://github.com/sebastiencs/company-box][company-box]] to further enhance the look of the completions with icons and better overall presentation.
+
+#+begin_src emacs-lisp
+
+  (use-package company
+	:after lsp-mode
+	:hook (lsp-mode . company-mode)
+	:bind (:map company-active-map
+		("<tab>" . company-complete-selection))
+	(:map lsp-mode-map
+	  ("<tab>" . company-indent-or-complete-common))
+	:config
+  (setq company-lsp-cache-candidates 'auto)
+	:custom
+	(company-minimum-prefix-length 1)
+	(company-idle-delay 0.15))
+
+  (global-company-mode t)
+  (use-package company-box
+	:hook (company-mode . company-box-mode))
+  (eval-after-load 'company
+	'(push 'company-robe company-backends))
+
+#+end_src
+*** Company Backends
+**** Golang
+   #+begin_src emacs-lisp
+
+     #+end_src
+
+**** Ruby
+     #+begin_src emacs-lisp
+       (use-package company-inf-ruby
+	 :after (company ruby-mode)
+	 :config (add-to-list 'company-backends 'company-inf-ruby))
+     #+end_src
+
+**** JavaScript
+     #+begin_src emacs-lisp
+
+       (use-package ac-js2
+	 :after (company tide js2-mode web-mode)
+	 :config (add-to-list 'company-backends 'ac-js2))
+
+     #+end_src
+
+**** Web
+     #+begin_src emacs-lisp
+
+	;; HTML company backend
+       (use-package company-web
+	 :after (company web-mode)
+	 :config (add-to-list 'company-backends 'company-web))
+;; WIP missing CSS backend
+     #+end_src
+
+**** eLisp
+     #+begin_src emacs-lisp
+	   ;; Add `company-elisp' backend for elisp.
+	   (add-hook 'emacs-lisp-mode-hook
+				 '(lambda ()
+					(require 'company-elisp)
+					(push 'company-elisp company-backends)))
+
+     #+end_src
+     
 ** Languages
 
 *** IDE Features with lsp-mode
@@ -668,7 +741,6 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 										  (php-mode . "php")
 										  (json-mode . "json")
 										  (rjsx-mode . "javascript")
-										  (typescript-mode . "typescript")
 										  ))
 
 	(setq lsp-diagnostics-provider :none)
@@ -685,7 +757,6 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 	(lsp-rust-analyzer-display-parameter-hints nil)
 	(lsp-rust-analyzer-display-reborrow-hints nil)
 	)
-
 #+end_src
 
 **** lsp-ui
@@ -741,30 +812,28 @@ Try these commands with =M-x=:
 
 #+end_src
 
-**** lsp-clients
-     #+begin_src emacs-lisp
-     #+end_src
 *** Yasnippets
     Yasnippet automatically inserts code templates when I write a word and press the tab key.
     It predefines most of the common templates, including the dreadful =if err !\=nil { ....=
 
     #+begin_src emacs-lisp
 
-	  (use-package yasnippet                  ; Snippets
-		:after company
-		:config
-		(setq
-		 yas-verbosity 1                      ; No need to be so verbose
-		 yas-wrap-around-region t)
+			(use-package yasnippet                  ; Snippets
+			  :after company
+			  :config
+			  (setq
+			   yas-verbosity 1                      ; No need to be so verbose
+			   yas-wrap-around-region t)
+			  (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
 
-		(with-eval-after-load 'yasnippet
-		  (setq yas-snippt-dirs '(yasnippet-snippets-dir)))
+			  (with-eval-after-load 'yasnippet
+				(setq yas-snippt-dirs '(yasnippet-snippets-dir)))
 
-		(yas-reload-all)
-		(yas-global-mode 1))
+			  (yas-reload-all)
+			  (yas-global-mode 1))
 
-	  (use-package yasnippet-snippets         ; Collection of snippets
-		:after yasnippet)
+			(use-package yasnippet-snippets         ; Collection of snippets
+			  :after yasnippet)
     #+end_src
 
 *** Flycheck
@@ -1109,38 +1178,43 @@ some versions might not work for every machine.
 
   (use-package web-mode
 	:mode "\\.html$'" "\\.jsx$" "\\.tsx$"
-	:init 
+	:init
 	(setq web-mode-markup-indent-offset 4)
 	(setq web-mode-css-indent-offset 4)
-	(setq web-mode-code-indent-offset 4)
-	)
+	(setq web-mode-code-indent-offset 4))
 
 #+end_src
 ***** RJSX mode
       It has all the features from js2 , and all the js files i've been using till now are .js
       files, so i don't really need to differentiate between modes
     #+begin_src emacs-lisp
-	  (use-package rjsx-mode
-		:mode "\\.js\\'"
-		:hook (rjsx-mode . lsp-deferred)
-		:init
-		(setq indent-tabs-mode t)
-		(setq js2-basic-offset 4))
+			(use-package rjsx-mode
+			  :mode "\\.js\\'"
+			  :hook (rjsx-mode . lsp-deferred)
+			  :init
+			  (setq indent-tabs-mode t)
+			  (setq js2-basic-offset 4))
 
 	#+end_src
-
+***** Node modules
+#+begin_src emacs-lisp
+(use-package add-node-modules-path
+  :defer t
+  :hook ( rjsx-mode . add-node-modules-path))
+#+end_src
 ***** Tide
       #+begin_src emacs-lisp
-	(defun setup-tide-mode()
-	  "Setup function for tide."
-	  (interactive)
-	  (tide-setup)
-	  (flycheck-mode +1)
-	  (setq flycheck-check-syntax-automatically '(save mode-enabled)))
+		(defun setup-tide-mode()
+		  "Setup function for tide."
+		  (interactive)
+		  (tide-setup)
+		  (flycheck-mode +1)
+		  (setq tide-format-options '(:tabSize 4 :indentSize 4))
+		  (setq flycheck-check-syntax-automatically '(save mode-enabled)))
 
-	  (use-package tide
-	    :after (rjsx-mode company flycheck)
-	    :hook (rjsx-mode . setup-tide-mode))
+		  (use-package tide
+			:after (rjsx-mode company flycheck)
+			:hook (rjsx-mode . setup-tide-mode))
 
       #+end_src
 
@@ -1149,12 +1223,15 @@ some versions might not work for every machine.
   It is important to have prettier installed through npm beforehand though
   =npm install -g prettier=
     #+begin_src emacs-lisp
-	  (use-package prettier-js
-		:after (rjsx-mode)
-		:hook (rjsx-mode . setup-tide-mode))
 
-    #+end_src
-	
+	  ;; (use-package prettier-js
+	  ;;   :after (rjsx-mode)
+	  ;;   :hook (rjsx-mode . prettier-js-mode))
+
+	#+end_src
+
+	#+RESULTS:
+
 *** Yaml
     #+begin_src emacs-lisp
 	  ;; yaml-mode doesn't derive from prog-mode, but we can at least enable
@@ -1167,74 +1244,6 @@ some versions might not work for every machine.
 
     #+end_src
     
-** Company Mode
-
-[[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
-
-We also use [[https://github.com/sebastiencs/company-box][company-box]] to further enhance the look of the completions with icons and better overall presentation.
-
-#+begin_src emacs-lisp
-
-  (use-package company
-    :after lsp-mode
-    :hook (lsp-mode . company-mode)
-    :bind (:map company-active-map
-		("<tab>" . company-complete-selection))
-    (:map lsp-mode-map
-	  ("<tab>" . company-indent-or-complete-common))
-    :custom
-    (company-minimum-prefix-length 1)
-    (company-idle-delay 0.2))
-
-  (global-company-mode t)
-  (use-package company-box
-    :hook (company-mode . company-box-mode))
-  (eval-after-load 'company
-    '(push 'company-robe company-backends))
-
-#+end_src
-*** Company Backends
-**** Golang
-   #+begin_src emacs-lisp
-
-     #+end_src
-
-**** Ruby
-     #+begin_src emacs-lisp
-       (use-package company-inf-ruby
-	 :after (company ruby-mode)
-	 :config (add-to-list 'company-backends 'company-inf-ruby))
-     #+end_src
-
-**** JavaScript
-     #+begin_src emacs-lisp
-
-       (use-package ac-js2
-	 :after (company tide js2-mode web-mode)
-	 :config (add-to-list 'company-backends 'ac-js2))
-
-     #+end_src
-
-**** Web
-     #+begin_src emacs-lisp
-
-	;; HTML company backend
-       (use-package company-web
-	 :after (company web-mode)
-	 :config (add-to-list 'company-backends 'company-web))
-;; WIP missing CSS backend
-     #+end_src
-
-**** eLisp
-     #+begin_src emacs-lisp
-	   ;; Add `company-elisp' backend for elisp.
-	   (add-hook 'emacs-lisp-mode-hook
-				 '(lambda ()
-					(require 'company-elisp)
-					(push 'company-elisp company-backends)))
-
-     #+end_src
-     
 ** Projectile
 
 [[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
