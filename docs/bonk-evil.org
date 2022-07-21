@@ -1,0 +1,167 @@
+#+title: Bonk-evil
+#+OPTIONS: toc:t
+#+PROPERTY: header-args:emacs-lisp :tangle ./../core/bonk-evil.el :mkdirp yes
+
+* Provide
+
+#+begin_src emacs-lisp
+
+  (provide 'bonk-evil)
+
+#+end_src
+
+* Evil
+
+#+begin_src emacs-lisp
+
+	(setup (:pkg undo-tree :straight t)
+	  (setq undo-tree-auto-save-history nil)
+	  (global-undo-tree-mode 1))
+
+	(setup (:pkg evil :straight t)
+	  (setq evil-want-integration t)
+	  (setq evil-want-keybinding nil)
+	  (setq evil-want-C-u-scroll t)
+	  (setq evil-want-C-i-jump nil)
+  ;; Activate evil-mode
+	  (evil-mode 1)
+	  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+	  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+
+	  ;; Use visual line motions even outside of visual-line-mode buffers
+	  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+	  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+	  (evil-set-initial-state 'messages-buffer-mode 'normal)
+	  (evil-set-initial-state 'dashboard-mode 'normal))
+
+  (setup (:pkg evil-collection :straight t)
+    ;; Is this a bug in evil-collection?
+    (setq evil-collection-company-use-tng nil)
+    (:load-after evil
+      (:option evil-collection-outline-bind-tab-p nil
+               (remove evil-collection-mode-list) 'lispy
+               (remove evil-collection-mode-list) 'org-present)
+      (evil-collection-init)))
+
+#+end_src
+
+#+RESULTS:
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-evil"
+  "emacs-evil-collection"
+  "emacs-undo-tree"
+
+#+end_src
+
+* Which key
+
+[[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in
+Emacs to offer you all possible completions for the prefix.  For example, if you press =C-c=
+(hold control and press the letter =c=), a panel will appear at the bottom of the frame
+displaying all of the bindings under that prefix and which command they run.  This is very
+useful for learning the possible key bindings in the mode of your current buffer.
+
+#+begin_src emacs-lisp
+
+  (setup (:pkg which-key :straight t)
+    (diminish 'which-key-mode)
+    (which-key-mode)
+    (setq which-key-idle-delay 0.3))
+
+#+end_src
+
+#+RESULTS:
+: 0.3
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-which-key"
+
+#+end_src
+
+* Text Scaling
+
+This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
+
+#+begin_src emacs-lisp
+
+	  (setup (:pkg hydra :straight t)
+		:defer t)
+
+	  (defhydra hydra-text-scale (:timeout 4)
+		"scale text"
+		("j" text-scale-increase "in")
+		("k" text-scale-decrease "out")
+		("f" nil "finished" :exit t))
+
+
+#+end_src
+
+* Keybindings
+
+#+begin_src emacs-lisp
+
+  ;; Make ESC quit prompts
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+  (setup (:pkg general :straight t)
+		 (general-create-definer bonk/leader-keys
+		   :keymaps '(normal insert visual emacs)
+		   :prefix "SPC"
+		   :global-prefix "C-SPC"))
+
+  (bonk/leader-keys
+  "ts" '(hydra-text-scale/body :which-key "scale text")
+	"t"  '(:ignore t :which-key "toggles")
+	"tt" '(counsel-load-theme :which-key "choose theme")
+	;; Window navigation
+	"h" '(evil-window-left :which-key "move to left window")
+	"l" '(evil-window-right :which-key "move to right window")
+	"j" '(evil-window-down :which-key "move to below window")
+	"k" '(evil-window-up :which-key "move to above window")
+
+	"H" '(evil-window-far-left :which-key "move to left window")
+	"L" '(evil-window-far-right :which-key "move to right window")
+	"J" '(evil-window-very-bottom :which-key "move to below window")
+	"K" '(evil-window-very-top :which-key "move to above window")
+	;; Window Splitting
+	"v" '(evil-window-vsplit :which-key "vertical window split")
+	"s" '(evil-window-split :which-key "window split")
+	"c" '(evil-window-delete :which-key "close current window")
+	;; Buffer options
+	"DD" '(kill-this-buffer :which "kills the current buffer")
+	"Vcc" '(vterm-send-C-c :which "kills current vterm process")
+	"nn" '(neotree-toggle :which "toggles neotree")
+	;; Origami options
+	"oon" '(origami-open-node :which "opens current origami node")
+	"ooc" '(origami-close-node :which "closes current origami node")
+	"oO" '(origami-open-all-nodes :which "opens all origami node")
+	"oC" '(origami-close-all-nodes :which "closes all origami node")
+	"orO" '(origami-open-node-recursively :which "opens all origami node below recursively")
+	"orC" '(origami-close-node-recursively :which "closes all origami node below recursively")
+;; Guix
+	"G"  '(:ignore t :which-key "Guix")
+	"Gg" '(guix :which-key "Guix")
+	"Gi" '(guix-installed-user-packages :which-key "user packages")
+	"GI" '(guix-installed-system-packages :which-key "system packages")
+	"Gp" '(guix-packages-by-name :which-key "search packages")
+	"GP" '(guix-pull :which-key "pull")
+	)
+#+end_src
+
+#+RESULTS:
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-general"
+
+#+end_src

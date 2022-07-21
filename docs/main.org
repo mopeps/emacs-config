@@ -21,29 +21,102 @@ keep bonking mates.
 
 * Main-file
 
-** Version
-
-** Package and System Setup
-
 Let's start by setting up some basic package and system stuff.
 
 #+begin_src emacs-lisp
+  (provide 'main)
+  (add-to-list 'load-path (expand-file-name "core/" user-emacs-directory))
   (require 'main-lib)
+  (require 'bonk-package)
+  (require 'bonk-evil)
+  (require 'bonk-editing)
+  (require 'bonk-ui)
+  (require 'bonk-ide)
+  (require 'bonk-startup)
 
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			   ("org" . "https://orgmode.org/elpa/")
-			   ("elpa" . "https://elpa.gnu.org/packages/")))
-
-
-  (setq package-check-signature nil)
-  ;; probably not necessary yet, but i will probably turn it on later
+  ;; Profile emacs startup
+  (add-hook 'emacs-startup-hook
+			(lambda ()
+			  (message "Bonk Emacs loaded in %s."
+					   (emacs-init-time))))
 
 #+end_src
 
-As you can see, i'm requiring the main-lib, which is a custom lib made exclusively for bonk emacs.
-In there, you'll find helper functions, definition of syntactic sugar and the common libraries being
-used.
+* Keep .emacs.d Clean
 
+I don't want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
 
-** Some optimizations
+#+begin_src emacs-lisp
+  
+  ;; Change the user-emacs-directory to keep unwanted things out of ~/.emacs.d
+  (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
+        url-history-file (expand-file-name "url/history" user-emacs-directory))
+  
+  ;; Use no-littering to automatically set common paths to the new user-emacs-directory
+  (setup (:pkg no-littering :straight t)
+    (require 'no-littering))
+  
+  ;; Keep customization settings in a temporary file (thanks Ambrevar!)
+  (setq custom-file
+        (if (boundp 'server-socket-dir)
+            (expand-file-name "custom.el" server-socket-dir)
+          (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
+  (load custom-file t)
+  
+#+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-no-littering"
+
+#+end_src
+
+Don't warn for large files (shows up when launching videos)
+
+#+begin_src emacs-lisp
+
+  (setq large-file-warning-threshold nil)
+
+#+end_src
+
+Don't warn for following symlinked files
+
+#+begin_src emacs-lisp
+
+  (setq vc-follow-symlinks t)
+
+#+end_src
+
+* Enable Mode Diminishing
+
+The [[https://github.com/myrjola/diminish.el][diminish]] package hides pesky minor modes from the modelines.
+
+#+begin_src emacs-lisp
+
+  (setup (:pkg diminish :straight t))
+
+#+end_src
+
+* Mail Config
+
+#+begin_src emacs-lisp
+ ;; Comment this line if you don't have a email setup or if you don't want to set up any email
+  (load-file "./email.el")
+
+#+end_src
+
+#+RESULTS:
+: t
+
+* Runtime Performance
+
+Dial the GC threshold back down so that garbage collection happens more frequently but in less time.
+
+#+begin_src emacs-lisp
+
+  ;; Make gc pauses faster by decreasing the threshold.
+  (setq gc-cons-threshold (* 2 1000 1000))
+
+#+end_src

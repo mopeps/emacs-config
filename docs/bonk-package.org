@@ -1,0 +1,165 @@
+#+title: Bonk Package
+#+OPTIONS: toc:t
+#+PROPERTY: header-args:emacs-lisp :tangle ./../core/bonk-package.el :mkdirp yes
+
+* Bonk Package
+
+#+begin_src emacs-lisp
+(provide 'bonk-package)
+#+end_src
+
+* Straight
+
+#+begin_src emacs-lisp
+
+  ;; Initialize use-package on non-Linux platforms
+
+  (use-package use-package-ensure-system-package)
+
+  (unless (featurep 'straight)
+	;; Bootstrap straight.el
+	(defvar bootstrap-version)
+	(let ((bootstrap-file
+		   (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+		  (bootstrap-version 5))
+	  (unless (file-exists-p bootstrap-file)
+		(with-current-buffer
+			(url-retrieve-synchronously
+			 "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+			 'silent 'inhibit-cookies)
+		  (goto-char (point-max))
+		  (eval-print-last-sexp)))
+	  (load bootstrap-file nil 'nomessage)))
+
+  ;; Use straight.el for use-package expressions
+  (straight-use-package 'use-package)
+#+end_src
+
+* Setup
+#+begin_src emacs-lisp
+
+
+  (straight-use-package '(setup :type git :host nil :repo "https://git.sr.ht/~pkal/setup"))
+  (require 'setup)
+
+#+end_src
+
+** :pkg
+
+The =:pkg= keyword will depend on Guix-installed Emacs packages unless the parameter seems like a =straight.el= recipe (it's a list).
+
+#+begin_src emacs-lisp
+
+  ;; Recipe is always a list
+  ;; Install via Guix if length == 1 or :guix t is present
+
+  (setq bonk/is-guix-system (and (eq system-type 'gnu/linux)
+											 ))
+
+  (defvar bonk/guix-emacs-packages '()
+	"Contains a list of all Emacs package names that must be
+  installed via Guix.")
+
+  ;; Examples:
+  ;; - (org-roam :straight t)
+  ;; - (git-gutter :straight git-gutter-fringe)
+
+  (defun bonk/filter-straight-recipe (recipe)
+	(let* ((plist (cdr recipe))
+		   (name (plist-get plist :straight)))
+	  (cons (if (and name (not (equal name t)))
+				name
+			  (car recipe))
+			(plist-put plist :straight nil))))
+
+  (setup-define :pkg
+	(lambda (&rest recipe)
+	  (if (and bonk/is-guix-system
+			   (or (eq (length recipe) 1)
+				   (plist-get (cdr recipe) :guix)))
+		  `(add-to-list 'bonk/guix-emacs-packages
+						,(or (plist-get recipe :guix)
+							 (concat "emacs-" (symbol-name (car recipe)))))
+		`(straight-use-package ',(bonk/filter-straight-recipe recipe))))
+	:documentation "Install RECIPE via Guix or straight.el"
+	:shorthand #'cadr)
+
+#+end_src
+
+** :delay
+
+Delay the loading of a package until a certain amount of idle time has passed.
+
+#+begin_src emacs-lisp
+
+  (setup-define :delay
+     (lambda (&rest time)
+       `(run-with-idle-timer ,(or time 1)
+                             nil ;; Don't repeat
+                             (lambda () (require ',(setup-get 'feature)))))
+     :documentation "Delay loading the feature until a certain amount of idle time has passed.")
+
+#+end_src
+
+** :disabled
+
+Used to disable a package configuration, similar to =:disabled= in =use-package=.
+
+#+begin_src emacs-lisp
+
+  (setup-define :disabled
+    (lambda ()
+      `,(setup-quit))
+    :documentation "Always stop evaluating the body.")
+
+#+end_src
+
+** :load-after
+
+This keyword causes a body to be executed after other packages/features are loaded:
+
+#+begin_src emacs-lisp
+
+  (setup-define :load-after
+      (lambda (features &rest body)
+        (let ((body `(progn
+                       (require ',(setup-get 'feature))
+                       ,@body)))
+          (dolist (feature (if (listp features)
+                               (nreverse features)
+                             (list features)))
+            (setq body `(with-eval-after-load ',feature ,body)))
+          body))
+    :documentation "Load the current feature after FEATURES."
+    :indent 1)
+
+#+end_src
+
+* Guix
+#+begin_src emacs-lisp
+
+  (setup (:pkg guix))
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-guix"
+
+#+end_src
+
+* Emacs Profile
+
+*.config/guix/manifests/emacs.scm:*
+
+#+begin_src scheme :tangle ~/.config/guix/manifests/emacs.scm :noweb yes
+
+  (specifications->manifest
+   '(;;"emacs"
+     "emacs-native-comp"
+     <<packages>>
+  ))
+
+#+end_src

@@ -1,0 +1,161 @@
+#+title: Bonk-UI
+#+OPTIONS: toc:t
+#+PROPERTY: header-args:emacs-lisp :tangle ./../core/bonk-ui.el :mkdirp yes
+
+* Provide
+
+#+begin_src emacs-lisp
+
+  (provide 'bonk-ui)
+
+#+end_src
+
+* Command Log Mode
+
+[[https://github.com/lewang/command-log-mode][command-log-mode]] is useful for displaying a panel showing each key binding you use in a panel on the right side of the frame.  Great for live streams and screencasts!
+
+#+begin_src emacs-lisp
+
+  (setup (:pkg command-log-mode :straight t)
+	(command-log-mode 1))
+
+#+end_src
+
+#+RESULTS:
+
+* Color Theme
+
+* Better Modeline
+
+[[https://github.com/seagle0128/doom-modeline][doom-modeline]] is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [[https://github.com/seagle0128/doom-modeline#customize][configuration options]] for more things you can enable or disable.
+
+*NOTE:* The first time you load your configuration on a new machine, you'll need to run `M-x all-the-icons-install-fonts` so that mode line icons display correctly.
+
+#+begin_src emacs-lisp
+
+(setup (:pkg all-the-icons :straight t))
+
+  (setup (:pkg minions :straight t)
+    (:hook-into doom-modeline-mode))
+  
+  (setup (:pkg doom-modeline :straight t)
+    (:hook-into after-init-hook)
+    (:option doom-modeline-height 15
+             doom-modeline-bar-width 6
+             doom-modeline-lsp t
+             doom-modeline-github nil
+             doom-modeline-mu4e nil
+             doom-modeline-irc t
+             doom-modeline-minor-modes t
+             doom-modeline-persp-name nil
+             doom-modeline-buffer-file-name-style 'truncate-except-project
+             doom-modeline-major-mode-icon nil)
+    (custom-set-faces '(mode-line ((t (:height 0.85))))
+                      '(mode-line-inactive ((t (:height 0.85))))))
+  
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-doom-modeline"
+  "emacs-all-the-icons"
+  "emacs-minions"
+
+#+end_src
+
+
+* Ivy and Counsel
+
+[[https://oremacs.com/swiper/][Ivy]] is an excellent completion framework for Emacs.  It provides a minimal yet powerful selection menu that appears when you open files, switch buffers, and for many other tasks in Emacs.  Counsel is a customized set of commands to replace `find-file` with `counsel-find-file`, etc which provide useful commands for each of the default completion commands.
+
+[[https://github.com/Yevgnen/ivy-rich][ivy-rich]] adds extra columns to a few of the Counsel commands to provide more information about each item.
+
+#+begin_src emacs-lisp
+
+    (use-package ivy
+      :diminish
+      :bind (("C-s" . swiper)
+             :map ivy-minibuffer-map
+             ("TAB" . ivy-alt-done)
+             ("C-l" . ivy-alt-done)
+             ("C-j" . ivy-next-line)
+             ("C-k" . ivy-previous-line)
+             :map ivy-switch-buffer-map
+             ("C-k" . ivy-previous-line)
+             ("C-l" . ivy-done)
+             ("C-d" . ivy-switch-buffer-kill)
+             :map ivy-reverse-i-search-map
+             ("C-k" . ivy-previous-line)
+             ("C-d" . ivy-reverse-i-search-kill))
+      :config
+      (ivy-mode 1))
+
+    (setup (:pkg ivy-rich :straight t)
+      (ivy-rich-mode 1))
+
+    (setup (:pkg counsel :straight t)
+      (:global "C-M-j"  counsel-switch-buffer
+              "C-r"  counsel-minibuffer-history)
+      (counsel-mode 1))
+
+#+end_src
+
+#+RESULTS:
+: counsel-minibuffer-history
+
+* Helpful Help Commands
+
+[[https://github.com/Wilfred/helpful][Helpful]] adds a lot of very helpful (get it?) information to Emacs' =describe-= command buffers.  For example, if you use =describe-function=, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
+
+#+begin_src emacs-lisp
+
+  (use-package helpful
+	:commands (helpful-callable helpful-variable helpful-command helpful-key)
+	:custom
+	(counsel-describe-function-function #'helpful-callable)
+	(counsel-describe-variable-function #'helpful-variable)
+	:bind
+	([remap describe-function] . counsel-describe-function)
+	([remap describe-command] . helpful-command)
+	([remap describe-variable] . counsel-describe-variable)
+	([remap describe-key] . helpful-key))
+
+#+end_src
+
+#+RESULTS:
+: helpful-key
+
+* Text Scaling
+
+This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
+
+#+begin_src emacs-lisp
+
+	  (use-package hydra
+		:defer t)
+
+	  (defhydra hydra-text-scale (:timeout 4)
+		"scale text"
+		("j" text-scale-increase "in")
+		("k" text-scale-decrease "out")
+		("f" nil "finished" :exit t))
+
+	(bonk/leader-keys
+		"ts" '(hydra-text-scale/body :which-key "scale text"))
+
+#+end_src
+
+#+RESULTS:
+
+* Ido (tool for buffer)
+   #+begin_src emacs-lisp
+	 (setup (:pkg ido)
+	   (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
+	   (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
+								  "*Messages*" "Async Shell Command")))
+   #+end_src
+
+   #+RESULTS:
+   
