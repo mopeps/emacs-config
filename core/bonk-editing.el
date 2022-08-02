@@ -43,7 +43,7 @@
 ;;                         '(("^ *\\([-]\\) "
 ;;                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-(setup org-faces
+(setup (:pkg org-faces)
   ;; Make sure org-indent face is available
   (:also-load org-indent)
   (:when-loaded
@@ -85,7 +85,7 @@
 ;; '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
 
 ;; This is needed as of Org 9.2
-(setup org-tempo
+(setup (:pkg org-tempo)
   (:when-loaded
 	(add-to-list 'org-structure-template-alist '("sh" . "src sh"))
 	(add-to-list 'org-structure-template-alist '("py" . "src python"))

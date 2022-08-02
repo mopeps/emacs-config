@@ -72,6 +72,7 @@
 (bonk/leader-keys
 	"ts" '(hydra-text-scale/body :which-key "scale text"))
 
+(use-package ido)
 (setup (:pkg ido)
   (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
   (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"

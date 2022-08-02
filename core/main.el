@@ -1,18 +1,18 @@
 (provide 'main)
-(add-to-list 'load-path (expand-file-name "core/" user-emacs-directory))
-(require 'main-lib)
-(require 'bonk-package)
+  (add-to-list 'load-path (expand-file-name "core/" user-emacs-directory))
+  (require 'main-lib)
+  (require 'bonk-package)
 (require 'bonk-evil)
-(require 'bonk-editing)
-(require 'bonk-ui)
-(require 'bonk-ide)
-(require 'bonk-startup)
+  (require 'bonk-editing)
+  (require 'bonk-ui)
+  (require 'bonk-ide)
+  (require 'bonk-startup)
 
-;; Profile emacs startup
-(add-hook 'emacs-startup-hook
-		  (lambda ()
-			(message "Bonk Emacs loaded in %s."
-					 (emacs-init-time))))
+  ;; Profile emacs startup
+  (add-hook 'emacs-startup-hook
+			(lambda ()
+			  (message "Bonk Emacs loaded in %s."
+					   (emacs-init-time))))
 
 ;; Change the user-emacs-directory to keep unwanted things out of ~/.emacs.d
 (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")

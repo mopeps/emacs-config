@@ -76,7 +76,6 @@
 			 ))
 
 (setup (:pkg company-inf-ruby :straight t)
-  (:hook prog-mode)
 (:load-after company)
 (add-to-list 'company-backends 'company-inf-ruby))
 
@@ -116,7 +115,23 @@
 
 		  (:option lsp-file-watch-threshold nil)
 		  (:option lsp-solargraph-multi-root nil)
-		  ;; enable / disable the hints as you prefer:
+		  ;; enable / disable the hints as you prefer: (setq lsp-auto-guess-root t)
+(setq lsp-log-io nil)
+(setq lsp-restart 'auto-restart)
+(setq lsp-enable-symbol-highlighting nil)
+(setq lsp-enable-on-type-formatting nil)
+(setq lsp-signature-auto-activate nil)
+(setq lsp-signature-render-documentation nil)
+(setq lsp-eldoc-hook nil)
+(setq lsp-modeline-code-actions-enable nil)
+(setq lsp-modeline-diagnostics-enable nil)
+(setq lsp-headerline-breadcrumb-enable nil)
+(setq lsp-semantic-tokens-enable nil)
+(setq lsp-enable-folding nil)
+(setq lsp-enable-imenu nil)
+(setq lsp-enable-snippet nil)
+(setq read-process-output-max (* 1024 1024)) ;; 1MB
+(setq lsp-idle-delay 0.5)
 		  )))
 
 (setup (:pkg lsp-ui :straight t)
@@ -184,11 +199,11 @@
 
 (setup (:pkg flycheck :straight t)
   (:hook-into company-mode lsp-mode)
-  (setq flycheck-check-syntax-automatically `(save idle-change mode-enabled))
+  (setq flycheck-check-syntax-automatically `(idle-change mode-enabled))
   (setq flycheck-idle-change-delay 4)
   (setq flycheck-disabled-checkers
 		'(ruby ruby-reek
-			   ruby-rubocop
+  ;;			 ruby-rubocop
 			   ruby-rubylint
 			   yaml-ruby)))
 
@@ -208,17 +223,26 @@
 									company-dabbrev-code))))
 (setup (:pkg python-mode)
   (:hook lsp-deferred))
+
+  (with-eval-after-load 'python-mode
+	(lambda () (require 'lsp-pyright)))
+(setup (:pkg lsp-pyright :straight t)
+  (:when-loaded
+	(progn
+	  (when (executable-find "python3")
+		(setq lsp-pyright-python-executable-cmd "python3")))))
 (setup (:pkg pyenv :straight t)
-  (:hook-into python-mode))
+  (:load-after python-mode))
 
 (setup (:pkg conda :straight t)
-  (:hook-into python-mode))
+  (:load-after python-mode))
 
 (setup (:pkg ruby-mode)
  (:file-match "\\.rb\\'")
  (:hook lsp-deferred)
+ (setq ruby-indent-level tab-width)
   (setq ruby-indent-tabs-mode t)
-  (setq ruby-indent-level tab-width))
+  )
 
 (setup (:pkg enh-ruby-mode :straight t)
   (:hook-into ruby-mode)
@@ -245,21 +269,21 @@
   (add-hook 'go-mode-hook 'lsp-go-install-save-hooks))
 
 (setup (:pkg typescript-mode)
-  :disabled
-  (:file-match "\\.ts\\'"))
+	:disabled
+	(:file-match "\\.ts\\'"))
 
 
-(setup (:pkg js2-mode)
-  (:file-match "\\.jsx?\\'")
-  ;; Use js2-mode for Node scripts
-  (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
+  (setup (:pkg js2-mode)
+	(:file-match "\\.jsx?\\'")
+	;; Use js2-mode for Node scripts
+	(add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
 
-  ;; Don't use built-in syntax checking
-  (setq js2-mode-show-strict-warnings nil))
+	;; Don't use built-in syntax checking
+	(setq js2-mode-show-strict-warnings nil))
 
 
-(setup (:pkg apheleia)
-  (apheleia-global-mode +1))
+;  (setup (:pkg apheleia)
+;	(apheleia-global-mode +1))
 
 (setup (:pkg rjsx-mode :straight t)
   (:file-match "\\.js\\'")
@@ -405,7 +429,8 @@
 (setup (:pkg docker-tramp :straight t))
 
 (setup (:pkg terraform-mode :straight t)
-	   (:file-match "\\.tf\\'"))
+	   (:file-match "\\.tf\\'")
+	   (:hook-into lsp-deferred))
 
 (setup (:pkg company-terraform :straight t))
 
@@ -550,75 +575,75 @@
   (setq backup-directory-alist            '((".*" . "~/.Trash")))
 
 (setup (:pkg all-the-icons-dired :straight t))
-(setup (:pkg dired-single :straight t))
-(setup (:pkg dired-ranger :straight t))
-(setup (:pkg dired-collapse :straight t))
+  (setup (:pkg dired-single :straight t))
+  (setup (:pkg dired-ranger :straight t))
+  (setup (:pkg dired-collapse :straight t))
 
-(setup (:pkg dired)
-  (setq dired-listing-switches "-agho --group-directories-first"
-		dired-omit-files "^\\.[^.].*"
-		dired-omit-verbose nil
-		dired-hide-details-hide-symlink-targets nil
-		delete-by-moving-to-trash t)
+  (setup (:pkg dired)
+	(setq dired-listing-switches "-agho --group-directories-first"
+		  dired-omit-files "^\\.[^.].*"
+		  dired-omit-verbose nil
+		  dired-hide-details-hide-symlink-targets nil
+		  delete-by-moving-to-trash t)
 
-  (autoload 'dired-omit-mode "dired-x")
+	(autoload 'dired-omit-mode "dired-x")
 
-  (add-hook 'dired-load-hook
-			(lambda ()
-			  (interactive)
-			  (dired-collapse)))
+	(add-hook 'dired-load-hook
+			  (lambda ()
+				(interactive)
+				(dired-collapse)))
 
-  (add-hook 'dired-mode-hook
-			(lambda ()
-			  (interactive)
-			  (dired-omit-mode 1)
-			  (dired-hide-details-mode 1)
-			  (all-the-icons-dired-mode 1)
-			  (hl-line-mode 1)))
+	(add-hook 'dired-mode-hook
+			  (lambda ()
+				(interactive)
+				(dired-omit-mode 1)
+				(dired-hide-details-mode 1)
+				(all-the-icons-dired-mode 1)
+				(hl-line-mode 1)))
 
-  (evil-collection-define-key 'normal 'dired-mode-map
-	"h" 'dired-single-up-directory
-	"H" 'dired-omit-mode
-	"l" 'dired-single-buffer
-	"y" 'dired-ranger-copy
-	"X" 'dired-ranger-move
-	"p" 'dired-ranger-paste))
+	(evil-collection-define-key 'normal 'dired-mode-map
+	  "h" 'dired-single-up-directory
+	  "H" 'dired-omit-mode
+	  "l" 'dired-single-buffer
+	  "y" 'dired-ranger-copy
+	  "X" 'dired-ranger-move
+	  "p" 'dired-ranger-paste))
 
-(setup (:pkg dired-rainbow :straight t)
-  (:load-after dired
-   (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
-   (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
-   (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
-   (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
-   (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
-   (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
-   (dired-rainbow-define media "#de751f" ("mp3" "mp4" "mkv" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
-   (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
-   (dired-rainbow-define log "#c17d11" ("log"))
-   (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
-   (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
-   (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
-   (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
-   (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
-   (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
-   (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
-   (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
-   (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
-   (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
-   (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")))
+  (setup (:pkg dired-rainbow :straight t)
+	(:load-after dired
+	 (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+	 (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+	 (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+	 (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+	 (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+	 (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+	 (dired-rainbow-define media "#de751f" ("mp3" "mp4" "mkv" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+	 (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+	 (dired-rainbow-define log "#c17d11" ("log"))
+	 (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+	 (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+	 (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+	 (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+	 (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+	 (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+	 (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+	 (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+	 (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+	 (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+	 (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")))
 
- (defun bonk/dired-link (path)
-   (lexical-let ((target path))
-     (lambda () (interactive) (message "Path: %s" target) (dired target))))
-
-(bonk/leader-keys
-   "d"   '(:ignore t :which-key "dired")
-   "dd"  '(dired :which-key "Here")
-   "dh"  `(,(bonk/dired-link "~") :which-key "Home")
-   "dn"  `(,(bonk/dired-link "~/Notes") :which-key "Notes")
-   "do"  `(,(bonk/dired-link "~/Downloads") :which-key "Downloads")
-   "dp"  `(,(bonk/dired-link "~/Pictures") :which-key "Pictures")
-   "dv"  `(,(bonk/dired-link "~/Videos") :which-key "Videos")
-   "d."  `(,(bonk/dired-link "~/.config") :which-key "dotfiles-config")
-   "dl"  `(,(bonk/dired-link "~/.local") :which-key "dotfiles-local")
-   "de"  `(,(bonk/dired-link "~/.emacs-modularized/") :which-key ".emacs.d"))
+(eval-when-compile (require 'cl))
+   (defun bonk/dired-link (path)
+	 (lexical-let ((target path))
+	   (lambda () (interactive) (message "Path: %s" target) (dired target))))
+  (bonk/leader-keys
+	 "d"   '(:ignore t :which-key "dired")
+	 "dd"  '(dired :which-key "Here")
+	 "dh"  `(,(bonk/dired-link "~/") :which-key "Home")
+	 "dn"  `(,(bonk/dired-link "~/Notes") :which-key "Notes")
+	 "do"  `(,(bonk/dired-link "~/Downloads") :which-key "Downloads")
+	 "dp"  `(,(bonk/dired-link "~/Pictures") :which-key "Pictures")
+	 "dv"  `(,(bonk/dired-link "~/Videos") :which-key "Videos")
+	 "d."  `(,(bonk/dired-link "~/.config") :which-key "dotfiles-config")
+	 "dl"  `(,(bonk/dired-link "~/.local") :which-key "dotfiles-local")
+	 "de"  `(,(bonk/dired-link "~/.emacs-modularized") :which-key ".emacs.d"))

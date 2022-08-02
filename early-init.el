@@ -28,10 +28,12 @@
   (add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory)))
 
 ;; Remove some unneeded UI elements (the user can turn back on anything they wish)
-  (setq inhibit-startup-message t)
-  (push '(tool-bar-lines . 0) default-frame-alist)
-  (push '(menu-bar-lines . 0) default-frame-alist)
-  (push '(vertical-scroll-bars) default-frame-alist)
-  (push '(mouse-color . "white") default-frame-alist)
+(setq inhibit-startup-message t)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(menu-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+(push '(mouse-color . "white") default-frame-alist)
 
+(setq visible-bell t)
+(setq warning-minimum-level :emergency)
 (customize-set-variable 'initial-major-mode 'fundamental-mode)

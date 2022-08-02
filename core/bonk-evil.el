@@ -35,6 +35,10 @@
   (which-key-mode)
   (setq which-key-idle-delay 0.3))
 
+(defun close-all-buffers ()
+(interactive)
+  (mapc 'kill-buffer (buffer-list)))
+
 (setup (:pkg hydra :straight t)
   :defer t)
 
@@ -65,8 +69,6 @@
 
 	"H" '(evil-window-far-left :which-key "move to left window")
 	"L" '(evil-window-far-right :which-key "move to right window")
-	"J" '(evil-window-very-bottom :which-key "move to below window")
-	"K" '(evil-window-very-top :which-key "move to above window")
 	;; Window Splitting
 	"v" '(evil-window-vsplit :which-key "vertical window split")
 	"s" '(evil-window-split :which-key "window split")
@@ -75,6 +77,7 @@
 	"DD" '(kill-this-buffer :which "kills the current buffer")
 	"Vcc" '(vterm-send-C-c :which "kills current vterm process")
 	"nn" '(neotree-toggle :which "toggles neotree")
+	"A" '(close-all-buffers :which "kills all buffers")
 	;; Origami options
 	"oon" '(origami-open-node :which "opens current origami node")
 	"ooc" '(origami-close-node :which "closes current origami node")

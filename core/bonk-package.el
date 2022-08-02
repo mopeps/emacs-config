@@ -2,8 +2,9 @@
 
 ;; Initialize use-package on non-Linux platforms
 
-(use-package use-package-ensure-system-package)
 
+(setq package-enable-at-startup nil)
+(setq straight-check-for-modifications nil)
 (unless (featurep 'straight)
   ;; Bootstrap straight.el
   (defvar bootstrap-version)

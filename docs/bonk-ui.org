@@ -151,6 +151,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 * Ido (tool for buffer)
    #+begin_src emacs-lisp
+	 (use-package ido)
 	 (setup (:pkg ido)
 	   (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
 	   (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
