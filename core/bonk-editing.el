@@ -43,7 +43,7 @@
 ;;                         '(("^ *\\([-]\\) "
 ;;                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-(setup (:pkg org-faces)
+(setup org-faces
   ;; Make sure org-indent face is available
   (:also-load org-indent)
   (:when-loaded

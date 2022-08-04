@@ -69,7 +69,7 @@ useful for learning the possible key bindings in the mode of your current buffer
 #+begin_src emacs-lisp
 
   (setup (:pkg which-key :straight t)
-    (diminish 'which-key-mode)
+    ;; (diminish 'which-key-mode)
     (which-key-mode)
     (setq which-key-idle-delay 0.3))
 

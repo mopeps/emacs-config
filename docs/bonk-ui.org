@@ -24,7 +24,6 @@
 #+RESULTS:
 
 * Color Theme
-
 * Better Modeline
 
 [[https://github.com/seagle0128/doom-modeline][doom-modeline]] is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [[https://github.com/seagle0128/doom-modeline#customize][configuration options]] for more things you can enable or disable.
@@ -64,7 +63,6 @@
   "emacs-minions"
 
 #+end_src
-
 
 * Ivy and Counsel
 
@@ -151,8 +149,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 * Ido (tool for buffer)
    #+begin_src emacs-lisp
-	 (use-package ido)
-	 (setup (:pkg ido)
+	 (setup ido
 	   (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
 	   (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
 								  "*Messages*" "Async Shell Command")))

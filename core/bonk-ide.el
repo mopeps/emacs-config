@@ -203,7 +203,7 @@
   (setq flycheck-idle-change-delay 4)
   (setq flycheck-disabled-checkers
 		'(ruby ruby-reek
-  ;;			 ruby-rubocop
+			   ruby-rubocop
 			   ruby-rubylint
 			   yaml-ruby)))
 
@@ -237,7 +237,7 @@
 (setup (:pkg conda :straight t)
   (:load-after python-mode))
 
-(setup (:pkg ruby-mode)
+(setup ruby-mode
  (:file-match "\\.rb\\'")
  (:hook lsp-deferred)
  (setq ruby-indent-level tab-width)
@@ -333,10 +333,10 @@
   (setq geiser-repl-default-port 44555) ; For Gambit Scheme
   (setq geiser-implementations-alist '(((regexp "\\.scm$") guile))))
 
-(setup (:pkg c-mode)
+(setup c-mode
 	   (:hook lsp-deferred))
 
-(setup (:pkg c++-mode)
+(setup c++-mode
 	   (:hook lsp-deferred))
 
 (setup (:pkg flycheck-clang-analyzer :straight t)
@@ -370,7 +370,7 @@
         :major-modes '(zig-mode)
         :server-id 'zls))))
 
-(setup (:pkg markdown-mode)
+(setup markdown-mode
   (setq markdown-command "marked")
   (:file-match "\\.md\\'")
   (:when-loaded
@@ -381,7 +381,7 @@
                     (markdown-header-face-5 . 1.0)))
       (set-face-attribute (car face) nil :weight 'normal :height (cdr face)))))
 
-(setup (:pkg web-mode)
+(setup web-mode
   (:file-match "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'")
   (setq-default web-mode-code-indent-offset 2)
   (setq-default web-mode-markup-indent-offset 2)
@@ -579,7 +579,7 @@
   (setup (:pkg dired-ranger :straight t))
   (setup (:pkg dired-collapse :straight t))
 
-  (setup (:pkg dired)
+  (setup dired
 	(setq dired-listing-switches "-agho --group-directories-first"
 		  dired-omit-files "^\\.[^.].*"
 		  dired-omit-verbose nil

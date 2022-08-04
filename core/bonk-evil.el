@@ -31,7 +31,7 @@
     (evil-collection-init)))
 
 (setup (:pkg which-key :straight t)
-  (diminish 'which-key-mode)
+  ;; (diminish 'which-key-mode)
   (which-key-mode)
   (setq which-key-idle-delay 0.3))
 

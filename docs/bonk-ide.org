@@ -331,7 +331,7 @@ Try these commands with =M-x=:
 		(setq flycheck-idle-change-delay 4)
 		(setq flycheck-disabled-checkers
 			  '(ruby ruby-reek
-		;;			 ruby-rubocop
+					 ruby-rubocop
 					 ruby-rubylint
 					 yaml-ruby)))
 
@@ -373,7 +373,7 @@ Try these commands with =M-x=:
 *** Ruby
 **** ruby-mode
      #+begin_src emacs-lisp
-			  (setup (:pkg ruby-mode)
+			  (setup ruby-mode
 			   (:file-match "\\.rb\\'")
 			   (:hook lsp-deferred)
 			   (setq ruby-indent-level tab-width)
@@ -533,10 +533,10 @@ Configure TypeScript and JavaScript language modes
 
 #+begin_src emacs-lisp
 
-  (setup (:pkg c-mode)
+  (setup c-mode
 		 (:hook lsp-deferred))
 
-  (setup (:pkg c++-mode)
+  (setup c++-mode
 		 (:hook lsp-deferred))
 
   (setup (:pkg flycheck-clang-analyzer :straight t)
@@ -585,7 +585,7 @@ Configure TypeScript and JavaScript language modes
 
 #+begin_src emacs-lisp
 
-  (setup (:pkg markdown-mode)
+  (setup markdown-mode
     (setq markdown-command "marked")
     (:file-match "\\.md\\'")
     (:when-loaded
@@ -610,7 +610,7 @@ Configure TypeScript and JavaScript language modes
 
 #+begin_src emacs-lisp
 
-  (setup (:pkg web-mode)
+  (setup web-mode
     (:file-match "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'")
     (setq-default web-mode-code-indent-offset 2)
     (setq-default web-mode-markup-indent-offset 2)
@@ -1011,7 +1011,7 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 	(setup (:pkg dired-ranger :straight t))
 	(setup (:pkg dired-collapse :straight t))
   
-	(setup (:pkg dired)
+	(setup dired
 	  (setq dired-listing-switches "-agho --group-directories-first"
 			dired-omit-files "^\\.[^.].*"
 			dired-omit-verbose nil
