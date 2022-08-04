@@ -193,13 +193,13 @@ for evil-mode.
 	  (defun my-frame-init ()
 		;; eg.
 		(set-face-attribute 'default nil
-							:font "Mononoki Nerd Font-15"
-							:slant 'italic)
+							:font "CaskaydiaCove Nerd Font-13"
+							)
 		(set-face-attribute 'mode-line nil
-							:font "Fira Code-11"
+							:font "Fira Code-12"
 							:weight 'normal
 							:slant 'italic)
-			(load-theme 'base16-onedark t))
+			(load-theme 'base16-gruvbox-dark-hard t))
 
 	  (if (daemonp)
 		  (add-hook 'after-make-frame-functions
@@ -630,18 +630,23 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 	:after lsp-mode
 	:hook (lsp-mode . company-mode)
 	:bind (:map company-active-map
-		("<tab>" . company-complete-selection))
+				("<tab>" . company-complete-selection))
 	(:map lsp-mode-map
-	  ("<tab>" . company-indent-or-complete-common))
+		  ("<tab>" . company-indent-or-complete-common))
 	:config
-  (setq company-lsp-cache-candidates 'auto)
+	(setq company-lsp-cache-candidates 'auto)
 	:custom
 	(company-minimum-prefix-length 1)
 	(company-idle-delay 0.15))
 
   (global-company-mode t)
   (use-package company-box
-	:hook (company-mode . company-box-mode))
+	:hook (company-mode . company-box-mode)
+	:config
+	(require 'all-the-icons)
+	(setf (alist-get 'min-height company-box-frame-parameters) 6)
+	(setq company-box-icons-alist 'company-box-icons-all-the-icons
+		  company-box-backends-colors nil))
   (eval-after-load 'company
 	'(push 'company-robe company-backends))
 
