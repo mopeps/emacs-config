@@ -55,6 +55,13 @@ It's a useful helper when working with more than one standard of code.
 			(setq indent-tabs-mode nil))
 		(if (> tab-count space-count)
 			(setq indent-tabs-mode t))))
+
+	(defun bonk/set-font (font-name)
+	  (interactive "sSet font name: ")
+		(set-face-attribute 'default nil
+							:font font-name
+							:weight 'normal
+							:slant 'italic))
 #+end_src
 
 * Sugars

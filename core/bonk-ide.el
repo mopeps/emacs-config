@@ -55,13 +55,14 @@
   (load-file "./magit.el"))
 
 (setup (:pkg company :straight t)
-	   (:hook-into prog-mode lsp-mode)
+	   (:hook-into lsp-mode)
 	   (:bind
 		"<tab>" company-complete-selection
 		"<tab>" company-indent-or-complete-common)
 	   (setq company-lsp-cache-candidates 'auto)
 	   (setq company-minimum-prefix-length 1)
 	   (setq company-idle-delay 0.15)
+	   (setq company-auto-complete nil)
 	   (setq company-tooltip-minimum-width 60))
 
 (global-company-mode t)
@@ -203,7 +204,8 @@
   (setq flycheck-idle-change-delay 4)
   (setq flycheck-disabled-checkers
 		'(ruby ruby-reek
-			   ruby-rubocop
+			   ruby-standard
+			   ;; ruby-rubocop
 			   ruby-rubylint
 			   yaml-ruby)))
 
@@ -240,15 +242,15 @@
 (setup ruby-mode
  (:file-match "\\.rb\\'")
  (:hook lsp-deferred)
- (setq ruby-indent-level tab-width)
+ (setq ruby-indent-level 4)
   (setq ruby-indent-tabs-mode t)
   )
 
-(setup (:pkg enh-ruby-mode :straight t)
-  (:hook-into ruby-mode)
-  (setq enh-ruby-indent-tabs-mode t))
+;; (setup (:pkg enh-ruby-mode :straight t)
+;; 	(:hook-into ruby-mode)
+;; 	(setq enh-ruby-indent-tabs-mode t))
 
-(setup (:pkg robe :straight t)
+(setup (:pkg robe-mode :straight t)
   (:hook-into ruby-mode))
 (eval-after-load 'company
   '(push 'company-robe company-backends))
@@ -269,21 +271,32 @@
   (add-hook 'go-mode-hook 'lsp-go-install-save-hooks))
 
 (setup (:pkg typescript-mode)
-	:disabled
-	(:file-match "\\.ts\\'"))
+		:disabled
+		(:file-match "\\.ts\\'"))
 
 
-  (setup (:pkg js2-mode)
-	(:file-match "\\.jsx?\\'")
-	;; Use js2-mode for Node scripts
-	(add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
+	  (setup (:pkg js2-mode)
+		(:file-match "\\.jsx?\\'")
+		;; Use js2-mode for Node scripts
+		(add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
 
-	;; Don't use built-in syntax checking
-	(setq js2-mode-show-strict-warnings nil))
+		;; Don't use built-in syntax checking
+		(setq js2-mode-show-strict-warnings nil))
 
 
-;  (setup (:pkg apheleia)
-;	(apheleia-global-mode +1))
+	 (use-package prettier
+	   :after (rjsx-mode)
+	   :hook (rjsx-mode . prettier-js-mode)
+	   :straight (prettier-js :host github :repo "prettier/prettier-emacs")
+	   :init
+  (setq prettier-js-args '(
+  "--trailing-comma" "es5"
+  "--bracket-spacing" "true"
+  "--use-tabs" "true"
+  "--print-width" "100"
+  "--single-quote" "true"
+))
+	)
 
 (setup (:pkg rjsx-mode :straight t)
   (:file-match "\\.js\\'")
@@ -422,6 +435,9 @@
 
 (setup (:pkg smartparens :straight t)
   (:hook-into prog-mode))
+
+;; Making electric-indent behave sanely
+(setq-default electric-indent-inhibit t)
 
 (setup (:pkg docker :straight t)
   (:also-load docker-tramp))

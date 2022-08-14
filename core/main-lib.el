@@ -34,6 +34,13 @@
 	(if (> tab-count space-count)
 		(setq indent-tabs-mode t))))
 
+(defun bonk/set-font (font-name)
+  (interactive "sSet font name: ")
+	(set-face-attribute 'default nil
+						:font font-name
+						:weight 'normal
+						:slant 'italic))
+
 (defun file! ()
   (cond ((bound-and-true-p byte-compile-current-file))
 		(load-file-name)
