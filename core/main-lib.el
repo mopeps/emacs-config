@@ -35,11 +35,38 @@
 		(setq indent-tabs-mode t))))
 
 (defun bonk/set-font (font-name)
-  (interactive "sSet font name: ")
+	(interactive "sSet font name: ")
 	(set-face-attribute 'default nil
 						:font font-name
-						:weight 'normal
-						:slant 'italic))
+						:weight 'normal))
+
+  (defun bonk/set-font-bar ()
+	(interactive)
+(let ((faces '(mode-line
+			   mode-line-buffer-id
+			   mode-line-emphasis
+			   mode-line-highlight
+			   mode-line-inactive)))
+	 (mapc
+	  (lambda (face) (set-face-attribute face nil :font "Hack-15"))
+	  faces)))
+(defun bonk/set-font-italic (font-name)
+	  (interactive "sSet font name: ")
+	  (set-face-attribute 'default nil
+						  :font font-name
+						  :weight 'normal
+						  :slant 'italic))
+	(defun bonk/set-font-bold (font-name)
+	  (interactive "sSet font name: ")
+	  (set-face-attribute 'default nil
+						  :font font-name
+						  :weight 'bold))
+	(defun bonk/set-font-bold-italic (font-name)
+	  (interactive "sSet font name: ")
+	  (set-face-attribute 'default nil
+						  :font font-name
+						  :weight 'bold
+						  :slant 'italic))
 
 (defun file! ()
   (cond ((bound-and-true-p byte-compile-current-file))

@@ -5,19 +5,18 @@
 
 
 (setup (:pkg org :straight t)
-      (:also-load org-tempo)
+	  (:also-load org-tempo)
 	 (setq org-ellipsis " ▾"
-	       org-hide-emphasis-markers t
-	       org-src-fontify-natively t
-	       org-fontify-quote-and-verse-blocks t
-	       org-src-tab-acts-natively t
-	       org-edit-src-content-indentation 2
-	       org-hide-block-startup nil
-	       org-src-preserve-indentation nil
-	       org-startup-folded 'content
-	       org-cycle-separator-lines 2
-	       org-capture-bookmark nil)
-
+		   org-hide-emphasis-markers t
+		   org-src-fontify-natively t
+		   org-fontify-quote-and-verse-blocks t
+		   org-src-tab-acts-natively t
+		   org-edit-src-content-indentation 2
+		   org-hide-block-startup nil
+		   org-src-preserve-indentation nil
+		   org-startup-folded 'content
+		   org-cycle-separator-lines 2
+		   org-capture-bookmark nil)
 
 	(setq org-refile-targets '((nil :maxlevel . 1)
 							   (org-agenda-files :maxlevel . 1)))
@@ -99,7 +98,26 @@
 	(add-to-list 'org-structure-template-alist '("py" . "src python"))
 	(add-to-list 'org-structure-template-alist '("go" . "src go"))
 	(add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+	(add-to-list 'org-structure-template-alist '("r" . "src R :noweb yes :exports both :results graphics :file ./fig_1?.png"))
 	(add-to-list 'org-structure-template-alist '("json" . "src json"))))
+
+(defun prob-buffer (buffer-name)
+	"Creates a new probability and statistics buffer for school."
+	(interactive "sSet new buffer Name: ")
+	(let (($buf (generate-new-buffer buffer-name)))
+	  (switch-to-buffer $buf)
+	  (insert
+	 "#+author:\n#+TITLE:
+#+STARTUP: latexpreview
+#+OPTIONS: toc:t
+#+LATEX_CLASS: org-plain-extarticle
+#+LATEX_CLASS_OPTIONS: [a4paper, 14pt]
+#+LATEX_HEADER: \\usepackage{unicode-math}
+#+LATEX_HEADER: \\usepackage{amsfonts}
+#+PROPERTY: header-args:python :session hello
+#+PROPERTY: header-args:python+ :async yes")
+	  (funcall 'org-mode)
+	  (setq buffer-offer-save t)))
 
 (setup (:pkg org-pomodoro :straight t)
 
@@ -138,19 +156,25 @@
   "ox"  '(org-export-dispatch t :which-key "export"))
 
 (setup (:pkg ob-rust :straight t))
-(setup (:pkg ob-go :straight t))
-(setup (:pkg ob-typescript :straight t))
-(with-eval-after-load 'org
-  (org-babel-do-load-languages
-	'org-babel-load-languages
-	'((emacs-lisp . t)
-	  (python . t)
-	  (typescript . t)
-	  (go . t)
-	  (scheme . t)
-	  (rust . t)))
+	(setup (:pkg ob-go :straight t))
+	(setup (:pkg ob-typescript :straight t))
+	(setup (:pkg ob-ipython :straight t))
+(setup (:pkg jupyter :straight t))
+	(with-eval-after-load 'org
+	  (org-babel-do-load-languages
+		'org-babel-load-languages
+		'((emacs-lisp . t)
+		  (python . t)
+		  (ipython . t)
+		  (jupyter . t)
+		  (R . t)
+		  (typescript . t)
+		  (go . t)
+		  (scheme . t)
+		  (rust . t)))
+	  (org-babel-jupyter-override-src-block "python")
 
-  (push '("conf-unix" . conf-unix) org-src-lang-modes))
+	  (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 (setup (:pkg org-make-toc :straight t)
   (:hook-into org-mode))

@@ -32,26 +32,28 @@
 
 #+begin_src emacs-lisp
 
-(setup (:pkg all-the-icons :straight t))
+	(setup (:pkg all-the-icons :straight t))
 
-  (setup (:pkg minions :straight t)
-    (:hook-into doom-modeline-mode))
-  
-  (setup (:pkg doom-modeline :straight t)
-    (:hook-into after-init-hook)
-    (:option doom-modeline-height 15
-             doom-modeline-bar-width 6
-             doom-modeline-lsp t
-             doom-modeline-github nil
-             doom-modeline-mu4e nil
-             doom-modeline-irc t
-             doom-modeline-minor-modes t
-             doom-modeline-persp-name nil
-             doom-modeline-buffer-file-name-style 'truncate-except-project
-             doom-modeline-major-mode-icon nil)
-    (custom-set-faces '(mode-line ((t (:height 0.85))))
-                      '(mode-line-inactive ((t (:height 0.85))))))
-  
+	  (setup (:pkg minions :straight t)
+		(:hook-into doom-modeline-mode))
+
+	  (setup (:pkg doom-modeline :straight t)
+		(:hook-into after-init-hook)
+		(:option doom-modeline-height 15
+				 doom-modeline-bar-width 4
+				 doom-modeline-lsp t
+				 doom-modeline-github nil
+				 doom-modeline-mu4e nil
+				 doom-modeline-irc t
+				 doom-modeline-minor-modes t
+				 doom-modeline-modal-icon t
+				 doom-modeline-persp-name nil
+				 doom-modeline-buffer-file-name-style 'truncate-except-project
+				 doom-modeline-major-mode-icon nil)
+		(setq all-the-icons-scale-factor 0.9)
+		(custom-set-faces '(mode-line ((t (:height 0.85, :family "Fira Code"))))
+						  '(mode-line-inactive ((t (:height 0.85, :family "Fira Code"))))))
+
 #+end_src
 
 *Guix Packages*

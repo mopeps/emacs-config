@@ -69,12 +69,12 @@
 
 (setup (:pkg all-the-icons-completion :straight t))
 
-(setup (:pkg company-box :straight t)
-	   (:hook-into company-mode)
-	   (require 'all-the-icons)
-	   (setq company-box-icons-alist 'company-box-icons-all-the-icons
-			 ;; These are the Doom Emacs defaults
-			 ))
+;; (setup (:pkg company-box :straight t)
+;; 	   (:hook-into company-mode)
+;; 	   (require 'all-the-icons)
+;; 	   (setq company-box-icons-alist 'company-box-icons-all-the-icons
+;; 			 ;; These are the Doom Emacs defaults
+;; 			 ))
 
 (setup (:pkg company-inf-ruby :straight t)
 (:load-after company)
@@ -408,12 +408,9 @@
 (setup (:pkg projectile :straight t)
   (:global "C-c p" projectile-command-map)
   (projectile-mode)
-  (when (file-directory-p "~/.")
-    (setq projectile-project-search-path '("~/.")))
-  (when (file-directory-p "~/github")
-	(setq projectile-project-search-path '("~/github")))
-  (when (file-directory-p "~/working")
-	(setq projectile-project-search-path '("~/working")))
+    (setq projectile-project-search-path '("~/."))
+	(setq projectile-project-search-path '("~/github"))
+	(setq projectile-project-search-path '("~/working"))
   (setq projectile-switch-project-action #'projectile-dired))
 
 (setup (:pkg counsel-projectile :straight t)
@@ -451,6 +448,32 @@
 (setup (:pkg company-terraform :straight t))
 
 (setup (:pkg terraform-doc :straight t))
+
+(setup (:pkg csv :straight t))
+(setup (:pkg pandoc :straight t))
+(setup (:pkg org-preview-html :straight t))
+
+; Set up ESS, i.e. Statistics in Emacs, R, Stata, etc.
+  (setup (:pkg ess :straight t))
+  (setup (:pkg ess-view :straight t))
+  (setup (:pkg ess-view-data :straight t))
+  (setup (:pkg ess-r-insert-obj :straight t))
+(setup (:pkg ess-R-data-view :straight t))
+(setup (:pkg ess-smart-underscore :straight t))
+
+(setup (:pkg jupyter :straight t))
+
+(setup (:pkg ob-ipython :straight t))
+(setup (:pkg ipython-shell-send :straight t))
+
+(setup (:pkg conda :straight t)
+  :options
+  (setq conda-anaconda-home (expand-file-name "~/Programs/miniconda3/"))
+  (setq conda-env-home-directory (expand-file-name "~/Programs/miniconda3/"))
+  (setq conda-env-subdirectory "envs"))
+
+(unless (getenv "CONDA_DEFAULT_ENV")
+  (conda-env-activate "base"))
 
 (setup (:pkg vterm :straight t)
 	  (:when-loaded
@@ -657,6 +680,8 @@
 	 "dd"  '(dired :which-key "Here")
 	 "dh"  `(,(bonk/dired-link "~/") :which-key "Home")
 	 "dn"  `(,(bonk/dired-link "~/Notes") :which-key "Notes")
+	 "dw"  `(,(bonk/dired-link "~/working") :which-key "Working")
+	 "dg"  `(,(bonk/dired-link "~/github") :which-key "Github")
 	 "do"  `(,(bonk/dired-link "~/Downloads") :which-key "Downloads")
 	 "dp"  `(,(bonk/dired-link "~/Pictures") :which-key "Pictures")
 	 "dv"  `(,(bonk/dired-link "~/Videos") :which-key "Videos")

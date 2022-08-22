@@ -14,15 +14,21 @@
 (setup (:pkg base16-theme :straight t))
 (setup (:pkg spacegray-theme :straight t))
 (setup (:pkg doom-themes :straight t))
+(setup (:pkg atom-dark-theme :straight t))
+(setup (:pkg atom-one-dark-theme :straight t))
+(setup (:pkg srcery-theme :straight t))
+(setup (:pkg xresources-theme :straight t))
+(setup (:pkg darkokai-theme :straight t))
+(setup (:pkg vampyricdark-theme :straight t))
 
 (add-hook 'emacs-startup-hook
 		  (lambda ()
 			(custom-set-faces
-			 '(default ((t (:font "CaskaydiaCove Nerd Font-15", :slant 'italic))))
+			 '(default ((t (:font "Comic Code Ligatures-14", :slant 'italic))))
 			 '(fixed-pitch ((t (:inherit (default)))))
 			 '(fixed-pitch-serif ((t (:inherit (default)))))
-			 '(variable-pitch ((t (:font "Fira Code 15"))))))
-		  (load-theme 'base16-gruvbox-dark-hard t))
+			 '(variable-pitch ((t (:font "Fira Code-10"))))))
+		  (load-theme 'base16-gruvbox-srcery t))
 
 ;; (C-q Tab) inserts a tab space
   (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))

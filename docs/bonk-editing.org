@@ -16,37 +16,36 @@
 
 #+begin_src emacs-lisp
 
-	(defun bonk/org-no-line-number ()
-	  (display-line-numbers-mode 0))
+	  (defun bonk/org-no-line-number ()
+		(display-line-numbers-mode 0))
 
 
-(setup (:pkg org :straight t)
-      (:also-load org-tempo)
-	 (setq org-ellipsis " ▾"
-	       org-hide-emphasis-markers t
-	       org-src-fontify-natively t
-	       org-fontify-quote-and-verse-blocks t
-	       org-src-tab-acts-natively t
-	       org-edit-src-content-indentation 2
-	       org-hide-block-startup nil
-	       org-src-preserve-indentation nil
-	       org-startup-folded 'content
-	       org-cycle-separator-lines 2
-	       org-capture-bookmark nil)
+  (setup (:pkg org :straight t)
+		(:also-load org-tempo)
+	   (setq org-ellipsis " ▾"
+			 org-hide-emphasis-markers t
+			 org-src-fontify-natively t
+			 org-fontify-quote-and-verse-blocks t
+			 org-src-tab-acts-natively t
+			 org-edit-src-content-indentation 2
+			 org-hide-block-startup nil
+			 org-src-preserve-indentation nil
+			 org-startup-folded 'content
+			 org-cycle-separator-lines 2
+			 org-capture-bookmark nil)
 
+	  (setq org-refile-targets '((nil :maxlevel . 1)
+								 (org-agenda-files :maxlevel . 1)))
 
-	(setq org-refile-targets '((nil :maxlevel . 1)
-							   (org-agenda-files :maxlevel . 1)))
+	  (setq org-outline-path-complete-in-steps nil)
+	  (setq org-refile-use-outline-path t)
 
-	(setq org-outline-path-complete-in-steps nil)
-	(setq org-refile-use-outline-path t)
+	  (org-babel-do-load-languages
+		'org-babel-load-languages
+		'((emacs-lisp . t)
+		  ))
 
-	(org-babel-do-load-languages
-	  'org-babel-load-languages
-	  '((emacs-lisp . t)
-		))
-
-	(push '("conf-unix" . conf-unix) org-src-lang-modes))
+	  (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 #+end_src
 
@@ -149,12 +148,44 @@ documentation page.
 	  (add-to-list 'org-structure-template-alist '("py" . "src python"))
 	  (add-to-list 'org-structure-template-alist '("go" . "src go"))
 	  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+	  (add-to-list 'org-structure-template-alist '("r" . "src R :noweb yes :exports both :results graphics :file ./fig_1?.png"))
 	  (add-to-list 'org-structure-template-alist '("json" . "src json"))))
 
 #+end_src
 
 #+RESULTS:
-: ((json . src json) (yaml . src yaml) (go . src go) (py . src python) (ts . src typescript) (sc . src scheme) (li . src lisp) (el . src emacs-lisp) (sh . src sh) (a . export ascii) (c . center) (C . comment) (e . example) (E . export) (h . export html) (l . export latex) (q . quote) (s . src) (v . verse))
+: ((r . src R :noweb t :exports both :results graphics :file ./fig_1?.png) (json . src json) (yaml . src yaml) (go . src go) (ts . src typescript) (cpp . src C++) (js . src javascript) (rb . src ruby) (li . src lisp) (scm . src scheme) (el . src emacs-lisp) (py . src python) (sh . src sh) (a . export ascii) (c . center) (C . comment) (e . example) (E . export) (h . export html) (l . export latex) (q . quote) (s . src) (v . verse))
+
+** Org file type insertion
+I know i could use org-capture-templates for this, but i don't want to apply
+this automatically or in a predefined way. Perhaps there is a more elegant or
+comfy way of doing this but well...
+
+#+begin_src emacs-lisp
+
+  (defun prob-buffer (buffer-name)
+	"Creates a new probability and statistics buffer for school."
+	(interactive "sSet new buffer Name: ")
+	(let (($buf (generate-new-buffer buffer-name)))
+	  (switch-to-buffer $buf)
+	  (insert
+	 "#+author:\n#+TITLE:
+,#+STARTUP: latexpreview
+,#+OPTIONS: toc:t
+,#+LATEX_CLASS: org-plain-extarticle
+,#+LATEX_CLASS_OPTIONS: [a4paper, 14pt]
+,#+LATEX_HEADER: \\usepackage{unicode-math}
+,#+LATEX_HEADER: \\usepackage{amsfonts}
+,#+PROPERTY: header-args:python :session hello
+,#+PROPERTY: header-args:python+ :async yes")
+	  (funcall 'org-mode)
+	  (setq buffer-offer-save t)))
+
+
+#+end_src 
+
+#+RESULTS:
+: prob-buffer
 
 ** Pomodoro
 
@@ -243,21 +274,30 @@ through =emacsclient.=
 To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use.  [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
 
 #+begin_src emacs-lisp
-	(setup (:pkg ob-rust :straight t))
-	(setup (:pkg ob-go :straight t))
-	(setup (:pkg ob-typescript :straight t))
-	(with-eval-after-load 'org
-	  (org-babel-do-load-languages
-		'org-babel-load-languages
-		'((emacs-lisp . t)
-		  (python . t)
-		  (typescript . t)
-		  (go . t)
-		  (scheme . t)
-		  (rust . t)))
+	  (setup (:pkg ob-rust :straight t))
+	  (setup (:pkg ob-go :straight t))
+	  (setup (:pkg ob-typescript :straight t))
+	  (setup (:pkg ob-ipython :straight t))
+  (setup (:pkg jupyter :straight t))
+	  (with-eval-after-load 'org
+		(org-babel-do-load-languages
+		  'org-babel-load-languages
+		  '((emacs-lisp . t)
+			(python . t)
+			(ipython . t)
+			(jupyter . t)
+			(R . t)
+			(typescript . t)
+			(go . t)
+			(scheme . t)
+			(rust . t)))
+		(org-babel-jupyter-override-src-block "python")
 
-	  (push '("conf-unix" . conf-unix) org-src-lang-modes))
+		(push '("conf-unix" . conf-unix) org-src-lang-modes))
 #+end_src
+
+#+RESULTS:
+: ((conf-unix . conf-unix) (jupyter-python . python) (conf-unix . conf-unix) (conf-unix . conf-unix) (ipython . python) (conf-unix . conf-unix) (conf-unix . conf-unix) (C . c) (C++ . c++) (asymptote . asy) (bash . sh) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (desktop . conf-desktop) (dot . fundamental) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (shell . sh) (sqlite . sql) (toml . conf-toml))
 
 ** Update Table of Contents on Save
 
