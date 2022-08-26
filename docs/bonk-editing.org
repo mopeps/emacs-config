@@ -13,7 +13,6 @@
 * Org Mode
 
 ** TODO Basic configuration
-
 #+begin_src emacs-lisp
 
 	  (defun bonk/org-no-line-number ()
@@ -21,6 +20,7 @@
 
 
   (setup (:pkg org :straight t)
+	(:hook  auto-fill-mode visual-line-mode)
 		(:also-load org-tempo)
 	   (setq org-ellipsis " ▾"
 			 org-hide-emphasis-markers t
@@ -36,7 +36,7 @@
 
 	  (setq org-refile-targets '((nil :maxlevel . 1)
 								 (org-agenda-files :maxlevel . 1)))
-
+	  (setq-default fill-column 95)
 	  (setq org-outline-path-complete-in-steps nil)
 	  (setq org-refile-use-outline-path t)
 
@@ -45,9 +45,13 @@
 		'((emacs-lisp . t)
 		  ))
 
+
 	  (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 #+end_src
+
+#+RESULTS:
+: ((conf-unix . conf-unix) (conf-unix . conf-unix) (conf-unix . conf-unix) (conf-unix . conf-unix) (conf-unix . conf-unix) (conf-unix . conf-unix) (conf-unix . conf-unix) (conf-unix . conf-unix) (conf-unix . conf-unix) (jupyter-python . python) (ipython . python) (conf-unix . conf-unix) (C . c) (C++ . c++) (asymptote . asy) (bash . sh) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (desktop . conf-desktop) (dot . fundamental) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (shell . sh) (sqlite . sql) (toml . conf-toml))
 
 *Guix Packages*
 
@@ -169,15 +173,16 @@ comfy way of doing this but well...
 	(let (($buf (generate-new-buffer buffer-name)))
 	  (switch-to-buffer $buf)
 	  (insert
-	 "#+author:\n#+TITLE:
-,#+STARTUP: latexpreview
-,#+OPTIONS: toc:t
-,#+LATEX_CLASS: org-plain-extarticle
-,#+LATEX_CLASS_OPTIONS: [a4paper, 14pt]
-,#+LATEX_HEADER: \\usepackage{unicode-math}
-,#+LATEX_HEADER: \\usepackage{amsfonts}
-,#+PROPERTY: header-args:python :session hello
-,#+PROPERTY: header-args:python+ :async yes")
+	   "#+author:\n#+TITLE:
+  ,#+LATEX_HEADER: \\usepackage{unicode-math}
+  ,#+LATEX_HEADER: \\usepackage{amsfonts}
+  ,#+STARTUP: latexpreview
+  ,#+OPTIONS: toc:t
+  ,#+LATEX_CLASS: article
+  ,#+LATEX_CLASS_OPTIONS: [a5paper, landscape]
+  ,#+BABEL: noweb yes
+  ,#+PROPERTY: header-args:python :session practica1 :results output
+  ,#+PROPERTY: header-args:python+ :async yes :results output")
 	  (funcall 'org-mode)
 	  (setq buffer-offer-save t)))
 
@@ -225,7 +230,7 @@ through =emacsclient.=
 #+begin_src emacs-lisp
 
   (defun bonk/org-mode-visual-fill ()
-	(setq visual-fill-column-width 100
+	(setq visual-fill-column-width 95
 		  visual-fill-column-center-text t)
 	(visual-fill-column-mode 1))
 
@@ -234,6 +239,9 @@ through =emacsclient.=
       (bonk/org-mode-visual-fill))
 
 #+end_src
+
+#+RESULTS:
+: t
 
 ** Bindings
 
@@ -299,7 +307,66 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 #+RESULTS:
 : ((conf-unix . conf-unix) (jupyter-python . python) (conf-unix . conf-unix) (conf-unix . conf-unix) (ipython . python) (conf-unix . conf-unix) (conf-unix . conf-unix) (C . c) (C++ . c++) (asymptote . asy) (bash . sh) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (desktop . conf-desktop) (dot . fundamental) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (shell . sh) (sqlite . sql) (toml . conf-toml))
 
-** Update Table of Contents on Save
+** Org Present
+=org-present=
+#+begin_src emacs-lisp
+  (defun bonk/org-present-prepare-slide ()
+    (org-overview)
+    (org-show-entry)
+    (org-show-children))
+
+  (defun bonk/org-present-hook ()
+    (setq header-line-format " ")
+    (org-appear-mode -1)
+    (org-display-inline-images)
+    (bonk/org-present-prepare-slide))
+
+  (defun bonk/org-present-quit-hook ()
+    (setq header-line-format nil)
+    (org-present-small)
+    (org-remove-inline-images)
+    (org-appear-mode 1))
+
+  (defun bonk/org-present-prev ()
+    (interactive)
+    (org-present-prev)
+    (bonk/org-present-prepare-slide))
+
+  (defun bonk/org-present-next ()
+    (interactive)
+    (org-present-next)
+    (bonk/org-present-prepare-slide)
+    (when (fboundp 'live-crafter-add-timestamp)
+      (live-crafter-add-timestamp (substring-no-properties (org-get-heading t t t t)))))
+
+  (setup (:pkg org-present)
+    (:with-map org-present-mode-keymap
+      (:bind "C-c C-j" bonk/org-present-next
+             "C-c C-k" bonk/org-present-prev))
+    (:hook bonk/org-present-hook)
+    (:with-hook org-present-mode-quit-hook
+      (:hook bonk/org-present-quit-hook)))
+#+end_src 
+
+#+RESULTS:
+| bonk/org-present-quit-hook |
+
+*** Keymaps
+
+| Value    | function                        |
+| -------- | ------------------------------  |
+| <left>   | org-present-prev                |
+| <right>  | org-present-next                |
+| C-c   <   | org-present-beginning           |
+| C-c   >   | org-present-end                 |
+| C-c   C-- | org-present-small               |
+| C-c   C-1 | org-present-toggle-one-big-page |
+| C-c   C-= | org-present-big                 |
+| C-c   C-q | org-present-quit                |
+| C-c   C-r | org-present-read-only           |
+| C-c   C-w | org-present-read-write          |
+
+** TODO Update Table of Contents on Save
 
 It's nice to have a table of contents section for long literate configuration files (like this one!) so I use =org-make-toc= to automatically update the ToC in any header with a property named =TOC=.
 

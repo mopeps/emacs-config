@@ -311,6 +311,25 @@
 	   (add-hook 'yaml-mode-hook 'whitespace-mode)
 	   (add-hook 'yaml-mode-hook 'subword-mode))
 
+(setup (:pkg lispy :straight t)
+  (:hook-into emacs-lisp-mode scheme-mode))
+
+(setup (:pkg lispyville :straight t)
+  (:hook-into lispy-mode)
+  (:when-loaded
+    (lispyville-set-key-theme '(operators c-w additional
+                                additional-movement slurp/barf-cp
+                                prettify))))
+
+(setup (:pkg sly :straight t)
+  (:file-match "\\.lisp\\'"))
+
+(setup (:pkg slime :straight t)
+  :options
+  (setq inferior-lisp-program "clisp")
+  (slime-setup '(slime-fancy slime-quicklisp))
+  (:file-match "\\.lisp\\'"))
+
 (setup emacs-lisp-mode
   (:hook flycheck-mode))
 
@@ -461,9 +480,6 @@
 (setup (:pkg ess-R-data-view :straight t))
 (setup (:pkg ess-smart-underscore :straight t))
 
-(setup (:pkg jupyter :straight t))
-
-(setup (:pkg ob-ipython :straight t))
 (setup (:pkg ipython-shell-send :straight t))
 
 (setup (:pkg conda :straight t)
@@ -524,22 +540,22 @@
     (concat
      "\n"
      (propertize (system-name) 'face `(:foreground "#62aeed"))
-     (propertize " at " 'face `(:foreground "white"))
+     (propertize " at " 'face `(:foreground "black"))
      (propertize (get-prompt-path) 'face `(:foreground "#82cfd3"))
      (when current-branch
        (concat
-        (propertize " • " 'face `(:foreground "white"))
+        (propertize " • " 'face `(:foreground "black"))
         (propertize (concat " " current-branch) 'face `(:foreground "#c475f0"))))
      (when package-version
        (concat
-        (propertize " @ " 'face `(:foreground "white"))
+        (propertize " @ " 'face `(:foreground "black"))
         (propertize package-version 'face `(:foreground "#e8a206"))))
-     (propertize " • " 'face `(:foreground "white"))
+     (propertize " • " 'face `(:foreground "black"))
      (propertize (format-time-string "%I:%M:%S %p") 'face `(:foreground "#5a5b7f"))
      (if (= (user-uid) 0)
          (propertize "\n#" 'face `(:foreground "red2"))
        (propertize "\nλ" 'face `(:foreground "#aece4a")))
-     (propertize " " 'face `(:foreground "white")))))
+     (propertize " " 'face `(:foreground "black")))))
 
 (defun bonks/configure-eshell ()
   ;; Make sure magit is loaded

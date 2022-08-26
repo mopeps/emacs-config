@@ -38,6 +38,10 @@
   (setup (:pkg xresources-theme :straight t))
   (setup (:pkg darkokai-theme :straight t))
   (setup (:pkg vampyricdark-theme :straight t))
+  (setup (:pkg spacemacs-theme :straight t))
+  (setup (:pkg solo-jazz-theme :straight t))
+  (setup (:pkg jazz-theme :straight t))
+  (setup (:pkg apropospriate-theme :straight t))
 
   (add-hook 'emacs-startup-hook
 			(lambda ()
@@ -46,7 +50,7 @@
 			   '(fixed-pitch ((t (:inherit (default)))))
 			   '(fixed-pitch-serif ((t (:inherit (default)))))
 			   '(variable-pitch ((t (:font "Fira Code-10"))))))
-			(load-theme 'base16-gruvbox-srcery t))
+			(load-theme 'base16-one-light t))
 
 #+end_src
 

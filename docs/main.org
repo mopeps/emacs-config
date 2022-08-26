@@ -24,21 +24,21 @@ keep bonking mates.
 Let's start by setting up some basic package and system stuff.
 
 #+begin_src emacs-lisp
-	(provide 'main)
-	(add-to-list 'load-path (expand-file-name "core/" user-emacs-directory))
-	(require 'main-lib)
-	(require 'bonk-package)
-  (require 'bonk-evil)
-	(require 'bonk-editing)
-	(require 'bonk-ui)
-	(require 'bonk-ide)
-	(require 'bonk-startup)
+	  (provide 'main)
+	  (add-to-list 'load-path (expand-file-name "core/" user-emacs-directory))
+	  (require 'main-lib)
+	  (require 'bonk-package)
+	  (require 'bonk-evil)
+	  (require 'bonk-editing)
+	  (require 'bonk-ui)
+	  (require 'bonk-ide)
+	  (require 'bonk-startup)
 
-	;; Profile emacs startup
-	(add-hook 'emacs-startup-hook
-			  (lambda ()
-				(message "Bonk Emacs loaded in %s."
-						 (emacs-init-time))))
+	  ;; Profile emacs startup
+	  (add-hook 'emacs-startup-hook
+				(lambda ()
+				  (message "Bonk Emacs loaded in %s."
+						   (emacs-init-time))))
 
 #+end_src
 
@@ -86,7 +86,7 @@ Don't warn for following symlinked files
 #+begin_src emacs-lisp
 
   (setq vc-follow-symlinks t)
-
+  
 #+end_src
 
 * Enable Mode Diminishing

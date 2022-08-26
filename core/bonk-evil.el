@@ -92,4 +92,6 @@
 	"GI" '(guix-installed-system-packages :which-key "system packages")
 	"Gp" '(guix-packages-by-name :which-key "search packages")
 	"GP" '(guix-pull :which-key "pull")
+	;; Org-Present
+	"oP" '(org-present :which "launches org-present-mode")
 	)

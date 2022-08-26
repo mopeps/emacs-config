@@ -5,6 +5,7 @@
 
 
 (setup (:pkg org :straight t)
+  (:hook  auto-fill-mode visual-line-mode)
 	  (:also-load org-tempo)
 	 (setq org-ellipsis " ▾"
 		   org-hide-emphasis-markers t
@@ -20,7 +21,7 @@
 
 	(setq org-refile-targets '((nil :maxlevel . 1)
 							   (org-agenda-files :maxlevel . 1)))
-
+	(setq-default fill-column 95)
 	(setq org-outline-path-complete-in-steps nil)
 	(setq org-refile-use-outline-path t)
 
@@ -28,6 +29,7 @@
 	  'org-babel-load-languages
 	  '((emacs-lisp . t)
 		))
+
 
 	(push '("conf-unix" . conf-unix) org-src-lang-modes))
 
@@ -102,22 +104,23 @@
 	(add-to-list 'org-structure-template-alist '("json" . "src json"))))
 
 (defun prob-buffer (buffer-name)
-	"Creates a new probability and statistics buffer for school."
-	(interactive "sSet new buffer Name: ")
-	(let (($buf (generate-new-buffer buffer-name)))
-	  (switch-to-buffer $buf)
-	  (insert
+  "Creates a new probability and statistics buffer for school."
+  (interactive "sSet new buffer Name: ")
+  (let (($buf (generate-new-buffer buffer-name)))
+	(switch-to-buffer $buf)
+	(insert
 	 "#+author:\n#+TITLE:
-#+STARTUP: latexpreview
-#+OPTIONS: toc:t
-#+LATEX_CLASS: org-plain-extarticle
-#+LATEX_CLASS_OPTIONS: [a4paper, 14pt]
 #+LATEX_HEADER: \\usepackage{unicode-math}
 #+LATEX_HEADER: \\usepackage{amsfonts}
-#+PROPERTY: header-args:python :session hello
-#+PROPERTY: header-args:python+ :async yes")
-	  (funcall 'org-mode)
-	  (setq buffer-offer-save t)))
+#+STARTUP: latexpreview
+#+OPTIONS: toc:t
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS: [a5paper, landscape]
+#+BABEL: noweb yes
+#+PROPERTY: header-args:python :session practica1 :results output
+#+PROPERTY: header-args:python+ :async yes :results output")
+	(funcall 'org-mode)
+	(setq buffer-offer-save t)))
 
 (setup (:pkg org-pomodoro :straight t)
 
@@ -127,7 +130,7 @@
 (require 'org-protocol)
 
 (defun bonk/org-mode-visual-fill ()
-	(setq visual-fill-column-width 100
+	(setq visual-fill-column-width 95
 		  visual-fill-column-center-text t)
 	(visual-fill-column-mode 1))
 
@@ -175,6 +178,43 @@
 	  (org-babel-jupyter-override-src-block "python")
 
 	  (push '("conf-unix" . conf-unix) org-src-lang-modes))
+
+(defun bonk/org-present-prepare-slide ()
+  (org-overview)
+  (org-show-entry)
+  (org-show-children))
+
+(defun bonk/org-present-hook ()
+  (setq header-line-format " ")
+  (org-appear-mode -1)
+  (org-display-inline-images)
+  (bonk/org-present-prepare-slide))
+
+(defun bonk/org-present-quit-hook ()
+  (setq header-line-format nil)
+  (org-present-small)
+  (org-remove-inline-images)
+  (org-appear-mode 1))
+
+(defun bonk/org-present-prev ()
+  (interactive)
+  (org-present-prev)
+  (bonk/org-present-prepare-slide))
+
+(defun bonk/org-present-next ()
+  (interactive)
+  (org-present-next)
+  (bonk/org-present-prepare-slide)
+  (when (fboundp 'live-crafter-add-timestamp)
+    (live-crafter-add-timestamp (substring-no-properties (org-get-heading t t t t)))))
+
+(setup (:pkg org-present)
+  (:with-map org-present-mode-keymap
+    (:bind "C-c C-j" bonk/org-present-next
+           "C-c C-k" bonk/org-present-prev))
+  (:hook bonk/org-present-hook)
+  (:with-hook org-present-mode-quit-hook
+    (:hook bonk/org-present-quit-hook)))
 
 (setup (:pkg org-make-toc :straight t)
   (:hook-into org-mode))

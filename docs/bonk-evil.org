@@ -159,6 +159,8 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 	  "GI" '(guix-installed-system-packages :which-key "system packages")
 	  "Gp" '(guix-packages-by-name :which-key "search packages")
 	  "GP" '(guix-pull :which-key "pull")
+	  ;; Org-Present
+	  "oP" '(org-present :which "launches org-present-mode")
 	  )
 #+end_src
 
