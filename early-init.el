@@ -17,15 +17,16 @@
   (package-refresh-contents))
 
 (when (featurep 'native-compile)
+(setq comp-num-cpus 6)
 (setq comp-speed 2)
-  (setq native-comp-async-report-warnings-errors nil)
-  (setq native-comp-deferred-compilation t)
-  (when (fboundp 'startup-redirect-eln-cache)
-	(if (version< emacs-version "29")
-		(add-to-list 'native-comp-eln-load-path (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))
-	  (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))))
+   (setq native-comp-async-report-warnings-errors nil)
+   (setq native-comp-deferred-compilation t)
+   (when (fboundp 'startup-redirect-eln-cache)
+	 (if (version< emacs-version "29")
+		 (add-to-list 'native-comp-eln-load-path (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))
+	   (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))))
 
-  (add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory)))
+   (add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory)))
 
 ;; Remove some unneeded UI elements (the user can turn back on anything they wish)
 (setq inhibit-startup-message t)

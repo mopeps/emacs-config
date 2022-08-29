@@ -321,14 +321,15 @@
                                 additional-movement slurp/barf-cp
                                 prettify))))
 
-(setup (:pkg sly :straight t)
-  (:file-match "\\.lisp\\'"))
+(setup (:pkg common-lisp-mode)
+  (:file-match "\\.lisp\\'")
+  (:hook lsp-deferred))
 
-(setup (:pkg slime :straight t)
+(setup (:pkg sly :straight t)
+  (:hook-into common-lisp-mode)
   :options
   (setq inferior-lisp-program "clisp")
-  (slime-setup '(slime-fancy slime-quicklisp))
-  (:file-match "\\.lisp\\'"))
+  )
 
 (setup emacs-lisp-mode
   (:hook flycheck-mode))
@@ -423,26 +424,6 @@
 ;; 2. Use `impatient-mode' on any buffer
 (setup (:pkg impatient-mode :straight t))
 (setup (:pkg skewer-mode :straight t))
-
-(setup (:pkg projectile :straight t)
-  (:global "C-c p" projectile-command-map)
-  (projectile-mode)
-    (setq projectile-project-search-path '("~/."))
-	(setq projectile-project-search-path '("~/github"))
-	(setq projectile-project-search-path '("~/working"))
-  (setq projectile-switch-project-action #'projectile-dired))
-
-(setup (:pkg counsel-projectile :straight t)
-  (counsel-projectile-mode))
-
-;; (use-package magit
-  ;; :custom
-  ;; (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-;; NOTE: Make sure to configure a GitHub token before using this package!
-;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
-;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
-;; (use-package forge)
 
 (setup (:pkg rainbow-delimiters :straight t)
 	 (:hook-into
@@ -555,7 +536,7 @@
      (if (= (user-uid) 0)
          (propertize "\n#" 'face `(:foreground "red2"))
        (propertize "\nλ" 'face `(:foreground "#aece4a")))
-     (propertize " " 'face `(:foreground "black")))))
+     (propertize " " 'face `(:inherit (default))))))
 
 (defun bonks/configure-eshell ()
   ;; Make sure magit is loaded
@@ -704,3 +685,12 @@
 	 "d."  `(,(bonk/dired-link "~/.config") :which-key "dotfiles-config")
 	 "dl"  `(,(bonk/dired-link "~/.local") :which-key "dotfiles-local")
 	 "de"  `(,(bonk/dired-link "~/.emacs-modularized") :which-key ".emacs.d"))
+
+(setup (:pkg projectile :straight t)
+  (:global "C-c p" projectile-command-map)
+  (projectile-mode)
+    (setq projectile-project-search-path '("~/." "~/github" "~/working"))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(setup (:pkg counsel-projectile :straight t)
+  (counsel-projectile-mode))

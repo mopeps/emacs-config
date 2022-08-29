@@ -50,19 +50,23 @@ depends more on the emacs version)
 
 #+begin_src emacs-lisp
 
-  (when (featurep 'native-compile)
+   (when (featurep 'native-compile)
+  (setq comp-num-cpus 6)
   (setq comp-speed 2)
-	(setq native-comp-async-report-warnings-errors nil)
-	(setq native-comp-deferred-compilation t)
-	(when (fboundp 'startup-redirect-eln-cache)
-	  (if (version< emacs-version "29")
-		  (add-to-list 'native-comp-eln-load-path (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))
-		(startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))))
+	 (setq native-comp-async-report-warnings-errors nil)
+	 (setq native-comp-deferred-compilation t)
+	 (when (fboundp 'startup-redirect-eln-cache)
+	   (if (version< emacs-version "29")
+		   (add-to-list 'native-comp-eln-load-path (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))
+		 (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))))
 
-	(add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory)))
+	 (add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory)))
 
 
 #+end_src
+
+#+RESULTS:
+| /home/mopeps/.cache/emacs/eln-cache/ | /home/mopeps/.emacs.d/eln-cache/ | /usr/lib64/emacs/28.1/native-lisp/ |
 
 
 * Early UI config

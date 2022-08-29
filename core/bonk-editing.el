@@ -3,7 +3,6 @@
 (defun bonk/org-no-line-number ()
 	  (display-line-numbers-mode 0))
 
-
 (setup (:pkg org :straight t)
   (:hook  auto-fill-mode visual-line-mode)
 	  (:also-load org-tempo)
@@ -32,6 +31,8 @@
 
 
 	(push '("conf-unix" . conf-unix) org-src-lang-modes))
+
+	(setq org-format-latex-options (plist-put org-format-latex-options :scale 1.75))
 
 (setup (:pkg org-superstar :straight t)
 	(:load-after org)
@@ -174,8 +175,11 @@
 		  (typescript . t)
 		  (go . t)
 		  (scheme . t)
-		  (rust . t)))
+		  (rust . t)
+		  (lisp . t)))
 	  (org-babel-jupyter-override-src-block "python")
+	  (setq org-confirm-babel-evaluate nil)
+	  (setq org-babel-lisp-eval-fn #'sly-eval)
 
 	  (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
