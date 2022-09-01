@@ -51,7 +51,7 @@ depends more on the emacs version)
 #+begin_src emacs-lisp
 
    (when (featurep 'native-compile)
-  (setq comp-num-cpus 6)
+  (setq comp-num-cpus 8)
   (setq comp-speed 2)
 	 (setq native-comp-async-report-warnings-errors nil)
 	 (setq native-comp-deferred-compilation t)
@@ -66,7 +66,7 @@ depends more on the emacs version)
 #+end_src
 
 #+RESULTS:
-| /home/mopeps/.cache/emacs/eln-cache/ | /home/mopeps/.emacs.d/eln-cache/ | /usr/lib64/emacs/28.1/native-lisp/ |
+| /home/mopeps/.cache/emacs/eln-cache/ | /home/mopeps/.emacs-modularized/eln-cache/ | /home/mopeps/.emacs.d/eln-cache/ | /gnu/store/kyx4d16j956pi70pr90a9iiahkdm5zwn-emacs-pgtk-native-comp-28.1.90-224.03fe258/lib/emacs/28.1.90/native-lisp/ |
 
 
 * Early UI config

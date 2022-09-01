@@ -17,7 +17,7 @@
   (package-refresh-contents))
 
 (when (featurep 'native-compile)
-(setq comp-num-cpus 6)
+(setq comp-num-cpus 8)
 (setq comp-speed 2)
    (setq native-comp-async-report-warnings-errors nil)
    (setq native-comp-deferred-compilation t)

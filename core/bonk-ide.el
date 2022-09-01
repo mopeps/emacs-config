@@ -312,7 +312,7 @@
 	   (add-hook 'yaml-mode-hook 'subword-mode))
 
 (setup (:pkg lispy :straight t)
-  (:hook-into emacs-lisp-mode scheme-mode))
+  (:hook-into emacs-lisp-mode scheme-mode lisp-mode))
 
 (setup (:pkg lispyville :straight t)
   (:hook-into lispy-mode)
@@ -326,10 +326,10 @@
   (:hook lsp-deferred))
 
 (setup (:pkg sly :straight t)
-  (:hook-into common-lisp-mode)
+  (:load-after common-lisp-mode)
   :options
-  (setq inferior-lisp-program "clisp")
-  )
+   (setq sly-lisp-implementations
+		 '((sbcl ("/usr/bin/sbcl")))))
 
 (setup emacs-lisp-mode
   (:hook flycheck-mode))

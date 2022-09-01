@@ -1,4 +1,4 @@
-#+title: Bonk-ide
++title: Bonk-ide
 #+OPTIONS: toc:t
 #+PROPERTY: header-args:emacs-lisp :tangle ./../core/bonk-ide.el :mkdirp yes
 
@@ -481,13 +481,12 @@ Configure TypeScript and JavaScript language modes
 
     #+end_src
 
-	
 *** Lispy-languages
 
 #+begin_src emacs-lisp
 
   (setup (:pkg lispy :straight t)
-    (:hook-into emacs-lisp-mode scheme-mode))
+    (:hook-into emacs-lisp-mode scheme-mode lisp-mode))
 
   (setup (:pkg lispyville :straight t)
     (:hook-into lispy-mode)
@@ -497,6 +496,8 @@ Configure TypeScript and JavaScript language modes
                                   prettify))))
 
 #+end_src
+
+#+RESULTS:
 
 *Guix Packages*
 
@@ -515,16 +516,16 @@ Configure TypeScript and JavaScript language modes
 	(:hook lsp-deferred))
 
   (setup (:pkg sly :straight t)
-	(:hook-into common-lisp-mode)
+	(:load-after common-lisp-mode)
 	:options
-	(setq inferior-lisp-program "clisp")
-	)
+	 (setq sly-lisp-implementations
+		   '((sbcl ("/usr/bin/sbcl")))))
 
 
 #+end_src
 
 #+RESULTS:
-: clisp
+| sbcl | (/usr/bin/sbcl) |
 
 **** Emacs Lisp
 
