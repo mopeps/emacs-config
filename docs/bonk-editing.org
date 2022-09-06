@@ -390,7 +390,7 @@ It's nice to have a table of contents section for long literate configuration fi
 
 #+end_src
 
-* Org-Roam
+* DONE Org-Roam
 
 #+begin_src emacs-lisp
   (setup (:pkg org-roam :straight t)
@@ -400,33 +400,17 @@ It's nice to have a table of contents section for long literate configuration fi
 	(:option
 	 org-roam-directory "~/Notes/Roam/"
 	 org-roam-completion-everywhere t
-	 org-roam-completion-system 'default
 	 org-roam-capture-templates
-	  '(("d" "default" plain
-		 #'org-roam-capture--get-point
-		 "%?"
-		 :file-name "%<%Y%m%d%H%M%S>-${slug}"
-		 :head "#+title: ${title}\n"
-		 :unnarrowed t)
-		("ll" "link note" plain
-		 #'org-roam-capture--get-point
-		 "* %^{Link}"
-		 :file-name "Inbox"
-		 :olp ("Links")
-		 :unnarrowed t
-		 :immediate-finish)
-		("lt" "link task" entry
-		 #'org-roam-capture--get-point
-		 "* TODO %^{Link}"
-		 :file-name "Inbox"
-		 :olp ("Tasks")
-		 :unnarrowed t
-		 :immediate-finish)))
-	 (:global "C-c n l"   org-roam
-			  "C-c n f"   org-roam-find-file
+	 '(("d" "default" plain "%?"
+		:if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+						   "#+title: ${title}\n")
+		:unnarrowed t)))
+	 (:global "C-c n l"   org-roam-buffer-toggle
+			  "C-c n f"   org-roam-node-find
+			  "C-c n c"   org-roam-dailies-capture-today
 			  "C-c n g"   org-roam-graph)
-	(:bind "C-c n i"  org-roam-insert
-	"C-c n I"  org-roam-insert-immediate))
+	 (:bind "C-c n i"  org-roam-insert
+			"C-c n I"  org-roam-insert-immediate))
 #+end_src
 
 #+RESULTS:
