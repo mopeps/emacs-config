@@ -234,10 +234,31 @@
    '(("d" "default" plain "%?"
 	  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
 						 "#+title: ${title}\n")
-	  :unnarrowed t)))
-   (:global "C-c n l"   org-roam-buffer-toggle
-			"C-c n f"   org-roam-node-find
-			"C-c n c"   org-roam-dailies-capture-today
-			"C-c n g"   org-roam-graph)
-   (:bind "C-c n i"  org-roam-insert
-		  "C-c n I"  org-roam-insert-immediate))
+	  :unnarrowed t)
+	 ("l" "learn org roam" plain
+	  "* Category\n- Class: [[roam:roam]] \n- Topic: %?"
+	  :if-new (file+head "learn_org_roam/${title}.org"
+						 "#+title: ${title}\n#+filetags: org roam learning")
+	  :unnarrowed t)
+	 ("m" "math_esp" plain
+	  "* Category\n- Class: [[roam:math]] \n- Topic: %?"
+	  :if-new (file+head "math_esp/${title}.org"
+						 "#+title: ${title}\n#+filetags: math esp")
+	  :unnarrowed t)
+	 ("D" "math_esp definition" plain
+	  "* Category\n- Class: [[roam:math]] \n- Topic: %?"
+	  :if-new (file+head "math_esp/definitions/${title}.org"
+						 "#+title: ${title}\n#+filetags: math esp definitions")
+	  :unnarrowed t)
+	 ("E" "math_esp example" plain
+	  "* Category\n- Class: [[roam:math]] \n- Topic: %?"
+	  :if-new (file+head "math_esp/examples/${title}.org"
+						 "#+title: ${title}\n#+filetags: math esp examples")
+	  :unnarrowed t)
+	 ))
+  (:global "C-c n l"   org-roam-buffer-toggle
+		   "C-c n f"   org-roam-node-find
+		   "C-c n c"   org-roam-dailies-capture-today
+		   "C-c n g"   org-roam-graph)
+  (:bind "C-c n i"  org-roam-insert
+		 "C-c n I"  org-roam-insert-immediate))
