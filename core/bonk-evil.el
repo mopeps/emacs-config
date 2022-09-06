@@ -4,7 +4,7 @@
 	(setq undo-tree-auto-save-history nil)
 	(global-undo-tree-mode 1))
 
-  (setup (:pkg evil :straight t)
+      (setup (:pkg evil :straight t)
 	(setq evil-want-integration t)
 	(setq evil-want-keybinding nil)
 	(setq evil-want-C-u-scroll t)
@@ -37,28 +37,28 @@
 
 (defun close-all-buffers ()
 (interactive)
-  (mapc 'kill-buffer (buffer-list)))
+      (mapc 'kill-buffer (buffer-list)))
 
 (setup (:pkg hydra :straight t)
-  :defer t)
+      :defer t)
 
 (defhydra hydra-text-scale (:timeout 4)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
+      "scale text"
+      ("j" text-scale-increase "in")
+      ("k" text-scale-decrease "out")
+      ("f" nil "finished" :exit t))
 
 ;; Make ESC quit prompts
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+      (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-  (setup (:pkg general :straight t)
+      (setup (:pkg general :straight t)
 		 (general-create-definer bonk/leader-keys
-		   :keymaps '(normal insert visual emacs)
-		   :prefix "SPC"
-		   :global-prefix "C-SPC"))
+		       :keymaps '(normal insert visual emacs)
+		       :prefix "SPC"
+		       :global-prefix "C-SPC"))
 
-  (bonk/leader-keys
-  "ts" '(hydra-text-scale/body :which-key "scale text")
+      (bonk/leader-keys
+      "ts" '(hydra-text-scale/body :which-key "scale text")
 	"t"  '(:ignore t :which-key "toggles")
 	"tt" '(counsel-load-theme :which-key "choose theme")
 	;; Window navigation
@@ -79,12 +79,12 @@
 	"nn" '(neotree-toggle :which "toggles neotree")
 	"A" '(close-all-buffers :which "kills all buffers")
 	;; Origami options
-	"oon" '(origami-open-node :which "opens current origami node")
-	"ooc" '(origami-close-node :which "closes current origami node")
-	"oO" '(origami-open-all-nodes :which "opens all origami node")
-	"oC" '(origami-close-all-nodes :which "closes all origami node")
-	"orO" '(origami-open-node-recursively :which "opens all origami node below recursively")
-	"orC" '(origami-close-node-recursively :which "closes all origami node below recursively")
+	;;"oon" '(origami-open-node :which "opens current origami node")
+       ;; "ooc" '(origami-close-node :which "closes current origami node")
+       ;; "oO" '(origami-open-all-nodes :which "opens all origami node")
+       ;; "oC" '(origami-close-all-nodes :which "closes all origami node")
+       ;; "orO" '(origami-open-node-recursively :which "opens all origami node below recursively")
+      ;;  "orC" '(origami-close-node-recursively :which "closes all origami node below recursively")
 ;; Guix
 	"G"  '(:ignore t :which-key "Guix")
 	"Gg" '(guix :which-key "Guix")

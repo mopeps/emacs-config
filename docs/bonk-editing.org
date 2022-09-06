@@ -269,6 +269,8 @@ through =emacsclient.=
 
 #+end_src
 
+#+RESULTS:
+
 *Guix Packages*
 
 #+begin_src scheme :noweb-ref packages :noweb-sep ""
@@ -389,6 +391,7 @@ It's nice to have a table of contents section for long literate configuration fi
 #+end_src
 
 * Org-Roam
+
 #+begin_src emacs-lisp
   (use-package org-roam
 	:after org-mode

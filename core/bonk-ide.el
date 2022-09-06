@@ -1,22 +1,23 @@
 (provide 'bonk-ide)
 
 (setup (:pkg exec-path-from-shell :straight t)
-  :ensure t
-  (exec-path-from-shell-initialize))
+      :ensure t
+      (exec-path-from-shell-initialize))
 
 (setup (:pkg evil-nerd-commenter :straight t)
   (:global "M-/" evilnc-comment-or-uncomment-lines))
 
 (setup (:pkg origami :straight t)
-  (:hook-into c-mode
-			  emacs-lisp-mode
-			  go-mode
-			  yaml-mode))
+      (:disabled)
+      (:hook-into c-mode
+			      emacs-lisp-mode
+			      go-mode
+			      yaml-mode))
 
 (defun bonk/infer-indent-style ()
-  ;; Honestly, This is more of a wild guess since we could be using tabs and having it wrongly
-  ;; configure on our ide
-  (let ((space-count (how-many "^ "))
+      ;; Honestly, This is more of a wild guess since we could be using tabs and having it wrongly
+      ;; configure on our ide
+      (let ((space-count (how-many "^ "))
 		(tab-count (how-many "^\t")))
 	(if (> space-count tab-count )
 		(setq indent-tabs-mode nil))
@@ -55,15 +56,15 @@
   (load-file "./magit.el"))
 
 (setup (:pkg company :straight t)
-	   (:hook-into lsp-mode)
-	   (:bind
+	       (:hook-into lsp-mode)
+	       (:bind
 		"<tab>" company-complete-selection
 		"<tab>" company-indent-or-complete-common)
-	   (setq company-lsp-cache-candidates 'auto)
-	   (setq company-minimum-prefix-length 1)
-	   (setq company-idle-delay 0.15)
-	   (setq company-auto-complete nil)
-	   (setq company-tooltip-minimum-width 60))
+	       (setq company-lsp-cache-candidates 'auto)
+	       (setq company-minimum-prefix-length 1)
+	       (setq company-idle-delay 0.15)
+	       (setq company-auto-complete nil)
+	       (setq company-tooltip-minimum-width 60))
 
 (global-company-mode t)
 
@@ -81,18 +82,18 @@
 (add-to-list 'company-backends 'company-inf-ruby))
 
 (defun bonk/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-  (lsp-headerline-breadcrumb-mode))
+      (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+      (lsp-headerline-breadcrumb-mode))
 
 (setup (:pkg lsp-mode :straight t)
-	   (:hook bonk/lsp-mode-setup )
-	   (:hook-into typescript-mode rsjx-mode web-mode ruby-mode)
-	   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-	   (:option lsp-enable-which-key-integration t)
-	   (setq lsp-completion-enable t)
-	   (:when-loaded
+	       (:hook bonk/lsp-mode-setup )
+	       (:hook-into typescript-mode rsjx-mode web-mode ruby-mode)
+	       (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+	       (:option lsp-enable-which-key-integration t)
+	       (setq lsp-completion-enable t)
+	       (:when-loaded
 		(progn
-		  (setq lsp-language-id-configuration '((java-mode . "java")
+		      (setq lsp-language-id-configuration '((java-mode . "java")
 												(python-mode . "python")
 												(gfm-view-mode . "markdown")
 												(rust-mode . "rust")
@@ -112,11 +113,11 @@
 												(rjsx-mode . "javascript")
 												))
 
-		  (setq lsp-diagnostics-provider :none)
+		      (setq lsp-diagnostics-provider :none)
 
-		  (:option lsp-file-watch-threshold nil)
-		  (:option lsp-solargraph-multi-root nil)
-		  ;; enable / disable the hints as you prefer: (setq lsp-auto-guess-root t)
+		      (:option lsp-file-watch-threshold nil)
+		      (:option lsp-solargraph-multi-root nil)
+		      ;; enable / disable the hints as you prefer: (setq lsp-auto-guess-root t)
 (setq lsp-log-io nil)
 (setq lsp-restart 'auto-restart)
 (setq lsp-enable-symbol-highlighting nil)
@@ -133,16 +134,16 @@
 (setq lsp-enable-snippet nil)
 (setq read-process-output-max (* 1024 1024)) ;; 1MB
 (setq lsp-idle-delay 0.5)
-		  )))
+		      )))
 
 (setup (:pkg lsp-ui :straight t)
-	   (:hook-into lsp-mode)
-	   (:when-loaded
+	       (:hook-into lsp-mode)
+	       (:when-loaded
 		(progn
-		  (setq lsp-ui-sideline-enable t)
-		  (setq lsp-ui-sideline-show-hover nil)
-		  (setq lsp-ui-doc-enable t)
-		  (setq lsp-ui-doc-position 'bottom))))
+		      (setq lsp-ui-sideline-enable t)
+		      (setq lsp-ui-sideline-show-hover nil)
+		      (setq lsp-ui-doc-enable t)
+		      (setq lsp-ui-doc-position 'bottom))))
 
 (setup (:pkg lsp-ivy :straight t)
   (:load-after lsp-mode))
@@ -183,68 +184,68 @@
 ;; 	(customize-set-variable 'eglot-autoshutdown t)
 
 (setup (:pkg yasnippet :straight t)                  ; Snippets
-  (:load-after company-mode)
-  (yas-global-mode 1))
+      (:load-after company-mode)
+      (yas-global-mode 1))
 
-  (with-eval-after-load 'yasnippet
-   (setq yas-snippt-dirs '(yasnippet-snippets-dir))
-  (setq
-   yas-verbosity 1                      ; No need to be so verbose
-   yas-wrap-around-region t)
-  (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
-  (yas-reload-all))
+      (with-eval-after-load 'yasnippet
+       (setq yas-snippt-dirs '(yasnippet-snippets-dir))
+      (setq
+       yas-verbosity 1                      ; No need to be so verbose
+       yas-wrap-around-region t)
+      (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
+      (yas-reload-all))
 
 
 (setup (:pkg yasnippet-snippets :straight t)         ; Collection of snippets
-  (:load-after yasnippet))
+      (:load-after yasnippet))
 
 (setup (:pkg flycheck :straight t)
-  (:hook-into company-mode lsp-mode)
-  (setq flycheck-check-syntax-automatically `(idle-change mode-enabled))
-  (setq flycheck-idle-change-delay 4)
-  (setq flycheck-disabled-checkers
+      (:hook-into company-mode lsp-mode)
+      (setq flycheck-check-syntax-automatically `(idle-change mode-enabled))
+      (setq flycheck-idle-change-delay 4)
+      (setq flycheck-disabled-checkers
 		'(ruby ruby-reek
-			   ruby-standard
-			   ;; ruby-rubocop
-			   ruby-rubylint
-			   yaml-ruby)))
+			       ruby-standard
+			       ;; ruby-rubocop
+			       ruby-rubylint
+			       yaml-ruby)))
 
 (add-hook 'python-mode-hook 'flycheck-mode)
 
-  (with-eval-after-load 'company
+      (with-eval-after-load 'company
 	(add-hook 'python-mode-hook 'company-mode))
 
-  (setup (:pkg company-jedi :straight t)
+      (setup (:pkg company-jedi :straight t)
 	(:when-loaded
-	  (progn
+	      (progn
 		(add-to-list 'company-backends 'company-jedi))))
 
-  (defun python-mode-company-init ()
+      (defun python-mode-company-init ()
 	(setq-local company-backends '((company-jedi
 									company-etags
 									company-dabbrev-code))))
 (setup (:pkg python-mode)
-  (:hook lsp-deferred))
+      (:hook lsp-deferred))
 
-  (with-eval-after-load 'python-mode
+      (with-eval-after-load 'python-mode
 	(lambda () (require 'lsp-pyright)))
 (setup (:pkg lsp-pyright :straight t)
-  (:when-loaded
+      (:when-loaded
 	(progn
-	  (when (executable-find "python3")
+	      (when (executable-find "python3")
 		(setq lsp-pyright-python-executable-cmd "python3")))))
 (setup (:pkg pyenv :straight t)
-  (:load-after python-mode))
+      (:load-after python-mode))
 
 (setup (:pkg conda :straight t)
-  (:load-after python-mode))
+      (:load-after python-mode))
 
 (setup ruby-mode
  (:file-match "\\.rb\\'")
  (:hook lsp-deferred)
  (setq ruby-indent-level 4)
-  (setq ruby-indent-tabs-mode t)
-  )
+      (setq ruby-indent-tabs-mode t)
+      )
 
 ;; (setup (:pkg enh-ruby-mode :straight t)
 ;; 	(:hook-into ruby-mode)
@@ -256,26 +257,26 @@
   '(push 'company-robe company-backends))
 
 (setup (:pkg rspec-mode :straight t)
-  (:hook-into ruby-mode))
+      (:hook-into ruby-mode))
 
 (setup (:pkg go-mode :straight t)
-  (:file-match "\\.go\\'")
-  (:hook lsp-deferred)
-  (add-hook 'go-mode-hook (lambda ()
+      (:file-match "\\.go\\'")
+      (:hook lsp-deferred)
+      (add-hook 'go-mode-hook (lambda ()
 							(setq tab-width 4)))
-  (add-hook 'go-mode-hook #'lsp)
-  (add-hook 'before-save-hook 'gofmt-before-save)
-  (defun lsp-go-install-save-hooks ()
+      (add-hook 'go-mode-hook #'lsp)
+      (add-hook 'before-save-hook 'gofmt-before-save)
+      (defun lsp-go-install-save-hooks ()
 	(add-hook 'before-save-hook 'lsp-format-buffer t t)
 	(add-hook 'before-save-hook 'lsp-organize-imports t t))
-  (add-hook 'go-mode-hook 'lsp-go-install-save-hooks))
+      (add-hook 'go-mode-hook 'lsp-go-install-save-hooks))
 
 (setup (:pkg typescript-mode)
 		:disabled
 		(:file-match "\\.ts\\'"))
 
 
-	  (setup (:pkg js2-mode)
+	      (setup (:pkg js2-mode)
 		(:file-match "\\.jsx?\\'")
 		;; Use js2-mode for Node scripts
 		(add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
@@ -287,14 +288,14 @@
 	 (use-package prettier
 	   :after (rjsx-mode)
 	   :hook (rjsx-mode . prettier-js-mode)
-	   :straight (prettier-js :host github :repo "prettier/prettier-emacs")
-	   :init
-  (setq prettier-js-args '(
-  "--trailing-comma" "es5"
-  "--bracket-spacing" "true"
-  "--use-tabs" "true"
-  "--print-width" "100"
-  "--single-quote" "true"
+	       :straight (prettier-js :host github :repo "prettier/prettier-emacs")
+	       :init
+      (setq prettier-js-args '(
+      "--trailing-comma" "es5"
+      "--bracket-spacing" "true"
+      "--use-tabs" "true"
+      "--print-width" "100"
+      "--single-quote" "true"
 ))
 	)
 
@@ -307,9 +308,9 @@
 ;; yaml-mode doesn't derive from prog-mode, but we can at least enable
 ;; whitespace-mode and apply cleanup.
 (setup (:pkg yaml-mode :straight t)
-	   (:file-match "\\.ya?ml\\'")
-	   (add-hook 'yaml-mode-hook 'whitespace-mode)
-	   (add-hook 'yaml-mode-hook 'subword-mode))
+	       (:file-match "\\.ya?ml\\'")
+	       (add-hook 'yaml-mode-hook 'whitespace-mode)
+	       (add-hook 'yaml-mode-hook 'subword-mode))
 
 (setup (:pkg lispy :straight t)
   (:hook-into emacs-lisp-mode scheme-mode lisp-mode))
@@ -322,13 +323,13 @@
                                 prettify))))
 
 (setup (:pkg common-lisp-mode)
-  (:file-match "\\.lisp\\'")
-  (:hook lsp-deferred))
+      (:file-match "\\.lisp\\'")
+      (:hook lsp-deferred))
 
 (setup (:pkg sly :straight t)
-  (:load-after common-lisp-mode)
-  :options
-   (setq sly-lisp-implementations
+      (:load-after common-lisp-mode)
+      :options
+       (setq sly-lisp-implementations
 		 '((sbcl ("/usr/bin/sbcl")))))
 
 (setup emacs-lisp-mode
@@ -366,32 +367,57 @@
   (setq geiser-repl-default-port 44555) ; For Gambit Scheme
   (setq geiser-implementations-alist '(((regexp "\\.scm$") guile))))
 
+(setup (:pkg lsp-java :straight t)
+  (:hook-into lsp-mode))
+(setup (:pkg java-mode)
+  (:hook lsp-deferred))
+
+(setup (:pkg clojure-mode :straight t))
+(setup (:pkg cider :straight t)
+      (:when-loaded
+	(progn
+	      ;; eldoc in cider mode
+	      (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+	      (add-hook 'cider-mode-hook '(paredit-mode +1))
+	      (with-eval-after-load 'evil
+		(defun my-evil-cider-repl-insert ()
+		      "Enter insert mode at the prompt, If we 're behind the prompt."
+		      (interactive)
+		      (if (> cider-repl-input-start-mark (point))
+			      (goto-char cider-repl-input-start-mark))
+		      (evil-insert-state))
+		))))
+
+(setup (:pkg kotlin-mode :straight t))
+
+(setup (:pkg gradle-mode :straight t))
+
 (setup c-mode
-	   (:hook lsp-deferred))
+	       (:hook lsp-deferred))
 
 (setup c++-mode
-	   (:hook lsp-deferred))
+	       (:hook lsp-deferred))
 
 (setup (:pkg flycheck-clang-analyzer :straight t)
-  (:hook-into flycheck)
-  (:when-loaded
+      (:hook-into flycheck)
+      (:when-loaded
 	(progn
 	(flycheck-clang-analyzer-setup))))
 
 (with-eval-after-load 'company
-  (add-hook 'c++-mode-hook 'company-mode)
-  (add-hook 'c-mode-hook 'company-mode))
+      (add-hook 'c++-mode-hook 'company-mode)
+      (add-hook 'c-mode-hook 'company-mode))
 
 (setup (:pkg company-irony :straight t)
-  (:when-loaded
+      (:when-loaded
 	(progn
-  (setq company-backends '((
+      (setq company-backends '((
 							company-dabbrev-code
 							company-irony))))))
 
 (setup (:pkg irony :straight t)
-  (:hook-into c++-mode c-mode)
-  (:hook irony-cdb-autosetup-compile-options))
+      (:hook-into c++-mode c-mode)
+      (:hook irony-cdb-autosetup-compile-options))
 
 (setup (:pkg zig-mode :straight t)
   (:disabled)
@@ -427,8 +453,8 @@
 
 (setup (:pkg rainbow-delimiters :straight t)
 	 (:hook-into
-	  org-mode
-	  prog-mode))
+	      org-mode
+	      prog-mode))
 
 (setup (:pkg smartparens :straight t)
   (:hook-into prog-mode))
@@ -442,8 +468,8 @@
 (setup (:pkg docker-tramp :straight t))
 
 (setup (:pkg terraform-mode :straight t)
-	   (:file-match "\\.tf\\'")
-	   (:hook-into lsp-deferred))
+	       (:file-match "\\.tf\\'")
+	       (:hook-into lsp-deferred))
 
 (setup (:pkg company-terraform :straight t))
 
@@ -473,45 +499,45 @@
   (conda-env-activate "base"))
 
 (setup (:pkg vterm :straight t)
-	  (:when-loaded
-  (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
-  (setq vterm-max-scrollback 10000)
-  ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
-  ;; spawn another if want one.
-  (setq vterm-kill-buffer-on-exit t)
-  (setq vterm-timer-delay 0.01)))
+	      (:when-loaded
+      (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+      (setq vterm-max-scrollback 10000)
+      ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
+      ;; spawn another if want one.
+      (setq vterm-kill-buffer-on-exit t)
+      (setq vterm-timer-delay 0.01)))
 
 (bonk/leader-keys
   "Vt" '(vterm-other-window :which-key "vterm in new window")
   "Vb" '(vterm :which-key "open new buffer for vterm"))
 
 (defun read-file (file-path)
-  (with-temp-buffer
+      (with-temp-buffer
 	(insert-file-contents file-path)
 	(buffer-string)))
 
 (defun get-current-package-version ()
-  (interactive)
-  (let ((package-json-file (concat (eshell/pwd) "/package.json")))
+      (interactive)
+      (let ((package-json-file (concat (eshell/pwd) "/package.json")))
 	(when (file-exists-p package-json-file)
-	  (let* ((package-json-contents (read-file package-json-file))
+	      (let* ((package-json-contents (read-file package-json-file))
 			 (package-json (ignore-errors (json-parse-string package-json-contents))))
 		(when package-json
-		  (ignore-errors (gethash "version" package-json)))))))
+		      (ignore-errors (gethash "version" package-json)))))))
 (defun map-line-to-status-char (line)
-  (cond ((string-match "^?\\? " line) "?")))
+      (cond ((string-match "^?\\? " line) "?")))
 
 (defun get-git-status-prompt ()
-  (let ((status-lines (cdr (process-lines "git" "status" "--porcelain" "-b"))))
+      (let ((status-lines (cdr (process-lines "git" "status" "--porcelain" "-b"))))
 	(seq-uniq (seq-filter 'identity (mapcar 'map-line-to-status-char status-lines)))))
 
 (defun get-prompt-path ()
-  (let* ((current-path (eshell/pwd))
+      (let* ((current-path (eshell/pwd))
 		 (git-output (shell-command-to-string "git rev-parse --show-toplevel"))
 		 (has-path (not (string-match "^fatal" git-output))))
 	(if (not has-path)
 		(abbreviate-file-name current-path)
-	  (string-remove-prefix (file-name-directory git-output) current-path))))
+	      (string-remove-prefix (file-name-directory git-output) current-path))))
 
 ;; This prompt function mostly replicates my custom zsh prompt setup
 ;; that is powered by github.com/denysdovhan/spaceship-prompt.
@@ -539,49 +565,49 @@
      (propertize " " 'face `(:inherit (default))))))
 
 (defun bonks/configure-eshell ()
-  ;; Make sure magit is loaded
-  (require 'magit)
+      ;; Make sure magit is loaded
+      (require 'magit)
 
-  (require 'evil-collection-eshell)
-  (evil-collection-eshell-setup)
+      (require 'evil-collection-eshell)
+      (evil-collection-eshell-setup)
 
-  (setup (:pkg xterm-color :straight t))
+      (setup (:pkg xterm-color :straight t))
 
-  (push 'eshell-tramp eshell-modules-list)
-  (push 'xterm-color-filter eshell-preoutput-filter-functions)
-  (delq 'eshell-handle-ansi-color eshell-output-filter-functions)
+      (push 'eshell-tramp eshell-modules-list)
+      (push 'xterm-color-filter eshell-preoutput-filter-functions)
+      (delq 'eshell-handle-ansi-color eshell-output-filter-functions)
 
-  ;; Save command history when commands are entered
-  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+      ;; Save command history when commands are entered
+      (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
 
-  (add-hook 'eshell-before-prompt-hook
+      (add-hook 'eshell-before-prompt-hook
 			(lambda ()
-			  (setq xterm-color-preserve-properties t)))
+			      (setq xterm-color-preserve-properties t)))
 
-  ;; Truncate buffer for performance
-  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+      ;; Truncate buffer for performance
+      (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
-  ;; We want to use xterm-256color when running interactive commands
-  ;; in eshell but not during other times when we might be launching
-  ;; a shell command to gather its output.
-  (add-hook 'eshell-pre-command-hook
+      ;; We want to use xterm-256color when running interactive commands
+      ;; in eshell but not during other times when we might be launching
+      ;; a shell command to gather its output.
+      (add-hook 'eshell-pre-command-hook
 			(lambda () (setenv "TERM" "xterm-256color")))
-  (add-hook 'eshell-post-command-hook
+      (add-hook 'eshell-post-command-hook
 			(lambda () (setenv "TERM" "dumb")))
 
-  ;; Use completion-at-point to provide completions in eshell
-  (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
+      ;; Use completion-at-point to provide completions in eshell
+      (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
 
-  ;; Initialize the shell history
-  (eshell-hist-initialize)
+      ;; Initialize the shell history
+      (eshell-hist-initialize)
 
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'consult-history)
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
-  (evil-normalize-keymaps)
+      (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'consult-history)
+      (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+      (evil-normalize-keymaps)
 
-  (setenv "PAGER" "cat")
+      (setenv "PAGER" "cat")
 
-  (setq eshell-prompt-function      'eshell-prompt
+      (setq eshell-prompt-function      'eshell-prompt
 		eshell-prompt-regexp        "^λ "
 		eshell-history-size         10000
 		eshell-buffer-maximum-lines 10000
@@ -591,10 +617,10 @@
 		eshell-prefer-lisp-functions nil))
 
 (use-package eshell
-  :hook (eshell-first-time-mode . bonks/configure-eshell)
-  :config
+      :hook (eshell-first-time-mode . bonks/configure-eshell)
+      :config
 
-  (with-eval-after-load 'esh-opt
+      (with-eval-after-load 'esh-opt
 	(setq eshell-destroy-buffer-when-process-dies t)
 	(setq eshell-visual-commands '("htop" "zsh" "vim" "nvim"))))
 
@@ -611,26 +637,26 @@
   (setq backup-directory-alist            '((".*" . "~/.Trash")))
 
 (setup (:pkg all-the-icons-dired :straight t))
-  (setup (:pkg dired-single :straight t))
-  (setup (:pkg dired-ranger :straight t))
-  (setup (:pkg dired-collapse :straight t))
+      (setup (:pkg dired-single :straight t))
+      (setup (:pkg dired-ranger :straight t))
+      (setup (:pkg dired-collapse :straight t))
 
-  (setup dired
+      (setup dired
 	(setq dired-listing-switches "-agho --group-directories-first"
-		  dired-omit-files "^\\.[^.].*"
-		  dired-omit-verbose nil
-		  dired-hide-details-hide-symlink-targets nil
-		  delete-by-moving-to-trash t)
+		      dired-omit-files "^\\.[^.].*"
+		      dired-omit-verbose nil
+		      dired-hide-details-hide-symlink-targets nil
+		      delete-by-moving-to-trash t)
 
 	(autoload 'dired-omit-mode "dired-x")
 
 	(add-hook 'dired-load-hook
-			  (lambda ()
+			      (lambda ()
 				(interactive)
 				(dired-collapse)))
 
 	(add-hook 'dired-mode-hook
-			  (lambda ()
+			      (lambda ()
 				(interactive)
 				(dired-omit-mode 1)
 				(dired-hide-details-mode 1)
@@ -638,14 +664,14 @@
 				(hl-line-mode 1)))
 
 	(evil-collection-define-key 'normal 'dired-mode-map
-	  "h" 'dired-single-up-directory
-	  "H" 'dired-omit-mode
-	  "l" 'dired-single-buffer
-	  "y" 'dired-ranger-copy
-	  "X" 'dired-ranger-move
-	  "p" 'dired-ranger-paste))
+	      "h" 'dired-single-up-directory
+	      "H" 'dired-omit-mode
+	      "l" 'dired-single-buffer
+	      "y" 'dired-ranger-copy
+	      "X" 'dired-ranger-move
+	      "p" 'dired-ranger-paste))
 
-  (setup (:pkg dired-rainbow :straight t)
+      (setup (:pkg dired-rainbow :straight t)
 	(:load-after dired
 	 (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
 	 (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
@@ -669,10 +695,10 @@
 	 (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")))
 
 (eval-when-compile (require 'cl))
-   (defun bonk/dired-link (path)
+       (defun bonk/dired-link (path)
 	 (lexical-let ((target path))
-	   (lambda () (interactive) (message "Path: %s" target) (dired target))))
-  (bonk/leader-keys
+	       (lambda () (interactive) (message "Path: %s" target) (dired target))))
+      (bonk/leader-keys
 	 "d"   '(:ignore t :which-key "dired")
 	 "dd"  '(dired :which-key "Here")
 	 "dh"  `(,(bonk/dired-link "~/") :which-key "Home")
@@ -687,10 +713,10 @@
 	 "de"  `(,(bonk/dired-link "~/.emacs-modularized") :which-key ".emacs.d"))
 
 (setup (:pkg projectile :straight t)
-  (:global "C-c p" projectile-command-map)
-  (projectile-mode)
+      (:global "C-c p" projectile-command-map)
+      (projectile-mode)
     (setq projectile-project-search-path '("~/." "~/github" "~/working"))
-  (setq projectile-switch-project-action #'projectile-dired))
+      (setq projectile-switch-project-action #'projectile-dired))
 
 (setup (:pkg counsel-projectile :straight t)
-  (counsel-projectile-mode))
+      (counsel-projectile-mode))

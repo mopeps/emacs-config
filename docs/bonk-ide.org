@@ -40,6 +40,7 @@
 ***** Folding with Origami
 #+begin_src emacs-lisp
   (setup (:pkg origami :straight t)
+	(:disabled)
 	(:hook-into c-mode
 				emacs-lisp-mode
 				go-mode
@@ -47,7 +48,6 @@
 #+end_src
 
 #+RESULTS:
-| origami-mode |
 
 ***** Infer Indent Style
 
@@ -589,6 +589,54 @@ Configure TypeScript and JavaScript language modes
   "emacs-geiser"
 
 #+end_src
+
+
+I was going to put clojure here, but you see, it runs on the JVM, so...
+*** JVM-Langs
+Apparently James Gosling used and likes Emacs (nice)
+**** Java
+
+#+begin_src emacs-lisp
+	(setup (:pkg lsp-java :straight t)
+	  (:hook-into lsp-mode))
+	(setup (:pkg java-mode)
+	  (:hook lsp-deferred))
+#+end_src
+**** Clojure
+#+begin_src emacs-lisp
+  (setup (:pkg clojure-mode :straight t))
+  (setup (:pkg cider :straight t)
+	(:when-loaded
+	  (progn
+		;; eldoc in cider mode
+		(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+		(add-hook 'cider-mode-hook '(paredit-mode +1))
+		(with-eval-after-load 'evil
+		  (defun my-evil-cider-repl-insert ()
+			"Enter insert mode at the prompt, If we 're behind the prompt."
+			(interactive)
+			(if (> cider-repl-input-start-mark (point))
+				(goto-char cider-repl-input-start-mark))
+			(evil-insert-state))
+		  ))))
+
+#+end_src
+
+#+RESULTS:
+: my-evil-cider-repl-insert
+
+**** Kotlin
+#+begin_src emacs-lisp
+  (setup (:pkg kotlin-mode :straight t))
+#+end_src
+
+**** Graddle
+#+begin_src emacs-lisp
+  (setup (:pkg gradle-mode :straight t))
+#+end_src
+
+#+RESULTS:
+: t
 
 *** C/C++
 
