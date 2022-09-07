@@ -20,7 +20,6 @@
 
 	(setq org-refile-targets '((nil :maxlevel . 1)
 							   (org-agenda-files :maxlevel . 1)))
-	(setq-default fill-column 95)
 	(setq org-outline-path-complete-in-steps nil)
 	(setq org-refile-use-outline-path t)
 
@@ -246,19 +245,22 @@
 						 "#+title: ${title}\n#+filetags: math esp")
 	  :unnarrowed t)
 	 ("D" "math_esp definition" plain
-	  "* Category\n- Class: [[roam:math]] \n- Topic: %?"
+	  "* Category\n- Class: [[roam:math]] \n- Topic: %? \n* Definicion"
 	  :if-new (file+head "math_esp/definitions/${title}.org"
 						 "#+title: ${title}\n#+filetags: math esp definitions")
 	  :unnarrowed t)
 	 ("E" "math_esp example" plain
-	  "* Category\n- Class: [[roam:math]] \n- Topic: %?"
+	  "* Category\n- Class: [[roam:math]] \n- Topic: %? \n* Ejemplos"
 	  :if-new (file+head "math_esp/examples/${title}.org"
 						 "#+title: ${title}\n#+filetags: math esp examples")
 	  :unnarrowed t)
-	 ))
+	 ("P" "math_esp properties" plain
+	  "* Category\n- Class: [[roam:math]] \n- Topic: %? \n* Propiedades"
+	  :if-new (file+head "math_esp/properties/${title}.org"
+						 "#+title: ${title}\n#+filetags: math esp propiedades")
+	  :unnarrowed t)))
   (:global "C-c n l"   org-roam-buffer-toggle
 		   "C-c n f"   org-roam-node-find
 		   "C-c n c"   org-roam-dailies-capture-today
-		   "C-c n g"   org-roam-graph)
-  (:bind "C-c n i"  org-roam-insert
-		 "C-c n I"  org-roam-insert-immediate))
+		   "C-c n g"   org-roam-graph
+		   "C-c n i"  org-roam-node-insert))
