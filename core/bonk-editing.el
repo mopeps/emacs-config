@@ -135,8 +135,9 @@
 	(visual-fill-column-mode 1))
 
 (setup (:pkg visual-fill-column :straight t)
-      (:hook-into org-mode)
-      (bonk/org-mode-visual-fill))
+  (:disabled)
+	  (:hook-into org-mode)
+	  (bonk/org-mode-visual-fill))
 
 (setup (:pkg evil-org :straight t)
   (:hook-into org-mode org-agenda-mode)
@@ -238,6 +239,11 @@
 	  "* Category\n- Class: [[roam:roam]] \n- Topic: %?"
 	  :if-new (file+head "learn_org_roam/${title}.org"
 						 "#+title: ${title}\n#+filetags: org roam learning")
+	  :unnarrowed t)
+	 ("p" "programming note" plain
+	  "* Category\n- Class: [[programming]] \n- Topic: %?\n- Language: "
+	  :if-new (file+head "programming/${title}.org"
+						 "#+title: ${title}\n#+filetags: org roam programming")
 	  :unnarrowed t)
 	 ("m" "math_esp" plain
 	  "* Category\n- Class: [[roam:math]] \n- Topic: %?"

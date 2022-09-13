@@ -1,4 +1,4 @@
-+title: Bonk-ide
+#+title: Bonk-ide
 #+OPTIONS: toc:t
 #+PROPERTY: header-args:emacs-lisp :tangle ./../core/bonk-ide.el :mkdirp yes
 
@@ -59,7 +59,7 @@
 	(let ((space-count (how-many "^ "))
 		  (tab-count (how-many "^\t")))
 	  (if (> space-count tab-count )
-		  (setq indent-tabs-mode nil))
+		  (setq indent-tabs-mode t))
 	  (if (> tab-count space-count)
 		  (setq indent-tabs-mode t))))
 
@@ -221,6 +221,9 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 			)))
 #+end_src
 
+#+RESULTS:
+: 0.5
+
 **** lsp-ui
 
 [[https://emacs-lsp.github.io/lsp-ui/][lsp-ui]] is a set of UI enhancements built on top of =lsp-mode= which make Emacs feel even more
@@ -376,18 +379,21 @@ Try these commands with =M-x=:
 *** Ruby
 **** ruby-mode
      #+begin_src emacs-lisp
-			  (setup ruby-mode
-			   (:file-match "\\.rb\\'")
-			   (:hook lsp-deferred)
-			   (setq ruby-indent-level 4)
-				(setq ruby-indent-tabs-mode t)
-				)
+	   (setup ruby-mode
+		(:file-match "\\.rb\\'")
+		(:hook lsp-deferred)
+		(setq ruby-indent-level 4)
+		 (setq ruby-indent-tabs-mode t)
+		 (setq lsp-lens-enable nil)
+		 )
 
-			  ;; (setup (:pkg enh-ruby-mode :straight t)
-			  ;; 	(:hook-into ruby-mode)
-			  ;; 	(setq enh-ruby-indent-tabs-mode t))
+	   ;; (setup (:pkg enh-ruby-mode :straight t)
+	   ;; 	(:hook-into ruby-mode)
+	   ;; 	(setq enh-ruby-indent-tabs-mode t))
 
      #+end_src
+
+	 #+RESULTS:
 
 **** robe-mode
      #+begin_src emacs-lisp
@@ -597,11 +603,16 @@ Apparently James Gosling used and likes Emacs (nice)
 **** Java
 
 #+begin_src emacs-lisp
-	(setup (:pkg lsp-java :straight t)
-	  (:hook-into lsp-mode))
-	(setup (:pkg java-mode)
-	  (:hook lsp-deferred))
+  (setup (:pkg lsp-java :straight t)
+	(:disabled)
+	(:hook-into lsp-mode))
+  (setup (:pkg java-mode)
+	(:hook lsp-deferred))
 #+end_src
+
+#+RESULTS:
+| lsp-deferred |
+
 **** Clojure
 #+begin_src emacs-lisp
   (setup (:pkg clojure-mode :straight t))
