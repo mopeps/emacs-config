@@ -28,7 +28,7 @@
 (add-hook 'emacs-startup-hook
 		  (lambda ()
 			(custom-set-faces
-			 '(default ((t (:font "Comic Code Ligatures-14", :slant 'italic))))
+			 '(default ((t (:font "Comic Code Ligatures-14"))))
 			 '(fixed-pitch ((t (:inherit (default)))))
 			 '(fixed-pitch-serif ((t (:inherit (default)))))
 			 '(variable-pitch ((t (:font "Fira Code-10"))))))
