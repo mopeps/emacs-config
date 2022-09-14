@@ -4,7 +4,7 @@
 	  (display-line-numbers-mode 0))
 
 (setup (:pkg org :straight t)
-  (:hook  auto-fill-mode visual-line-mode)
+  (:hook visual-line-mode visual-fill-column-mode)
 	  (:also-load org-tempo)
 	 (setq org-ellipsis " ▾"
 		   org-hide-emphasis-markers t
@@ -17,12 +17,10 @@
 		   org-startup-folded 'content
 		   org-cycle-separator-lines 2
 		   org-capture-bookmark nil)
-
 	(setq org-refile-targets '((nil :maxlevel . 1)
 							   (org-agenda-files :maxlevel . 1)))
 	(setq org-outline-path-complete-in-steps nil)
 	(setq org-refile-use-outline-path t)
-
 	(org-babel-do-load-languages
 	  'org-babel-load-languages
 	  '((emacs-lisp . t)
@@ -130,14 +128,13 @@
 (require 'org-protocol)
 
 (defun bonk/org-mode-visual-fill ()
-	(setq visual-fill-column-width 95
-		  visual-fill-column-center-text t)
+	(setq visual-fill-column-center-text t)
+	(setq visual-fill-column-width 100)
 	(visual-fill-column-mode 1))
 
-(setup (:pkg visual-fill-column :straight t)
-  (:disabled)
-	  (:hook-into org-mode)
-	  (bonk/org-mode-visual-fill))
+(setup (:pkg visual-fill-column)
+  (:hook-into org)
+  (bonk/org-mode-visual-fill))
 
 (setup (:pkg evil-org :straight t)
   (:hook-into org-mode org-agenda-mode)
