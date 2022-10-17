@@ -98,6 +98,17 @@ It's a useful helper when working with more than one standard of code.
 #+RESULTS:
 : bonk/set-font-bold-italic
 
+** Set latex preview scale
+#+begin_src emacs-lisp
+  (defun bonk/set-latex-scale (scale-number)
+	(interactive "nSelect the scale in which latex previews are going to be displayed: ")
+	(setq org-format-latex-options (plist-put org-format-latex-options :scale scale-number))
+	)
+#+end_src
+
+#+RESULTS:
+: bonk/set-latex-scale
+
 * Sugars
 ** file!
 Return the emacs lisp file this function is called from.

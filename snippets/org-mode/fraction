@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: latex_fraction
+# key: frac_
+# --
+
+\frac{$1}{$2} $0

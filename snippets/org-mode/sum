@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: latex_sum / sigma
+# key: sum_
+# --
+
+\sum^{$1}_{$2}{$3} $0

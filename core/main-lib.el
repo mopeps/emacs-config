@@ -68,6 +68,11 @@
 						  :weight 'bold
 						  :slant 'italic))
 
+(defun bonk/set-latex-scale (scale-number)
+  (interactive "nSelect the scale in which latex previews are going to be displayed: ")
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale scale-number))
+  )
+
 (defun file! ()
   (cond ((bound-and-true-p byte-compile-current-file))
 		(load-file-name)

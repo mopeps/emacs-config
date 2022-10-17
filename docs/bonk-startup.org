@@ -50,14 +50,13 @@
 			   '(fixed-pitch ((t (:inherit (default)))))
 			   '(fixed-pitch-serif ((t (:inherit (default)))))
 			   '(variable-pitch ((t (:font "Fira Code-10"))))))
-			(load-theme 'base16-one-light t))
+			(load-theme 'base16-gruvbox-material-light-hard t))
 
 #+end_src
 
 #+RESULTS:
-| lambda | nil | (message Bonk Emacs loaded in %s. (emacs-init-time))                                                                                                                                           |
-| lambda | nil | (custom-set-faces '(default ((t (:font Comic Code Ligatures-12 (, :slant) 'italic)))) '(fixed-pitch ((t (:inherit (default))))) '(fixed-pitch-serif ((t (:inherit (default))))) '(variable-pitch ((t (:font Fira Code-10))))) |
-| lambda | nil | (custom-set-faces '(default ((t (:font Comic Code Ligatures-14 (, :slant) 'italic)))) '(fixed-pitch ((t (:inherit (default))))) '(fixed-pitch-serif ((t (:inherit (default))))) '(variable-pitch ((t (:font Fira Code-10))))) |
+| lambda | nil | (message Bonk Emacs loaded in %s. (emacs-init-time))                                                                                                                  |
+| lambda | nil | (custom-set-faces '(default ((t (:font Comic Code Ligatures-14)))) '(fixed-pitch ((t (:inherit (default))))) '(fixed-pitch-serif ((t (:inherit (default))))) '(variable-pitch ((t (:font Fira Code-10))))) |
 
 *Guix Packages*
 

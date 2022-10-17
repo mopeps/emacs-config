@@ -29,8 +29,6 @@
 
 	(push '("conf-unix" . conf-unix) org-src-lang-modes))
 
-	(setq org-format-latex-options (plist-put org-format-latex-options :scale 1.75))
-
 (setup (:pkg org-superstar :straight t)
 	(:load-after org)
 	(:hook-into org-mode)
@@ -98,7 +96,7 @@
 	(add-to-list 'org-structure-template-alist '("py" . "src python"))
 	(add-to-list 'org-structure-template-alist '("go" . "src go"))
 	(add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
-	(add-to-list 'org-structure-template-alist '("r" . "src R :noweb yes :exports both :results graphics :file ./fig_1?.png"))
+	(add-to-list 'org-structure-template-alist '("r" . "src R :noweb yes :exports both"))
 	(add-to-list 'org-structure-template-alist '("json" . "src json"))))
 
 (defun prob-buffer (buffer-name)
@@ -151,6 +149,8 @@
 
   "on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
 
+  "olp" '(org-latex-preview :which-key "preview latex block")
+
   "oa"  '(org-agenda :which-key "status")
   "ot"  '(org-todo-list :which-key "todos")
   "oc"  '(org-capture t :which-key "capture")
@@ -160,6 +160,7 @@
 	(setup (:pkg ob-go :straight t))
 	(setup (:pkg ob-typescript :straight t))
 	(setup (:pkg ob-ipython :straight t))
+(setup (:pkg ob-sagemath :straight t))
 (setup (:pkg jupyter :straight t))
 	(with-eval-after-load 'org
 	  (org-babel-do-load-languages
@@ -267,3 +268,4 @@
 		   "C-c n c"   org-roam-dailies-capture-today
 		   "C-c n g"   org-roam-graph
 		   "C-c n i"  org-roam-node-insert))
+(setup (:pkg org-roam-ui :straight t))

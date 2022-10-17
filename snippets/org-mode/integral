@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: latex_integral
+# key: integral_
+# --
+
+\int^{$1}_{$2}{$3} $0

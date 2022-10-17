@@ -159,3 +159,13 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
    #+RESULTS:
    
+
+* pdf-tools
+
+#+begin_src emacs-lisp
+	(setup (:pkg pdf-tools :straight t)
+	 (evil-set-initial-state 'pdf-view-mode 'normal) )
+#+end_src
+
+#+RESULTS:
+| pdf-view-mode | xref--transient-buffer-mode | xref--xref-buffer-mode | view-mode | vc-git-log-view-mode | tabulated-list-mode | tab-switcher-mode | speedbar-mode | shortdoc-mode | occur-mode | package-menu-mode | outline-mode | Info-mode | image-mode | ibuffer-mode | help-mode | gnus-summary-mode | gnus-server-mode | gnus-group-mode | gnus-browse-mode | gnus-bookmark-bmenu-mode | gnus-article-mode | geiser-doc-mode | geiser-debug-mode | flycheck-error-list-mode | eww-bookmark-mode | eww-buffers-mode | eww-history-mode | eww-mode | emacs-lisp-mode | edebug-mode | doc-view-mode | diff-mode | Custom-mode | compilation-mode | calendar-mode | calc-mode | Buffer-menu-mode | bookmark-bmenu-mode | dashboard-mode | messages-buffer-mode |

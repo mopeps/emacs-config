@@ -44,11 +44,10 @@
 
 	  (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
-	  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.75))
 #+end_src
 
 #+RESULTS:
-| :foreground | default | :background | default | :scale | 1.75 | :html-foreground | Black | :html-background | Transparent | :html-scale | 1.0 | :matchers | (begin $1 $ $$ \( \[) |
+| :foreground | default | :background | default | :scale | 1.1 | :html-foreground | Black | :html-background | Transparent | :html-scale | 1.0 | :matchers | (begin $1 $ $$ \( \[) |
 
 *Guix Packages*
 
@@ -149,13 +148,13 @@ documentation page.
 	  (add-to-list 'org-structure-template-alist '("py" . "src python"))
 	  (add-to-list 'org-structure-template-alist '("go" . "src go"))
 	  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
-	  (add-to-list 'org-structure-template-alist '("r" . "src R :noweb yes :exports both :results graphics :file ./fig_1?.png"))
+	  (add-to-list 'org-structure-template-alist '("r" . "src R :noweb yes :exports both"))
 	  (add-to-list 'org-structure-template-alist '("json" . "src json"))))
 
 #+end_src
 
 #+RESULTS:
-: ((r . src R :noweb t :exports both :results graphics :file ./fig_1?.png) (json . src json) (yaml . src yaml) (go . src go) (ts . src typescript) (cpp . src C++) (js . src javascript) (rb . src ruby) (li . src lisp) (scm . src scheme) (el . src emacs-lisp) (py . src python) (sh . src sh) (a . export ascii) (c . center) (C . comment) (e . example) (E . export) (h . export html) (l . export latex) (q . quote) (s . src) (v . verse))
+: ((r . src R) (r . src R :noweb yes) (r . src R :noweb yes :exports both) (r . src R :noweb yes :exports both ) (json . src json) (r . src R :noweb yes :exports both :results graphics :file ./fig_1?.png) (yaml . src yaml) (go . src go) (ts . src typescript) (cpp . src C++) (js . src javascript) (rb . src ruby) (li . src lisp) (scm . src scheme) (el . src emacs-lisp) (py . src python) (sh . src sh) (a . export ascii) (c . center) (C . comment) (e . example) (E . export) (h . export html) (l . export latex) (q . quote) (s . src) (v . verse))
 
 ** Org file type insertion
 I know i could use org-capture-templates for this, but i don't want to apply
@@ -243,25 +242,27 @@ through =emacsclient.=
 
 #+begin_src emacs-lisp
 
-   (setup (:pkg evil-org :straight t)
-     (:hook-into org-mode org-agenda-mode)
-     (require 'evil-org)
-     (require 'evil-org-agenda)
-     (evil-org-set-key-theme '(navigation todo insert textobjects additional))
-     (evil-org-agenda-set-keys))
+  (setup (:pkg evil-org :straight t)
+	(:hook-into org-mode org-agenda-mode)
+	(require 'evil-org)
+	(require 'evil-org-agenda)
+	(evil-org-set-key-theme '(navigation todo insert textobjects additional))
+	(evil-org-agenda-set-keys))
 
-   (bonk/leader-keys
-     "o"   '(:ignore t :which-key "org mode")
+  (bonk/leader-keys
+	"o"   '(:ignore t :which-key "org mode")
 
-     "oi"  '(:ignore t :which-key "insert")
-     "oil" '(org-insert-link :which-key "insert link")
+	"oi"  '(:ignore t :which-key "insert")
+	"oil" '(org-insert-link :which-key "insert link")
 
-     "on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
+	"on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
 
-     "oa"  '(org-agenda :which-key "status")
-     "ot"  '(org-todo-list :which-key "todos")
-     "oc"  '(org-capture t :which-key "capture")
-     "ox"  '(org-export-dispatch t :which-key "export"))
+	"olp" '(org-latex-preview :which-key "preview latex block")
+	
+	"oa"  '(org-agenda :which-key "status")
+	"ot"  '(org-todo-list :which-key "todos")
+	"oc"  '(org-capture t :which-key "capture")
+	"ox"  '(org-export-dispatch t :which-key "export"))
 
 #+end_src
 
@@ -284,6 +285,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 	  (setup (:pkg ob-go :straight t))
 	  (setup (:pkg ob-typescript :straight t))
 	  (setup (:pkg ob-ipython :straight t))
+  (setup (:pkg ob-sagemath :straight t))
   (setup (:pkg jupyter :straight t))
 	  (with-eval-after-load 'org
 		(org-babel-do-load-languages
@@ -306,7 +308,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 #+end_src
 
 #+RESULTS:
-: ((conf-unix . conf-unix) (conf-unix . conf-unix) (conf-unix . conf-unix) (jupyter-python . python) (ipython . python) (conf-unix . conf-unix) (C . c) (C++ . c++) (asymptote . asy) (bash . sh) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (desktop . conf-desktop) (dot . fundamental) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (shell . sh) (sqlite . sql) (toml . conf-toml))
+: ((conf-unix . conf-unix) (jupyter-sage . sage) (jupyter-python . python) (conf-unix . conf-unix) (ipython . python) (conf-unix . conf-unix) (C . c) (C++ . c++) (asymptote . asy) (bash . sh) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (desktop . conf-desktop) (dot . fundamental) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (shell . sh) (sqlite . sql) (toml . conf-toml))
 
 ** Org Present
 =org-present=
@@ -436,6 +438,7 @@ It's nice to have a table of contents section for long literate configuration fi
 			 "C-c n c"   org-roam-dailies-capture-today
 			 "C-c n g"   org-roam-graph
 			 "C-c n i"  org-roam-node-insert))
+  (setup (:pkg org-roam-ui :straight t))
 #+end_src
 
 #+RESULTS:

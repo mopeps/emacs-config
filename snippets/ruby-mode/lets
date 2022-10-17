@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: lets
+# key: lets_
+# --
+
+let(:$1) { $2 }
+$0

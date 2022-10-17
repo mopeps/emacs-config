@@ -78,3 +78,6 @@
   (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
   (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
 							 "*Messages*" "Async Shell Command")))
+
+(setup (:pkg pdf-tools :straight t)
+ (evil-set-initial-state 'pdf-view-mode 'normal) )
