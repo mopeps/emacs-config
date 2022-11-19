@@ -28,11 +28,11 @@
 (add-hook 'emacs-startup-hook
 		  (lambda ()
 			(custom-set-faces
-			 '(default ((t (:font "Comic Code Ligatures-14"))))
+			 '(default ((t (:font "FantasqueSansMono Nerd Font-14"))))
 			 '(fixed-pitch ((t (:inherit (default)))))
 			 '(fixed-pitch-serif ((t (:inherit (default)))))
 			 '(variable-pitch ((t (:font "Fira Code-10"))))))
-		  (load-theme 'base16-gruvbox-material-light-hard t))
+		  (load-theme 'base16-one-light t))
 
 ;; (C-q Tab) inserts a tab space
   (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))

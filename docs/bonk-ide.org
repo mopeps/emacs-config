@@ -99,7 +99,7 @@
 					(when (boundp 'read-process-output-max)
 					  ;; New in Emacs 27
 					  (setq read-process-output-max (* 2048 2048))
-					  (load-file "./magit.el"))
+					  (load-file "~/magit.el"))
    #+end_src
 
    #+RESULTS:
@@ -180,11 +180,11 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 			(setq lsp-language-id-configuration '((java-mode . "java")
 												  (python-mode . "python")
 												  (gfm-view-mode . "markdown")
-												  (rust-mode . "rust")
 												  (css-mode . "css")
 												  (xml-mode . "xml")
 												  (c-mode . "c")
 												  (c++-mode . "cpp")
+												  (rustic-mode . "rust")
 												  (objc-mode . "objective-c")
 												  (web-mode . "html")
 												  (html-mode . "html")
@@ -194,7 +194,7 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 												  (haskell-mode . "haskell")
 												  (php-mode . "php")
 												  (json-mode . "json")
-												  (rjsx-mode . "javascript")
+												  (typescript-mode . "typescript")
 												  ))
 
 			(setq lsp-diagnostics-provider :none)
@@ -300,6 +300,23 @@ Try these commands with =M-x=:
 #+RESULTS:
 : t
 
+*** Treesitter
+#+begin_src emacs-lisp
+	(setup (:pkg tree-sitter :straight t)
+	  (:hook tree-sitter-hl-mode)
+	  (:hook-into typescript-mode))
+	(setup (:pkg tree-sitter-langs :straight t))
+	(setup (:pkg tree-sitter-ess-r :straight t))
+#+end_src
+
+#+RESULTS:
+: t
+
+*** Rainbow-mode
+#+begin_src emacs-lisp
+  (setup (:pkg rainbow-mode :straight t)
+  (:hook-into prog-mode))
+#+end_src
 *** Yasnippets
     Yasnippet automatically inserts code templates when I write a word and press the tab key.
     It predefines most of the common templates, including the dreadful =if err !\=nil { ....=
@@ -362,8 +379,9 @@ Try these commands with =M-x=:
 									  company-etags
 									  company-dabbrev-code))))
   (setup (:pkg python-mode)
-	(:hook lsp-deferred))
-  
+	(:hook lsp-deferred)
+  (:hook tree-sitter-mode))
+
 	(with-eval-after-load 'python-mode
 	  (lambda () (require 'lsp-pyright)))
   (setup (:pkg lsp-pyright :straight t)
@@ -374,16 +392,17 @@ Try these commands with =M-x=:
   (setup (:pkg pyenv :straight t)
 	(:load-after python-mode))
 
-  (setup (:pkg conda :straight t)
-	(:load-after python-mode))
 #+end_src
+
+#+RESULTS:
 
 *** Ruby
 **** ruby-mode
      #+begin_src emacs-lisp
-	   (setup ruby-mode
+	   (setup (:pkg ruby-mode)
 		(:file-match "\\.rb\\'")
 		(:hook lsp-deferred)
+		(:hook tree-sitter-mode)
 		(setq ruby-indent-level 4)
 		 (setq ruby-indent-tabs-mode t)
 		 (setq lsp-lens-enable nil)
@@ -419,19 +438,23 @@ Try these commands with =M-x=:
 *** Golang
     
     #+begin_src emacs-lisp
-	  (setup (:pkg go-mode :straight t)
-		(:file-match "\\.go\\'")
-		(:hook lsp-deferred)
-		(add-hook 'go-mode-hook (lambda ()
-								  (setq tab-width 4)))
-		(add-hook 'go-mode-hook #'lsp)
-		(add-hook 'before-save-hook 'gofmt-before-save)
-		(defun lsp-go-install-save-hooks ()
-		  (add-hook 'before-save-hook 'lsp-format-buffer t t)
-		  (add-hook 'before-save-hook 'lsp-organize-imports t t))
-		(add-hook 'go-mode-hook 'lsp-go-install-save-hooks))
+			(setup (:pkg go-mode :straight t)
+			  (:file-match "\\.go\\'")
+			  (:hook tree-sitter-mode)
+			  (:hook lsp-deferred)
+			  (add-hook 'go-mode-hook (lambda ()
+										(setq tab-width 4)))
+			  (add-hook 'go-mode-hook #'lsp)
+			  (add-hook 'before-save-hook 'gofmt-before-save)
+			  (defun lsp-go-install-save-hooks ()
+				(add-hook 'before-save-hook 'lsp-format-buffer t t)
+				(add-hook 'before-save-hook 'lsp-organize-imports t t))
+			  (add-hook 'go-mode-hook 'lsp-go-install-save-hooks))
 
     #+end_src
+
+	#+RESULTS:
+	| tree-sitter-mode | doom-modeline-env-setup-go | lsp-go-install-save-hooks | lsp | (lambda nil (setq tab-width 4)) | lsp-deferred |
 	
 *** TypeScript and JavaScript
 
@@ -439,45 +462,39 @@ Configure TypeScript and JavaScript language modes
 
 #+begin_src emacs-lisp
 
-		(setup (:pkg typescript-mode)
-		  :disabled
-		  (:file-match "\\.ts\\'"))
+  (setup (:pkg typescript-mode :straight t)
+	(:file-match "\\.tsx?\\'")
+	(:hook tree-sitter-hl-mode)
+	(:hook lsp-deferred)
+	)
 
 
-		(setup (:pkg js2-mode)
-		  (:file-match "\\.jsx?\\'")
-		  ;; Use js2-mode for Node scripts
-		  (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
+  (setup (:pkg js2-mode :straight t)
+	(:file-match "\\.jsx?\\'")
+	;; Use js2-mode for Node scripts
+	(add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
 
-		  ;; Don't use built-in syntax checking
-		  (setq js2-mode-show-strict-warnings nil))
+	;; Don't use built-in syntax checking
+	(setq js2-mode-show-strict-warnings nil))
 
-
-	   (use-package prettier
-	     :after (rjsx-mode)
-	     :hook (rjsx-mode . prettier-js-mode)
-		 :straight (prettier-js :host github :repo "prettier/prettier-emacs")
-		 :init
-	(setq prettier-js-args '(
-	"--trailing-comma" "es5"
-	"--bracket-spacing" "true"
-	"--use-tabs" "true"
-	"--print-width" "100"
-	"--single-quote" "true"
-  ))
-	  )
 
 
 #+end_src
+
+#+RESULTS:
 
 *** RJSX
 #+begin_src emacs-lisp
 			(setup (:pkg rjsx-mode :straight t)
-			  (:file-match "\\.js\\'")
+			  (:file-match "\\.js\\' \\.tsx\\' \\.ts\\'")
 			  (:hook lsp-deferred)
 			  (setq indent-tabs-mode t)
 			  (setq js2-basic-offset 4))
 #+end_src
+
+#+RESULTS:
+: 4
+
 *** Yaml
     #+begin_src emacs-lisp
 	  ;; yaml-mode doesn't derive from prog-mode, but we can at least enable
@@ -617,7 +634,8 @@ Apparently James Gosling used and likes Emacs (nice)
 
 **** Clojure
 #+begin_src emacs-lisp
-  (setup (:pkg clojure-mode :straight t))
+  (setup (:pkg clojure-mode :straight t)
+		(:hook tree-sitter-mode))
   (setup (:pkg cider :straight t)
 	(:when-loaded
 	  (progn
@@ -655,10 +673,12 @@ Apparently James Gosling used and likes Emacs (nice)
 
 #+begin_src emacs-lisp
 
-  (setup c-mode
+  (setup (:pkg c-mode)
+		(:hook tree-sitter-mode)
 		 (:hook lsp-deferred))
 
-  (setup c++-mode
+  (setup (:pkg c++-mode)
+		(:hook tree-sitter-mode)
 		 (:hook lsp-deferred))
 
   (setup (:pkg flycheck-clang-analyzer :straight t)
@@ -692,19 +712,20 @@ Apparently James Gosling used and likes Emacs (nice)
 #+begin_src emacs-lisp
 
   (setup (:pkg zig-mode :straight t)
+	(:disabled)
 	(:hook lsp-deferred))
 
 #+end_src
 
 #+RESULTS:
-| lsp-deferred |
 
 *** Rust
-**** Rustic
+**** TODO Rustic
 rustic is an extension of rust-mode which adds a number of useful features (see the its github readme) to it. It is the core of the setup and you can use just it without any other Emacs packages (and without rust-analyzer) if you just want code highlighting, compilation and cargo commands bound to emacs shortcuts, and a few other features.
 #+begin_src emacs-lisp
   (setup (:pkg rustic :straight t)
-	:ensure
+	(:hook lsp-deferred)
+	(:hook tree-sitter-mode)
 	(:with-map rustic-mode-map
 	  (:bind  "M-j"  lsp-ui-imenu
 			  "M-?"  lsp-find-references
@@ -712,14 +733,13 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
 			  "C-c C-c a"  lsp-execute-code-action
 			  "C-c C-c r"  lsp-rename
 			  "C-c C-c q"  lsp-workspace-restart
-			  "C-c C-c Q"  lsp-workspace-shutdown
-			  "C-c C-c s"  lsp-rust-analyzer-status))
+			  "C-c C-c Q"  lsp-workspace-shutdown))
 	:config
 	;; uncomment for less flashiness
 	;; (setq lsp-eldoc-hook nil)
 	;; (setq lsp-enable-symbol-highlighting nil)
 	;; (setq lsp-signature-auto-activate nil)
-
+	(setq rustic-analyzer-command '("~/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer"))
 	;; comment to disable rustfmt on save
 	(setq rustic-format-on-save t))
 #+end_src
@@ -731,7 +751,7 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
 
 #+begin_src emacs-lisp
 
-  (setup markdown-mode
+  (setup (:pkg markdown-mode :straight t)
     (setq markdown-command "marked")
     (:file-match "\\.md\\'")
     (:when-loaded
@@ -743,6 +763,8 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
         (set-face-attribute (car face) nil :weight 'normal :height (cdr face)))))
 
 #+end_src
+
+#+RESULTS:
 
 *Guix Packages*
 
@@ -853,13 +875,15 @@ Some useful packages to have for datascience are the following:
 
 ** ESS (Emacs Speaks Statistics)
 #+begin_src emacs-lisp
-	; Set up ESS, i.e. Statistics in Emacs, R, Stata, etc.
-  (setup (:pkg ess :straight t))
-  (setup (:pkg ess-view :straight t))
-  (setup (:pkg ess-view-data :straight t))
-  (setup (:pkg ess-r-insert-obj :straight t))
-(setup (:pkg ess-R-data-view :straight t))
-(setup (:pkg ess-smart-underscore :straight t))
+	  ; Set up ESS, i.e. Statistics in Emacs, R, Stata, etc.
+	(setup (:pkg ess :straight t)
+		(:hook tree-sitter-mode)
+	  )
+	(setup (:pkg ess-view :straight t))
+	(setup (:pkg ess-view-data :straight t))
+	(setup (:pkg ess-r-insert-obj :straight t))
+  (setup (:pkg ess-R-data-view :straight t))
+  (setup (:pkg ess-smart-underscore :straight t))
 #+end_src
 
 #+RESULTS:
@@ -867,7 +891,7 @@ Some useful packages to have for datascience are the following:
 ** Python
 *** ob-Ipython
 #+begin_src emacs-lisp
-(setup (:pkg ipython-shell-send :straight t))
+;; (setup (:pkg ipython-shell-send :straight t))
 #+end_src 
 
 *** Anaconda
@@ -877,15 +901,17 @@ manager, which specializes in Python & R, but also supports a whole lot of stuff
 like Node.js. In my opinion, it is the easiest way to manage multiple Python
 installations if you don’t use some advanced package manager like Guix.
 #+begin_src emacs-lisp
-(setup (:pkg conda :straight t)
-  :options
-  (setq conda-anaconda-home (expand-file-name "~/Programs/miniconda3/"))
-  (setq conda-env-home-directory (expand-file-name "~/Programs/miniconda3/"))
-  (setq conda-env-subdirectory "envs"))
+;; (setup (:pkg conda :straight t)
+;;   :options
+;;   (setq conda-anaconda-home (expand-file-name "~/Programs/miniconda3/"))
+;;   (setq conda-env-home-directory (expand-file-name "~/Programs/miniconda3/"))
+;;   (setq conda-env-subdirectory "envs"))
 
-(unless (getenv "CONDA_DEFAULT_ENV")
-  (conda-env-activate "base"))
+;; (unless (getenv "CONDA_DEFAULT_ENV")
+;;   (conda-env-activate "base"))
 #+end_src 
+
+#+RESULTS:
 
 * Terminals
 ** Vterm

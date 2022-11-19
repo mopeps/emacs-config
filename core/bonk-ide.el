@@ -53,7 +53,7 @@
 (when (boundp 'read-process-output-max)
   ;; New in Emacs 27
   (setq read-process-output-max (* 2048 2048))
-  (load-file "./magit.el"))
+  (load-file "~/magit.el"))
 
 (setup (:pkg company :straight t)
 	   (:hook-into lsp-mode)
@@ -95,11 +95,11 @@
 		  (setq lsp-language-id-configuration '((java-mode . "java")
 												(python-mode . "python")
 												(gfm-view-mode . "markdown")
-												(rust-mode . "rust")
 												(css-mode . "css")
 												(xml-mode . "xml")
 												(c-mode . "c")
 												(c++-mode . "cpp")
+												(rustic-mode . "rust")
 												(objc-mode . "objective-c")
 												(web-mode . "html")
 												(html-mode . "html")
@@ -109,7 +109,7 @@
 												(haskell-mode . "haskell")
 												(php-mode . "php")
 												(json-mode . "json")
-												(rjsx-mode . "javascript")
+												(typescript-mode . "typescript")
 												))
 
 		  (setq lsp-diagnostics-provider :none)
@@ -182,6 +182,15 @@
 ;; 	;; Shutdown server when last managed buffer is killed
 ;; 	(customize-set-variable 'eglot-autoshutdown t)
 
+(setup (:pkg tree-sitter :straight t)
+  (:hook tree-sitter-hl-mode)
+  (:hook-into typescript-mode))
+(setup (:pkg tree-sitter-langs :straight t))
+(setup (:pkg tree-sitter-ess-r :straight t))
+
+(setup (:pkg rainbow-mode :straight t)
+(:hook-into prog-mode))
+
 (setup (:pkg yasnippet :straight t)                  ; Snippets
   (yas-global-mode 1))
 
@@ -223,7 +232,8 @@
 									company-etags
 									company-dabbrev-code))))
 (setup (:pkg python-mode)
-  (:hook lsp-deferred))
+  (:hook lsp-deferred)
+(:hook tree-sitter-mode))
 
   (with-eval-after-load 'python-mode
 	(lambda () (require 'lsp-pyright)))
@@ -235,12 +245,10 @@
 (setup (:pkg pyenv :straight t)
   (:load-after python-mode))
 
-(setup (:pkg conda :straight t)
-  (:load-after python-mode))
-
-(setup ruby-mode
+(setup (:pkg ruby-mode)
  (:file-match "\\.rb\\'")
  (:hook lsp-deferred)
+ (:hook tree-sitter-mode)
  (setq ruby-indent-level 4)
   (setq ruby-indent-tabs-mode t)
   (setq lsp-lens-enable nil)
@@ -260,6 +268,7 @@
 
 (setup (:pkg go-mode :straight t)
   (:file-match "\\.go\\'")
+  (:hook tree-sitter-mode)
   (:hook lsp-deferred)
   (add-hook 'go-mode-hook (lambda ()
 							(setq tab-width 4)))
@@ -270,36 +279,23 @@
 	(add-hook 'before-save-hook 'lsp-organize-imports t t))
   (add-hook 'go-mode-hook 'lsp-go-install-save-hooks))
 
-(setup (:pkg typescript-mode)
-		:disabled
-		(:file-match "\\.ts\\'"))
+(setup (:pkg typescript-mode :straight t)
+  (:file-match "\\.tsx?\\'")
+  (:hook tree-sitter-hl-mode)
+  (:hook lsp-deferred)
+  )
 
 
-	  (setup (:pkg js2-mode)
-		(:file-match "\\.jsx?\\'")
-		;; Use js2-mode for Node scripts
-		(add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
+(setup (:pkg js2-mode :straight t)
+  (:file-match "\\.jsx?\\'")
+  ;; Use js2-mode for Node scripts
+  (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
 
-		;; Don't use built-in syntax checking
-		(setq js2-mode-show-strict-warnings nil))
-
-
-	 (use-package prettier
-	   :after (rjsx-mode)
-	   :hook (rjsx-mode . prettier-js-mode)
-	   :straight (prettier-js :host github :repo "prettier/prettier-emacs")
-	   :init
-  (setq prettier-js-args '(
-  "--trailing-comma" "es5"
-  "--bracket-spacing" "true"
-  "--use-tabs" "true"
-  "--print-width" "100"
-  "--single-quote" "true"
-))
-	)
+  ;; Don't use built-in syntax checking
+  (setq js2-mode-show-strict-warnings nil))
 
 (setup (:pkg rjsx-mode :straight t)
-  (:file-match "\\.js\\'")
+  (:file-match "\\.js\\' \\.tsx\\' \\.ts\\'")
   (:hook lsp-deferred)
   (setq indent-tabs-mode t)
   (setq js2-basic-offset 4))
@@ -372,7 +368,8 @@
 (setup (:pkg java-mode)
   (:hook lsp-deferred))
 
-(setup (:pkg clojure-mode :straight t))
+(setup (:pkg clojure-mode :straight t)
+	  (:hook tree-sitter-mode))
 (setup (:pkg cider :straight t)
   (:when-loaded
 	(progn
@@ -392,10 +389,12 @@
 
 (setup (:pkg gradle-mode :straight t))
 
-(setup c-mode
+(setup (:pkg c-mode)
+	  (:hook tree-sitter-mode)
 	   (:hook lsp-deferred))
 
-(setup c++-mode
+(setup (:pkg c++-mode)
+	  (:hook tree-sitter-mode)
 	   (:hook lsp-deferred))
 
 (setup (:pkg flycheck-clang-analyzer :straight t)
@@ -420,10 +419,12 @@
   (:hook irony-cdb-autosetup-compile-options))
 
 (setup (:pkg zig-mode :straight t)
+  (:disabled)
   (:hook lsp-deferred))
 
 (setup (:pkg rustic :straight t)
-  :ensure
+  (:hook lsp-deferred)
+  (:hook tree-sitter-mode)
   (:with-map rustic-mode-map
 	(:bind  "M-j"  lsp-ui-imenu
 			"M-?"  lsp-find-references
@@ -431,18 +432,17 @@
 			"C-c C-c a"  lsp-execute-code-action
 			"C-c C-c r"  lsp-rename
 			"C-c C-c q"  lsp-workspace-restart
-			"C-c C-c Q"  lsp-workspace-shutdown
-			"C-c C-c s"  lsp-rust-analyzer-status))
+			"C-c C-c Q"  lsp-workspace-shutdown))
   :config
   ;; uncomment for less flashiness
   ;; (setq lsp-eldoc-hook nil)
   ;; (setq lsp-enable-symbol-highlighting nil)
   ;; (setq lsp-signature-auto-activate nil)
-
+  (setq rustic-analyzer-command '("~/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer"))
   ;; comment to disable rustfmt on save
   (setq rustic-format-on-save t))
 
-(setup markdown-mode
+(setup (:pkg markdown-mode :straight t)
   (setq markdown-command "marked")
   (:file-match "\\.md\\'")
   (:when-loaded
@@ -493,23 +493,25 @@
 (setup (:pkg org-preview-html :straight t))
 
 ; Set up ESS, i.e. Statistics in Emacs, R, Stata, etc.
-  (setup (:pkg ess :straight t))
+  (setup (:pkg ess :straight t)
+	  (:hook tree-sitter-mode)
+	)
   (setup (:pkg ess-view :straight t))
   (setup (:pkg ess-view-data :straight t))
   (setup (:pkg ess-r-insert-obj :straight t))
 (setup (:pkg ess-R-data-view :straight t))
 (setup (:pkg ess-smart-underscore :straight t))
 
-(setup (:pkg ipython-shell-send :straight t))
+;; (setup (:pkg ipython-shell-send :straight t))
 
-(setup (:pkg conda :straight t)
-  :options
-  (setq conda-anaconda-home (expand-file-name "~/Programs/miniconda3/"))
-  (setq conda-env-home-directory (expand-file-name "~/Programs/miniconda3/"))
-  (setq conda-env-subdirectory "envs"))
+;; (setup (:pkg conda :straight t)
+;;   :options
+;;   (setq conda-anaconda-home (expand-file-name "~/Programs/miniconda3/"))
+;;   (setq conda-env-home-directory (expand-file-name "~/Programs/miniconda3/"))
+;;   (setq conda-env-subdirectory "envs"))
 
-(unless (getenv "CONDA_DEFAULT_ENV")
-  (conda-env-activate "base"))
+;; (unless (getenv "CONDA_DEFAULT_ENV")
+;;   (conda-env-activate "base"))
 
 (setup (:pkg vterm :straight t)
 	  (:when-loaded

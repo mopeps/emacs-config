@@ -79,7 +79,7 @@ Use bullet characters instead of asterisks, plus set the header font sizes to so
 	(:also-load org-indent)
 	(:when-loaded
 	  ;; Increase the size of various headings
-	  (set-face-attribute 'org-document-title nil :font "CaskaydiaCove Nerd Font" :weight 'bold :height 1.3)
+	  (set-face-attribute 'org-document-title nil :font "Hack Nerd Font" :weight 'bold :height 1.3)
 
 	  (dolist (face '((org-level-1 . 1.2)
 					  (org-level-2 . 1.1)
@@ -89,7 +89,7 @@ Use bullet characters instead of asterisks, plus set the header font sizes to so
 					  (org-level-6 . 1.1)
 					  (org-level-7 . 1.1)
 					  (org-level-8 . 1.1)))
-		(set-face-attribute (car face) nil :font "CaskaydiaCove Nerd Font" :weight 'medium :height (cdr face)))
+		(set-face-attribute (car face) nil :font "Hack Nerd Font" :weight 'medium :height (cdr face)))
 
 	  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
 	  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
@@ -116,6 +116,8 @@ Use bullet characters instead of asterisks, plus set the header font sizes to so
   ;; '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
 
 #+end_src
+
+#+RESULTS:
 
 *Guix Packages*
 
@@ -292,15 +294,12 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 		  'org-babel-load-languages
 		  '((emacs-lisp . t)
 			(python . t)
-			(ipython . t)
-			(jupyter . t)
 			(R . t)
 			(typescript . t)
 			(go . t)
 			(scheme . t)
 			(rust . t)
 			(lisp . t)))
-		(org-babel-jupyter-override-src-block "python")
 		(setq org-confirm-babel-evaluate nil)
 		(setq org-babel-lisp-eval-fn #'sly-eval)
 
@@ -308,7 +307,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 #+end_src
 
 #+RESULTS:
-: ((conf-unix . conf-unix) (jupyter-sage . sage) (jupyter-python . python) (conf-unix . conf-unix) (ipython . python) (conf-unix . conf-unix) (C . c) (C++ . c++) (asymptote . asy) (bash . sh) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (desktop . conf-desktop) (dot . fundamental) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (shell . sh) (sqlite . sql) (toml . conf-toml))
+: ((conf-unix . conf-unix) (conf-unix . conf-unix) (conf-unix . conf-unix) (C . c) (C++ . c++) (asymptote . asy) (bash . sh) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (desktop . conf-desktop) (dot . fundamental) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (shell . sh) (sqlite . sql) (toml . conf-toml))
 
 ** Org Present
 =org-present=
