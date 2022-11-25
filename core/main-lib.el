@@ -73,6 +73,25 @@
   (setq org-format-latex-options (plist-put org-format-latex-options :scale scale-number))
   )
 
+(defun toggle-transparency ()
+  (interactive)
+  (let ((alpha (frame-parameter nil 'alpha)))
+    (set-frame-parameter
+     nil 'alpha
+     (if (eql (cond ((numberp alpha) alpha)
+                    ((numberp (cdr alpha)) (cdr alpha))
+                    ;; Also handle undocumented (<active> <inactive>) form.
+                    ((numberp (cadr alpha)) (cadr alpha)))
+              100)
+         '(85 . 70) '(100 . 100)))))
+(global-set-key (kbd "C-c y") 'toggle-transparency)
+
+;; Set transparency of emacs
+(defun transparency (value)
+  "Sets the transparency of the frame window. 0=transparent/100=opaque"
+  (interactive "nTransparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+
 (defun file! ()
   (cond ((bound-and-true-p byte-compile-current-file))
 		(load-file-name)

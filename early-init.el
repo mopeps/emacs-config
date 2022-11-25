@@ -33,7 +33,9 @@
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
-
+(push '(mouse-color . "white") default-frame-alist)
+(set-frame-parameter (selected-frame) 'alpha '(90 . 90))
+(add-to-list 'default-frame-alist '(alpha . (90 . 90)))
 (setq visible-bell t)
 (setq warning-minimum-level :emergency)
 (customize-set-variable 'initial-major-mode 'fundamental-mode)
