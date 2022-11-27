@@ -306,11 +306,9 @@ Try these commands with =M-x=:
 	  (:hook tree-sitter-hl-mode)
 	  (:hook-into typescript-mode))
 	(setup (:pkg tree-sitter-langs :straight t))
-	(setup (:pkg tree-sitter-ess-r :straight t))
 #+end_src
 
 #+RESULTS:
-: t
 
 *** Rainbow-mode
 #+begin_src emacs-lisp
@@ -399,7 +397,7 @@ Try these commands with =M-x=:
 *** Ruby
 **** ruby-mode
      #+begin_src emacs-lisp
-	   (setup (:pkg ruby-mode)
+	   (setup ruby-mode
 		(:file-match "\\.rb\\'")
 		(:hook lsp-deferred)
 		(:hook tree-sitter-mode)
@@ -536,7 +534,7 @@ Configure TypeScript and JavaScript language modes
 **** Common Lisp
 
 #+begin_src emacs-lisp
-  (setup (:pkg common-lisp-mode)
+  (setup common-lisp-mode
 	(:file-match "\\.lisp\\'")
 	(:hook lsp-deferred))
 
@@ -625,7 +623,7 @@ Apparently James Gosling used and likes Emacs (nice)
   (setup (:pkg lsp-java :straight t)
 	(:disabled)
 	(:hook-into lsp-mode))
-  (setup (:pkg java-mode)
+  (setup java-mode
 	(:hook lsp-deferred))
 #+end_src
 
@@ -673,11 +671,11 @@ Apparently James Gosling used and likes Emacs (nice)
 
 #+begin_src emacs-lisp
 
-  (setup (:pkg c-mode)
+  (setup c-mode
 		(:hook tree-sitter-mode)
 		 (:hook lsp-deferred))
 
-  (setup (:pkg c++-mode)
+  (setup c++-mode
 		(:hook tree-sitter-mode)
 		 (:hook lsp-deferred))
 
@@ -1271,6 +1269,9 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 	"d."  `(,(bonk/dired-link "~/.config") :which-key "dotfiles-config")
 	"dl"  `(,(bonk/dired-link "~/.local") :which-key "dotfiles-local")
 	"de"  `(,(bonk/dired-link "~/.emacs-modularized") :which-key ".emacs.d"))
+
+  (setq insert-directory-program "gls" dired-use-ls-dired t)
+(setq dired-listing-switches "-al --group-directories-first")
 
 #+end_src
 
