@@ -97,6 +97,7 @@
 												(gfm-view-mode . "markdown")
 												(css-mode . "css")
 												(xml-mode . "xml")
+												(ruby-mode . "ruby")
 												(c-mode . "c")
 												(c++-mode . "cpp")
 												(rustic-mode . "rust")
@@ -250,8 +251,7 @@
  (:hook tree-sitter-mode)
  (setq ruby-indent-level 4)
   (setq ruby-indent-tabs-mode t)
-  (setq lsp-lens-enable nil)
-  )
+  (setq lsp-lens-enable nil))
 
 ;; (setup (:pkg enh-ruby-mode :straight t)
 ;; 	(:hook-into ruby-mode)
@@ -281,9 +281,14 @@
 (setup (:pkg typescript-mode :straight t)
   (:file-match "\\.tsx?\\'")
   (:hook tree-sitter-hl-mode)
-  (:hook lsp-deferred)
+  ;; (:hook lsp-deferred)
+  (:hook tide-setup)
+  (:hook tide-hl-identifier-mode)
   )
 
+(setup (:pkg tide :straight t)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (:load-after typescript-mode company-mode flycheck-mode))
 
 (setup (:pkg js2-mode :straight t)
   (:file-match "\\.jsx?\\'")
