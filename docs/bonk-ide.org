@@ -401,6 +401,7 @@ Try these commands with =M-x=:
 	   (setup ruby-mode
 		(:file-match "\\.rb\\'")
 		(:hook lsp-deferred)
+		(:hook copilot-mode)
 		(:hook tree-sitter-mode)
 		(setq ruby-indent-level 4)
 		 (setq ruby-indent-tabs-mode t)
@@ -464,6 +465,7 @@ Configure TypeScript and JavaScript language modes
 	(:file-match "\\.tsx?\\'")
 	(:hook tree-sitter-hl-mode)
 	;; (:hook lsp-deferred)
+	(:hook copilot-mode)
 	(:hook tide-setup)
 	(:hook tide-hl-identifier-mode)
 	)
@@ -678,10 +680,12 @@ Apparently James Gosling used and likes Emacs (nice)
 
   (setup c-mode
 		(:hook tree-sitter-mode)
+		(:hook copilot-mode)
 		 (:hook lsp-deferred))
 
   (setup c++-mode
 		(:hook tree-sitter-mode)
+		(:hook copilot-mode)
 		 (:hook lsp-deferred))
 
   (setup (:pkg flycheck-clang-analyzer :straight t)
@@ -716,6 +720,7 @@ Apparently James Gosling used and likes Emacs (nice)
 
   (setup (:pkg zig-mode :straight t)
 	(:disabled)
+	(:hook copilot-mode)
 	(:hook lsp-deferred))
 
 #+end_src
@@ -728,6 +733,7 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
 #+begin_src emacs-lisp
   (setup (:pkg rustic :straight t)
 	(:hook lsp-deferred)
+	(:hook copilot-mode)
 	(:hook tree-sitter-mode)
 	(:with-map rustic-mode-map
 	  (:bind  "M-j"  lsp-ui-imenu
@@ -828,6 +834,18 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
 (setq-default electric-indent-inhibit t)
 
 #+end_src 
+
+
+** TODO Copilot
+
+#+begin_src emacs-lisp
+  (use-package copilot
+  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+  :ensure t)
+#+end_src 
+
+#+RESULTS:
+
 * DevOops
 ** Docker
 

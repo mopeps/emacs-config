@@ -248,6 +248,7 @@
 (setup ruby-mode
  (:file-match "\\.rb\\'")
  (:hook lsp-deferred)
+ (:hook copilot-mode)
  (:hook tree-sitter-mode)
  (setq ruby-indent-level 4)
   (setq ruby-indent-tabs-mode t)
@@ -282,6 +283,7 @@
   (:file-match "\\.tsx?\\'")
   (:hook tree-sitter-hl-mode)
   ;; (:hook lsp-deferred)
+  (:hook copilot-mode)
   (:hook tide-setup)
   (:hook tide-hl-identifier-mode)
   )
@@ -395,10 +397,12 @@
 
 (setup c-mode
 	  (:hook tree-sitter-mode)
+	  (:hook copilot-mode)
 	   (:hook lsp-deferred))
 
 (setup c++-mode
 	  (:hook tree-sitter-mode)
+	  (:hook copilot-mode)
 	   (:hook lsp-deferred))
 
 (setup (:pkg flycheck-clang-analyzer :straight t)
@@ -424,10 +428,12 @@
 
 (setup (:pkg zig-mode :straight t)
   (:disabled)
+  (:hook copilot-mode)
   (:hook lsp-deferred))
 
 (setup (:pkg rustic :straight t)
   (:hook lsp-deferred)
+  (:hook copilot-mode)
   (:hook tree-sitter-mode)
   (:with-map rustic-mode-map
 	(:bind  "M-j"  lsp-ui-imenu
@@ -478,6 +484,10 @@
 
 ;; Making electric-indent behave sanely
 (setq-default electric-indent-inhibit t)
+
+(use-package copilot
+:straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+:ensure t)
 
 (setup (:pkg docker :straight t)
   (:also-load docker-tramp))
