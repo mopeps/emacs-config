@@ -93,6 +93,7 @@
 	   (:when-loaded
 		(progn
 		  (setq lsp-language-id-configuration '((java-mode . "java")
+												(kotlin-mode . "kotlin")
 												(python-mode . "python")
 												(gfm-view-mode . "markdown")
 												(css-mode . "css")
@@ -355,6 +356,9 @@
 ;; :bind (:map geiser-mode-map
 ;;        ("TAB" . completion-at-point))
 
+(setup scheme-mode
+  (:hook geiser-mode)
+  (:hook tree-sitter-mode))
 (setup (:pkg geiser :straight t)
   ;; (setq geiser-default-implementation 'gambit)
   ;; (setq geiser-active-implementations '(gambit guile))

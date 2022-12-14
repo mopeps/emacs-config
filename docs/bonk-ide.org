@@ -178,6 +178,7 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 		 (:when-loaded
 		  (progn
 			(setq lsp-language-id-configuration '((java-mode . "java")
+												  (kotlin-mode . "kotlin")
 												  (python-mode . "python")
 												  (gfm-view-mode . "markdown")
 												  (css-mode . "css")
@@ -223,7 +224,6 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 #+end_src
 
 #+RESULTS:
-: 0.5
 
 **** lsp-ui
 
@@ -589,6 +589,7 @@ Configure TypeScript and JavaScript language modes
 
 #+end_src
 
+
 **** Scheme
 
 #+begin_src emacs-lisp
@@ -597,18 +598,24 @@ Configure TypeScript and JavaScript language modes
   ;; :bind (:map geiser-mode-map
   ;;        ("TAB" . completion-at-point))
 
+  (setup scheme-mode
+	(:hook geiser-mode)
+	(:hook tree-sitter-mode))
   (setup (:pkg geiser :straight t)
-    ;; (setq geiser-default-implementation 'gambit)
-    ;; (setq geiser-active-implementations '(gambit guile))
-    ;; (setq geiser-implementations-alist '(((regexp "\\.scm$") gambit)
-    ;;                                      ((regexp "\\.sld") gambit)))
-    ;; (setq geiser-repl-default-port 44555) ; For Gambit Scheme
-    (setq geiser-default-implementation 'guile)
-    (setq geiser-active-implementations '(guile))
-    (setq geiser-repl-default-port 44555) ; For Gambit Scheme
-    (setq geiser-implementations-alist '(((regexp "\\.scm$") guile))))
+	;; (setq geiser-default-implementation 'gambit)
+	;; (setq geiser-active-implementations '(gambit guile))
+	;; (setq geiser-implementations-alist '(((regexp "\\.scm$") gambit)
+	;;                                      ((regexp "\\.sld") gambit)))
+	;; (setq geiser-repl-default-port 44555) ; For Gambit Scheme
+	(setq geiser-default-implementation 'guile)
+	(setq geiser-active-implementations '(guile))
+	(setq geiser-repl-default-port 44555) ; For Gambit Scheme
+	(setq geiser-implementations-alist '(((regexp "\\.scm$") guile))))
 
 #+end_src
+
+#+RESULTS:
+| (regexp \.scm$) | guile |
 
 *Guix Packages*
 
@@ -620,6 +627,7 @@ Configure TypeScript and JavaScript language modes
 
 
 I was going to put clojure here, but you see, it runs on the JVM, so...
+
 *** JVM-Langs
 Apparently James Gosling used and likes Emacs (nice)
 **** Java
