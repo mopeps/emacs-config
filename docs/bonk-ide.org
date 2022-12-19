@@ -637,6 +637,8 @@ Apparently James Gosling used and likes Emacs (nice)
 	(:disabled)
 	(:hook-into lsp-mode))
   (setup java-mode
+	(:hook tree-sitter-hl-mode)
+	(:hook copilot-mode)
 	(:hook lsp-deferred))
 #+end_src
 
@@ -646,7 +648,8 @@ Apparently James Gosling used and likes Emacs (nice)
 **** Clojure
 #+begin_src emacs-lisp
   (setup (:pkg clojure-mode :straight t)
-		(:hook tree-sitter-mode))
+		(:hook copilot-mode)
+		(:hook tree-sitter-hl-mode))
   (setup (:pkg cider :straight t)
 	(:when-loaded
 	  (progn
@@ -665,11 +668,14 @@ Apparently James Gosling used and likes Emacs (nice)
 #+end_src
 
 #+RESULTS:
-: my-evil-cider-repl-insert
 
 **** Kotlin
 #+begin_src emacs-lisp
-  (setup (:pkg kotlin-mode :straight t))
+  (setup (:pkg kotlin-mode :straight t)
+	(:hook tree-sitter-hl-mode)
+	(:hook copilot-mode)
+	(:hook lsp-deferred)
+	)
 #+end_src
 
 **** Graddle

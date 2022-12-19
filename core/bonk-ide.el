@@ -374,10 +374,13 @@
   (:disabled)
   (:hook-into lsp-mode))
 (setup java-mode
+  (:hook tree-sitter-hl-mode)
+  (:hook copilot-mode)
   (:hook lsp-deferred))
 
 (setup (:pkg clojure-mode :straight t)
-	  (:hook tree-sitter-mode))
+	  (:hook copilot-mode)
+	  (:hook tree-sitter-hl-mode))
 (setup (:pkg cider :straight t)
   (:when-loaded
 	(progn
@@ -393,7 +396,11 @@
 		  (evil-insert-state))
 		))))
 
-(setup (:pkg kotlin-mode :straight t))
+(setup (:pkg kotlin-mode :straight t)
+  (:hook tree-sitter-hl-mode)
+  (:hook copilot-mode)
+  (:hook lsp-deferred)
+  )
 
 (setup (:pkg gradle-mode :straight t))
 
