@@ -100,6 +100,7 @@
 												(xml-mode . "xml")
 												(ruby-mode . "ruby")
 												(c-mode . "c")
+												(dart-mode . "dart")
 												(c++-mode . "cpp")
 												(rustic-mode . "rust")
 												(objc-mode . "objective-c")
@@ -282,7 +283,7 @@
 (setup (:pkg typescript-mode :straight t)
   (:file-match "\\.tsx?\\'")
   (:hook tree-sitter-hl-mode)
-  ;; (:hook lsp-deferred)
+  (:hook lsp-deferred)
   (:hook tide-setup)
   (:hook tide-hl-identifier-mode)
   )
@@ -406,10 +407,12 @@
 
 (setup c-mode
 	  (:hook tree-sitter-mode)
+  (:hook copilot-mode)
 	   (:hook lsp-deferred))
 
 (setup c++-mode
 	  (:hook tree-sitter-mode)
+  (:hook copilot-mode)
 	   (:hook lsp-deferred))
 
 (setup (:pkg flycheck-clang-analyzer :straight t)
@@ -439,6 +442,7 @@
 
 (setup (:pkg rustic :straight t)
   (:hook lsp-deferred)
+  (:hook copilot-mode)
   (:hook tree-sitter-mode)
   (:with-map rustic-mode-map
 	(:bind  "M-j"  lsp-ui-imenu
@@ -449,12 +453,12 @@
 			"C-c C-c q"  lsp-workspace-restart
 			"C-c C-c Q"  lsp-workspace-shutdown))
   :config
+  (setq rustic-rustfmt-config-alist '((edition . "2018")))
   ;; uncomment for less flashiness
   ;; (setq lsp-eldoc-hook nil)
   ;; (setq lsp-enable-symbol-highlighting nil)
   ;; (setq lsp-signature-auto-activate nil)
-  (setq rustic-analyzer-command '("~/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer"))
-  ;; comment to disable rustfmt on save
+  (setq lsp-rust-analyzer-server-command '("~/.cargo/bin/rust-analyzer"))	;; comment to disable rustfmt on save
   (setq rustic-format-on-save t))
 
 (setup (:pkg markdown-mode :straight t)
@@ -479,6 +483,15 @@
 (setup (:pkg impatient-mode :straight t))
 (setup (:pkg skewer-mode :straight t))
 
+(setup (:pkg dart-mode :straight t)
+	  (:hook tree-sitter-hl-mode)
+	  (:hook copilot-mode)
+	  )
+(use-package lsp-dart
+  :straight t
+  :ensure t
+  :hook (dart-mode . lsp))
+
 (setup (:pkg rainbow-delimiters :straight t)
 	 (:hook-into
 	  org-mode
@@ -490,14 +503,22 @@
 ;; Making electric-indent behave sanely
 (setq-default electric-indent-inhibit t)
 
+(use-package copilot
+	:straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+	:ensure t)
+  ;; you can utilize :map :hook and :config to customize copilot
+(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+
 (setup (:pkg docker :straight t)
+	   (:hook tree-sitter-mode)
   (:also-load docker-tramp))
 
 (setup (:pkg docker-tramp :straight t))
 
 (setup (:pkg terraform-mode :straight t)
 	   (:file-match "\\.tf\\'")
-	   (:hook-into lsp-deferred))
+	   (:hook tree-sitter-mode)
+	  (:hook lsp-deferred))
 
 (setup (:pkg company-terraform :straight t))
 
@@ -529,6 +550,8 @@
 ;;   (conda-env-activate "base"))
 
 (setup (:pkg vterm :straight t)
+  (:bind
+   "C-<tab>" vterm-send-tab)
 	  (:when-loaded
   (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
   (setq vterm-max-scrollback 10000)
@@ -742,7 +765,6 @@
 	"dl"  `(,(bonk/dired-link "~/.local") :which-key "dotfiles-local")
 	"de"  `(,(bonk/dired-link "~/.emacs-modularized") :which-key ".emacs.d"))
 
-  (setq insert-directory-program "gls" dired-use-ls-dired t)
 (setq dired-listing-switches "-al --group-directories-first")
 
 (setup (:pkg image+ :straight t))

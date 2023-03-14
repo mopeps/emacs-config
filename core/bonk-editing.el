@@ -130,7 +130,7 @@
 	(setq visual-fill-column-width 100)
 	(visual-fill-column-mode 1))
 
-(setup (:pkg visual-fill-column)
+(setup (:pkg visual-fill-column :straight t)
   (:hook-into org)
   (bonk/org-mode-visual-fill))
 

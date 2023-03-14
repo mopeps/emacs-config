@@ -36,7 +36,7 @@
 
 ;; (C-q Tab) inserts a tab space
   (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
-(load-file "./ligature.el")
+(load-file "~/ligature.el")
 (use-package ligature
   :load-path "."
   :config

@@ -185,6 +185,7 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 												  (xml-mode . "xml")
 												  (ruby-mode . "ruby")
 												  (c-mode . "c")
+												  (dart-mode . "dart")
 												  (c++-mode . "cpp")
 												  (rustic-mode . "rust")
 												  (objc-mode . "objective-c")
@@ -463,7 +464,7 @@ Configure TypeScript and JavaScript language modes
   (setup (:pkg typescript-mode :straight t)
 	(:file-match "\\.tsx?\\'")
 	(:hook tree-sitter-hl-mode)
-	;; (:hook lsp-deferred)
+	(:hook lsp-deferred)
 	(:hook tide-setup)
 	(:hook tide-hl-identifier-mode)
 	)
@@ -692,10 +693,12 @@ Apparently James Gosling used and likes Emacs (nice)
 
   (setup c-mode
 		(:hook tree-sitter-mode)
+	(:hook copilot-mode)
 		 (:hook lsp-deferred))
 
   (setup c++-mode
 		(:hook tree-sitter-mode)
+	(:hook copilot-mode)
 		 (:hook lsp-deferred))
 
   (setup (:pkg flycheck-clang-analyzer :straight t)
@@ -742,6 +745,7 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
 #+begin_src emacs-lisp
   (setup (:pkg rustic :straight t)
 	(:hook lsp-deferred)
+	(:hook copilot-mode)
 	(:hook tree-sitter-mode)
 	(:with-map rustic-mode-map
 	  (:bind  "M-j"  lsp-ui-imenu
@@ -752,13 +756,14 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
 			  "C-c C-c q"  lsp-workspace-restart
 			  "C-c C-c Q"  lsp-workspace-shutdown))
 	:config
+	(setq rustic-rustfmt-config-alist '((edition . "2018")))
 	;; uncomment for less flashiness
 	;; (setq lsp-eldoc-hook nil)
 	;; (setq lsp-enable-symbol-highlighting nil)
 	;; (setq lsp-signature-auto-activate nil)
-	(setq rustic-analyzer-command '("~/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer"))
-	;; comment to disable rustfmt on save
+	(setq lsp-rust-analyzer-server-command '("~/.cargo/bin/rust-analyzer"))	;; comment to disable rustfmt on save
 	(setq rustic-format-on-save t))
+
 #+end_src
 
 #+RESULTS:
@@ -815,6 +820,21 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
   "emacs-web-mode"
 
 #+end_src
+*** Dart
+#+begin_src emacs-lisp
+  (setup (:pkg dart-mode :straight t)
+		(:hook tree-sitter-hl-mode)
+		(:hook copilot-mode)
+		)
+  (use-package lsp-dart
+	:straight t
+	:ensure t
+	:hook (dart-mode . lsp))
+#+end_src
+
+#+RESULTS:
+| copilot-mode | tree-sitter-hl-mode | lsp |
+
 ** Rainbow Delimiters
 
 [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
@@ -842,12 +862,25 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
 (setq-default electric-indent-inhibit t)
 
 #+end_src 
+** Copilot
+#+begin_src emacs-lisp
+  (use-package copilot
+	:straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+	:ensure t)
+  ;; you can utilize :map :hook and :config to customize copilot
+(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+#+end_src
+
+#+RESULTS:
+: copilot-accept-completion
+
 * DevOops
 ** Docker
 
 #+begin_src emacs-lisp
 
   (setup (:pkg docker :straight t)
+		 (:hook tree-sitter-mode)
     (:also-load docker-tramp))
 
   (setup (:pkg docker-tramp :straight t))
@@ -866,13 +899,14 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
 
 ** Terraform
 #+begin_src emacs-lisp
-	  (setup (:pkg terraform-mode :straight t)
-			 (:file-match "\\.tf\\'")
-			 (:hook-into lsp-deferred))
+  (setup (:pkg terraform-mode :straight t)
+		 (:file-match "\\.tf\\'")
+		 (:hook tree-sitter-mode)
+		(:hook lsp-deferred))
 
-	  (setup (:pkg company-terraform :straight t))
+  (setup (:pkg company-terraform :straight t))
 
-	  (setup (:pkg terraform-doc :straight t))
+  (setup (:pkg terraform-doc :straight t))
 #+end_src
 * Data-Sci
 
@@ -941,16 +975,21 @@ installations if you don’t use some advanced package manager like Guix.
 
 #+begin_src emacs-lisp
 
-  (setup (:pkg vterm :straight t)
-		(:when-loaded
-	(setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
-	(setq vterm-max-scrollback 10000)
-	;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
-	;; spawn another if want one.
-	(setq vterm-kill-buffer-on-exit t)
-	(setq vterm-timer-delay 0.01)))
+   (setup (:pkg vterm :straight t)
+	 (:bind
+	  "C-<tab>" vterm-send-tab)
+		 (:when-loaded
+	 (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+	 (setq vterm-max-scrollback 10000)
+	 ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
+	 ;; spawn another if want one.
+	 (setq vterm-kill-buffer-on-exit t)
+	 (setq vterm-timer-delay 0.01)))
 
 #+end_src
+
+#+RESULTS:
+: 0.01
 
 *** Keybindings for opening vterm in other windows with =SPACE v +options=
 
@@ -1209,7 +1248,7 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 - =S= - Create a symbolic link to this file
 - =L= - Load an Emacs Lisp file into Emacs
   
-*** Setup
+*** TODO Setup
 
 #+begin_src emacs-lisp
 
@@ -1289,12 +1328,12 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 	"dl"  `(,(bonk/dired-link "~/.local") :which-key "dotfiles-local")
 	"de"  `(,(bonk/dired-link "~/.emacs-modularized") :which-key ".emacs.d"))
 
-  (setq insert-directory-program "gls" dired-use-ls-dired t)
 (setq dired-listing-switches "-al --group-directories-first")
 
 #+end_src
 
 #+RESULTS:
+: -al --group-directories-first
 
 *Guix Packages*
 
