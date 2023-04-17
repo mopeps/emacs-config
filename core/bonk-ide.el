@@ -436,6 +436,9 @@
   (:hook-into c++-mode c-mode)
   (:hook irony-cdb-autosetup-compile-options))
 
+(setup (:pkg verilog-mode :straight t))
+(setup (:pkg vhdl-mode))
+
 (setup (:pkg zig-mode :straight t)
   (:disabled)
   (:hook lsp-deferred))
@@ -538,7 +541,7 @@
 (setup (:pkg ess-R-data-view :straight t))
 (setup (:pkg ess-smart-underscore :straight t))
 
-;; (setup (:pkg ipython-shell-send :straight t))
+(setup (:pkg ipython-shell-send :straight t))
 
 ;; (setup (:pkg conda :straight t)
 ;;   :options

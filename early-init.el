@@ -6,6 +6,7 @@
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("org" . "https://orgmode.org/elpa/")
+			 ( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")
 			 ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (setq package-check-signature nil) 
@@ -30,11 +31,10 @@
 
 ;; Remove some unneeded UI elements (the user can turn back on anything they wish)
 (setq inhibit-startup-message t)
-(require 'transient)
 (push '(tool-bar-lines . -1) default-frame-alist)
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
-(push '(mouse-color . "black") default-frame-alist)
+(push '(mouse-color . "white") default-frame-alist)
 (push '(internal-border-width . 1) default-frame-alist)
 (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
 (add-to-list 'default-frame-alist '(alpha . (90 . 90)))

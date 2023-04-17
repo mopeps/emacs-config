@@ -727,6 +727,15 @@ Apparently James Gosling used and likes Emacs (nice)
 #+RESULTS:
 | irony-cdb-autosetup-compile-options |
 
+*** Verilog / FPGA
+#+begin_src emacs-lisp
+  (setup (:pkg verilog-mode :straight t))
+(setup (:pkg vhdl-mode))
+#+end_src
+
+#+RESULTS:
+| emacs-vhdl-mode | emacs-python-mode | emacs-org-present | emacs-guix |
+
 *** Zig
 
 #+begin_src emacs-lisp
@@ -942,8 +951,11 @@ Some useful packages to have for datascience are the following:
 ** Python
 *** ob-Ipython
 #+begin_src emacs-lisp
-;; (setup (:pkg ipython-shell-send :straight t))
+ (setup (:pkg ipython-shell-send :straight t))
 #+end_src 
+
+#+RESULTS:
+: t
 
 *** Anaconda
 If you were using Jupyter Lab or Notebook before, there is a good chance you
