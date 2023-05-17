@@ -5,8 +5,11 @@
 (require 'bonk-evil)
 (require 'bonk-editing)
 (require 'bonk-ui)
+(require 'bonk-project-explorer)
 (require 'bonk-ide)
+(require 'bonk-shell)
 (require 'bonk-startup)
+(require 'bonk-compile)
 
 ;; Profile emacs startup
 (add-hook 'emacs-startup-hook

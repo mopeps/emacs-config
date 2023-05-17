@@ -1,0 +1,235 @@
+#+title: Bonk-Project-Explorer
+#+OPTIONS: toc:t
+#+PROPERTY: header-args:emacs-lisp :tangle ./../core/bonk-project-explorer.el :mkdirp yes
+
+* File Exploring
+** Backup-files
+*** Configuration
+
+I don't like when emacs creates backup files next to the originals, since it can be tedious
+to commit changes on a project.
+
+#+begin_src emacs-lisp
+;; Backup and Autosave Directories
+  (setq temporary-file-directory "~/.tmp/emacs/")
+  (setq auto-save-file-name-transforms
+	`((".*" ,temporary-file-directory t)))
+  (setq backup-directory-alist            '((".*" . "~/.Trash")))
+#+end_src
+
+#+RESULTS:
+: ((.* . ~/.Trash))
+
+** Dired
+*** Key Bindings
+
+**** Navigation
+**** Emacs / Evil
+- =n= / =j= - next line
+- =p= / =k= - previous line
+- =j= / =J= - jump to file in buffer
+- =RET= - select file or directory
+- =^= - go to parent directory
+- =S-RET= / =g O= - Open file in "other" window
+- =M-RET= - Show file in other window without focusing (previewing files)
+- =g o= (=dired-view-file=) - Open file but in a "preview" mode, close with =q=
+- =g= / =g r= Refresh the buffer with =revert-buffer=
+  after changing configuration (and after filesystem changes!)
+
+**** Marking Files
+- =m= - Marks a file
+- =u= - Unmarks a file
+- =U= - Unmarks all files in buffer
+- =* t= / =t= - Inverts marked files in buffer
+- =% m= - Mark files in buffer using regular expression
+- =*= - Lots of other auto-marking functions
+- =k= / =K= - "Kill" marked items (refresh buffer with =g= / =g r= to get them back)
+- Many operations can be done on a single file if there are no active marks!
+
+**** Copying and Renaming files
+
+- =C= - Copy marked files (or if no files are marked, the current file)
+- Copying single and multiple files
+- =U= - Unmark all files in buffer
+- =R= - Rename marked files, renaming multiple is a move!
+- =% R= - Rename based on regular expression: =^test= , =old-\&=
+
+**** Power Command:
+=C-x C-q= (=dired-toggle-read-only=) - Makes all file names in the buffer
+editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to abort.
+
+**** Deleting Files
+
+- =D= - Delete marked file
+- =d= - Mark file for deletion
+- =x= - Execute deletion for marks
+- =delete-by-moving-to-trash= - Move to trash instead of deleting permanently
+
+**** Creating and extracting archives
+
+- =Z= - Compress or uncompress a file or folder to (=.tar.gz=)
+- =c= - Compress selection to a specific file
+- =dired-compress-files-alist= - Bind compression commands to file extension
+
+**** Other common operations
+
+- =T= - Touch (change timestamp)
+- =M= - Change file mode
+- =O= - Change file owner
+- =G= - Change file group
+- =S= - Create a symbolic link to this file
+- =L= - Load an Emacs Lisp file into Emacs
+  
+*** TODO Setup
+
+#+begin_src emacs-lisp
+
+	(setup (:pkg all-the-icons-dired :straight t))
+	(setup (:pkg dired-single :straight t))
+	(setup (:pkg dired-ranger :straight t))
+	(setup (:pkg dired-collapse :straight t)
+	  )
+
+	(setup dired
+	  (setq dired-listing-switches "-agho --group-directories-first"
+			dired-omit-files "^\\.[^.].*"
+			dired-omit-verbose nil
+			dired-hide-details-hide-symlink-targets nil
+			delete-by-moving-to-trash t)
+
+	  ;;(autoload 'dired-omit-mode "dired-x")
+
+	  (add-hook 'dired-load-hook
+				(lambda ()
+				  (interactive)
+				  (dired-collapse)))
+
+	  (add-hook 'dired-mode-hook
+				(lambda ()
+				  (interactive)
+				  (dired-hide-details-mode 1)
+				  (all-the-icons-dired-mode 1)
+				  (hl-line-mode 1)))
+
+	  (evil-collection-define-key 'normal 'dired-mode-map
+		"h" 'dired-single-up-directory
+		"H" 'dired-omit-mode
+		"l" 'dired-single-buffer
+		"y" 'dired-ranger-copy
+		"X" 'dired-ranger-move
+		"p" 'dired-ranger-paste))
+
+	(setup (:pkg dired-rainbow :straight t)
+	  (:load-after dired
+		(dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+		(dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+		(dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+		(dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+		(dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+		(dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+		(dired-rainbow-define media "#de751f" ("mp3" "mp4" "mkv" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+		(dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+		(dired-rainbow-define log "#c17d11" ("log"))
+		(dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+		(dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+		(dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+		(dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+		(dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+		(dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+		(dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+		(dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+		(dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+		(dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+		(dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")))
+
+	(eval-when-compile (require 'cl))
+	(defun bonk/dired-link (path)
+	  (lexical-let ((target path))
+		(lambda () (interactive) (message "Path: %s" target) (dired target))))
+	(bonk/leader-keys
+	  "d"   '(:ignore t :which-key "dired")
+	  "dd"  '(dired :which-key "Here")
+	  "dh"  `(,(bonk/dired-link "~/") :which-key "Home")
+	  "dn"  `(,(bonk/dired-link "~/Notes") :which-key "Notes")
+	  "dw"  `(,(bonk/dired-link "~/working") :which-key "Working")
+	  "dp"  `(,(bonk/dired-link "~/Protos-prog") :which-key "Working")
+	  "dg"  `(,(bonk/dired-link "~/github") :which-key "Github")
+	  "do"  `(,(bonk/dired-link "~/Downloads") :which-key "Downloads")
+	  "dv"  `(,(bonk/dired-link "~/Videos") :which-key "Videos")
+	  "d."  `(,(bonk/dired-link "~/.config") :which-key "dotfiles-config")
+	  "dl"  `(,(bonk/dired-link "~/.local") :which-key "dotfiles-local")
+	  "de"  `(,(bonk/dired-link "~/.emacs.d") :which-key ".emacs.d"))
+
+  (setq dired-listing-switches "-al --group-directories-first")
+
+#+end_src
+
+#+RESULTS:
+: -al --group-directories-first
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-dired-single"
+  "emacs-dired-hacks"
+  "emacs-all-the-icons-dired"
+
+#+end_src
+
+
+#+RESULTS:
+
+*** TODO Ranger
+
+It brings Ranger like functionality to dired, since emacs is not really good at using cores and concurrent tasks, some default options are disabled, such as preview and literal previews. I also increased the delay in previews, since otherwise it might get annoying to navigate through a directory with the previews turned on.
+For more info go to [[https://github.com/punassuming/ranger.el][ranger.]]
+#+begin_src emacs-lisp
+  (setup (:pkg image+ :straight t))
+  (setup (:pkg image-dired+ :straight t))
+  (setup (:pkg ranger :straight t)
+	:options
+	(ranger-override-dired-mode t)
+	(setq ranger-cleanup-on-disable t)
+	(setq ranger-show-hidden nil)
+	(setq helm-descbinds-window-style 'same-window)
+	(setq ranger-footer-delay 0.2)
+	(setq ranger-preview-delay 0.150)
+	(setq ranger-preview-file nil)
+	(setq ranger-show-literal nil)
+	(setq ranger-width-preview 0.55)
+	(setq ranger-excluded-extensions '("mkv" "iso" "mp4"))
+	(setq ranger-max-preview-size 5)
+	(setq ranger-dont-show-binary t))
+
+  (bonk/leader-keys
+	"r"  '(ranger :which-key "Ranger Current Dir"))
+#+end_src
+
+#+RESULTS:
+
+* Project Management
+** Projectile
+
+[[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
+
+#+begin_src emacs-lisp
+
+  (setup (:pkg projectile :straight t)
+	(:global "C-c p" projectile-command-map)
+	(projectile-mode)
+      (setq projectile-project-search-path '("~/." "~/github" "~/working"))
+	(setq projectile-switch-project-action #'projectile-dired))
+
+  (setup (:pkg counsel-projectile :straight t)
+	(counsel-projectile-mode))
+
+#+end_src
+
+#+RESULTS:
+: t
+
+* Provide
+#+begin_src emacs-lisp
+(provide 'bonk-project-explorer)
+#+end_src

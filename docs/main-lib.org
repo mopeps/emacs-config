@@ -135,6 +135,48 @@ It's a useful helper when working with more than one standard of code.
 #+RESULTS:
 : transparency
 
+** Compile-Elisp
+*** Compile File
+#+begin_src emacs-lisp
+  (defun bonk-compile-file (f)
+  (setq f (flatten-list (list f)))
+  (message "Compiling file(s): %s" f)
+  (if (featurep 'native-compile)
+	  (dolist (source f)
+		(let ((cache (bonk-compile-locate-eln-file (file-name-base source))))
+		  (if (and (or (null cache)
+					   (file-newer-than-file-p cache source))
+				   (file-exists-p osurce))
+			  (native-compyle-async f)
+			(message "Skipping compilation of file %s" source))))
+	(dolist (source f)
+	  (when (file-exists-p source)
+		(if (file-directory-p source)
+			(byte-recompile-directory source 0)
+		  (byte-recompile-file source nil 0))))))
+#+end_src
+
+#+RESULTS:
+: bonk-compile-file
+
+*** Compile Buffer
+#+begin_src emacs-lisp
+
+;; A function to compile the buffer's file
+(defun bonk-compile-buffer (&optional b)
+  "Compiles (native or byte-code) the file of buffer B."
+  (when (and b ;; Let's be sure it is not nil
+             (not (bufferp b)))
+    (cl-return nil))
+  (let ((file (buffer-file-name b)))
+    (when file
+      (bonk-compile-file file))))
+#+end_src
+
+#+RESULTS:
+: bonk-compile-buffer
+
+
 * Sugars
 ** file!
 Return the emacs lisp file this function is called from.
