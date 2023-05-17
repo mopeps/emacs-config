@@ -1,6 +1,19 @@
 (setq gc-cons-threshold (* 50 1000 1000))
 
-(customize-set-variable 'load-prefer-newer noninteractive)
+(customize-set-variable 'load-prefer-newer t)
+
+(defvar bonk-config-path
+  (cond
+   ((featurep 'chemacs)
+	(if (getenv  "BONK_EMACS_HOME")
+		(expand-file-name (getenv "BONK_EMACS_HOME"))
+	  (expand-file-name "bonk-emacs" user-emacs-directory)))
+   ((getenv "BONK_EMACS_HOME") (expand-file-name (getenv "BONK_EMACS_HOME")))
+   (
+	(if (getenv "HOME")
+		(expand-file-name ".emacs.d/" (getenv "HOME"))))
+   ((getenv "HOME") (expand-file-name ".bonk-emacs" (getenv "HOME"))))
+  "The user's bonk-emacs configuration path.")
 
 (require 'package)
 
@@ -18,7 +31,7 @@
   (package-refresh-contents))
 
 (when (featurep 'native-compile)
-(setq comp-num-cpus 8)
+(setq comp-num-cpus 10)
 (setq comp-speed 2)
    (setq native-comp-async-report-warnings-errors nil)
    (setq native-comp-deferred-compilation t)

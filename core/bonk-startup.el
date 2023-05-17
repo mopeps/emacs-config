@@ -32,11 +32,11 @@
 			 '(fixed-pitch ((t (:inherit (default)))))
 			 '(fixed-pitch-serif ((t (:inherit (default)))))
 			 '(variable-pitch ((t (:font "Fira Code-10"))))))
-		  (load-theme 'base16-one-light t))
+		  (load-theme 'doom-gruvbox-light t))
 
 ;; (C-q Tab) inserts a tab space
   (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))
-(load-file "~/ligature.el")
+(load-file "./ligature.el")
 (use-package ligature
   :load-path "."
   :config

@@ -24,54 +24,54 @@
 		(add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; Initialize package sources
-(require 'package)
+;; (require 'package)
 
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			   ("org" . "https://orgmode.org/elpa/")
-			   ( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")
-			   ("elpa" . "https://elpa.gnu.org/packages/")))
+;;   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+;; 			   ("org" . "https://orgmode.org/elpa/")
+;; 			   ( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")
+;; 			   ("elpa" . "https://elpa.gnu.org/packages/")))
 
 
-(setq package-check-signature nil) 
+;; (setq package-check-signature nil) 
 ;; probably not necessary
 
 
-(package-initialize)
-(unless package-archive-contents
-  (package-refresh-contents))
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
+;; (package-initialize)
+;; (unless package-archive-contents
+;;   (package-refresh-contents))
+;; (when (memq window-system '(mac ns x))
+;;   (exec-path-from-shell-initialize))
 
-;; Initialize use-package on non-Linux platforms
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
+;; ;; Initialize use-package on non-Linux platforms
+;; (unless (package-installed-p 'use-package)
+;;   (package-install 'use-package))
 
-(require 'use-package)
-(setq use-package-always-ensure t)
-(use-package use-package-ensure-system-package)
+;; (require 'use-package)
+;; (setq use-package-always-ensure t)
+;; (use-package use-package-ensure-system-package)
 
-(setq straight-vc-git-default-clone-depth 1)
-(setq straight-recipes-gnu-elpa-use-mirror t)
-;; (setq straight-check-for-modifications '(check-on-save find-when-checking))
-(setq straight-check-for-modifications nil)
-(defvar bootstrap-version)
-(let* ((straight-repo-dir
-        (expand-file-name "straight/repos" user-emacs-directory))
-       (bootstrap-file
-        (concat straight-repo-dir "/straight.el/bootstrap.el"))
-       (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (shell-command
-     (concat
-      "mkdir -p " straight-repo-dir " && "
-      "git -C " straight-repo-dir " clone "
-      "https://github.com/raxod502/straight.el.git && "
-      "git -C " straight-repo-dir " checkout 2d407bc")))
-  (load bootstrap-file nil 'nomessage))
-(straight-use-package 'use-package)
-;; This is a variable that has been renamed but straight still refers when
-;; doing :sraight (:no-native-compile t)
-(setq comp-deferred-compilation-black-list nil)
+;; (setq straight-vc-git-default-clone-depth 1)
+;; (setq straight-recipes-gnu-elpa-use-mirror t)
+;; ;; (setq straight-check-for-modifications '(check-on-save find-when-checking))
+;; (setq straight-check-for-modifications nil)
+;; (defvar bootstrap-version)
+;; (let* ((straight-repo-dir
+;;         (expand-file-name "straight/repos" user-emacs-directory))
+;;        (bootstrap-file
+;;         (concat straight-repo-dir "/straight.el/bootstrap.el"))
+;;        (bootstrap-version 5))
+;;   (unless (file-exists-p bootstrap-file)
+;;     (shell-command
+;;      (concat
+;;       "mkdir -p " straight-repo-dir " && "
+;;       "git -C " straight-repo-dir " clone "
+;;       "https://github.com/raxod502/straight.el.git && "
+;;       "git -C " straight-repo-dir " checkout 2d407bc")))
+;;   (load bootstrap-file nil 'nomessage))
+;; (straight-use-package 'use-package)
+;; ;; This is a variable that has been renamed but straight still refers when
+;; ;; doing :sraight (:no-native-compile t)
+;; (setq comp-deferred-compilation-black-list nil)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
