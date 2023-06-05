@@ -1,33 +1,37 @@
 (provide 'bonk-editing)
 
 (defun bonk/org-no-line-number ()
-	  (display-line-numbers-mode 0))
+  (display-line-numbers-mode 0))
 
 (setup (:pkg org :straight t)
-  (:hook visual-line-mode visual-fill-column-mode)
-	  (:also-load org-tempo)
-	 (setq org-ellipsis " ▾"
-		   org-hide-emphasis-markers t
-		   org-src-fontify-natively t
-		   org-fontify-quote-and-verse-blocks t
-		   org-src-tab-acts-natively t
-		   org-edit-src-content-indentation 2
-		   org-hide-block-startup nil
-		   org-src-preserve-indentation nil
-		   org-startup-folded 'content
-		   org-cycle-separator-lines 2
-		   org-capture-bookmark nil)
-	(setq org-refile-targets '((nil :maxlevel . 1)
-							   (org-agenda-files :maxlevel . 1)))
-	(setq org-outline-path-complete-in-steps nil)
-	(setq org-refile-use-outline-path t)
-	(org-babel-do-load-languages
-	  'org-babel-load-languages
-	  '((emacs-lisp . t)
-		))
+  (:hook visual-line-mode visual-fill-column-mode org-init-org-directory-h) 
+  (:also-load org-tempo)
+  (setq org-ellipsis " ▾"
+		org-hide-emphasis-markers t
+		org-src-fontify-natively t
+		org-fontify-quote-and-verse-blocks t
+		org-src-tab-acts-natively t
+		org-edit-src-content-indentation 2
+		org-hide-block-startup nil
+		org-src-preserve-indentation nil
+		org-startup-folded 'content
+		org-cycle-separator-lines 2
+		org-capture-bookmark nil)
+  (setq org-refile-targets '((nil :maxlevel . 3)
+							 (org-agenda-files :maxlevel . 3)))
+  (setq org-outline-path-complete-in-steps nil)
+
+  (setq org-todo-keywords
+		'((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+		  (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
+  (setq org-refile-use-outline-path t)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+	 ))
 
 
-	(push '("conf-unix" . conf-unix) org-src-lang-modes))
+  (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 (setup (:pkg org-superstar :straight t)
 	(:load-after org)
@@ -118,9 +122,132 @@
 	(funcall 'org-mode)
 	(setq buffer-offer-save t)))
 
+(defun org-init-org-directory-h ()
+	  (setq org-directory "~/Notes/agenda/")
+	  (unless org-id-locations-file
+		(setq org-id-locations-file (expand-file-name ".orgids" org-directory))))
+
+  (defun org-init-agenda-h ()
+	(setq org-agenda-files (list org-directory)))
+	(setq
+	 ;; Different colors for different priority levels
+	 org-agenda-deadline-faces
+	 '((1.001 . error)
+	   (1.0 . org-warning)
+	   (0.5 . org-upcoming-deadline)
+	   (0.0 . org-upcoming-distant-deadline))
+	 ;; Don't monopolize the whole frame just for the agenda
+	 org-agenda-window-setup 'current-window
+	 org-agenda-skip-unavailable-files t
+	 ;; Shift the agenda to show the previous 3 days and the next 7 days for
+	 ;; better context on your week. The past is less important than the future.
+	 org-agenda-span 10
+	 org-agenda-start-on-weekday nil
+	 org-agenda-start-day "-3d"
+	 ;; Optimize `org-agenda' by inhibiting extra work while opening agenda
+	 ;; buffers in the background. They'll be "restarted" if the user switches to
+	 ;; them anyway (see `+org-exclude-agenda-buffers-from-workspace-h')
+	 org-agenda-inhibit-startup t)
+  (setup (:pkg org-agenda)
+	(:hook org-init-agenda-h)
+
+	(setq org-agenda-custom-commands
+		  '(("d" "Dashboard"
+			 ((agenda "" ((org-deadline-warning-days 7)))
+			  (todo "NEXT"
+					((org-agenda-overriding-header "Next Tasks")))
+			  (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+
+	("n" "Next Tasks"
+	 ((todo "NEXT"
+		((org-agenda-overriding-header "Next Tasks")))))
+
+
+	("W" "Work Tasks" tags-todo "+work")
+
+	;; Low-effort next actions
+	("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+	 ((org-agenda-overriding-header "Low Effort Tasks")
+	  (org-agenda-max-todos 20)
+	  (org-agenda-files org-agenda-files)))
+
+	("w" "Workflow Status"
+	 ((todo "WAIT"
+			((org-agenda-overriding-header "Waiting on External")
+			 (org-agenda-files org-agenda-files)))
+	  (todo "REVIEW"
+			((org-agenda-overriding-header "In Review")
+			 (org-agenda-files org-agenda-files)))
+	  (todo "PLAN"
+			((org-agenda-overriding-header "In Planning")
+			 (org-agenda-todo-list-sublevels nil)
+			 (org-agenda-files org-agenda-files)))
+	  (todo "BACKLOG"
+			((org-agenda-overriding-header "Project Backlog")
+			 (org-agenda-todo-list-sublevels nil)
+			 (org-agenda-files org-agenda-files)))
+	  (todo "READY"
+			((org-agenda-overriding-header "Ready for Work")
+			 (org-agenda-files org-agenda-files)))
+	  (todo "ACTIVE"
+			((org-agenda-overriding-header "Active Projects")
+			 (org-agenda-files org-agenda-files)))
+	  (todo "COMPLETED"
+			((org-agenda-overriding-header "Completed Projects")
+			 (org-agenda-files org-agenda-files)))
+	  (todo "CANC"
+			((org-agenda-overriding-header "Cancelled Projects")
+			 (org-agenda-files org-agenda-files)))))))
+	)
+
+(define-key global-map (kbd "C-c j")
+  (lambda () (interactive) (org-capture nil "j")))
+
+(setq org-capture-templates
+  `(("t" "Tasks / Projects")
+    ("tt" "Task" entry (file "Tasks.org")
+         "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+      ("o" "Centralized templates for projects")
+      ("ot" "Project todo" entry
+       (file "Projects_todo.org")
+       "* TODO %?\n %i\n %a"
+       :heading "Tasks"
+       :prepend nil)
+      ("on" "Project notes" entry
+       (file+headline "Projects_notes.org" "Project Notes")
+       "* %U %?\n %i\n %a"
+       :heading "Notes"
+       :prepend t)
+      ("oc" "Project changelog" entry
+       (file "Project_Changelog.org")
+       "* %U %?\n %i\n %a"
+       :heading "Changelog"
+       :prepend t)
+
+    ("j" "Journal Entries")
+    ("jj" "Journal" entry
+         (file+olp+datetree "Journal.org")
+         "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+         ;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
+         :clock-in :clock-resume
+         :empty-lines 1)
+    ("jm" "Meeting" entry
+         (file+olp+datetree "Journal.org")
+         "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
+         :clock-in :clock-resume
+         :empty-lines 1)
+
+    ("w" "Workflows")
+    ("we" "Checking Email" entry (file+olp+datetree "Wokr.org")
+         "* Checking Email :email:\n\n%?" :clock-in :clock-resume :empty-lines 1)
+
+    ("m" "Metrics Capture")
+    ("mw" "Weight" table-line (file+headline "Metrics.org" "Weight")
+     "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
+
 (setup (:pkg org-pomodoro :straight t)
 
-  (bonk/leader-keys
+  (bonk/set-leader-keys
     "op"  '(org-pomodoro :which-key "pomodoro")))
 
 (require 'org-protocol)
@@ -141,7 +268,7 @@
   (evil-org-set-key-theme '(navigation todo insert textobjects additional))
   (evil-org-agenda-set-keys))
 
-(bonk/leader-keys
+(bonk/set-leader-keys
   "o"   '(:ignore t :which-key "org mode")
 
   "oi"  '(:ignore t :which-key "insert")

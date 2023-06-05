@@ -9,7 +9,7 @@
       (setq vterm-kill-buffer-on-exit t)
       (setq vterm-timer-delay 0.01)))
 
-(bonk/leader-keys
+(bonk/set-leader-keys
   "Vt" '(vterm-other-window :which-key "vterm in new window")
   "Vb" '(vterm :which-key "open new buffer for vterm"))
 

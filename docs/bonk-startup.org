@@ -42,6 +42,12 @@
   (setup (:pkg solo-jazz-theme :straight t))
   (setup (:pkg jazz-theme :straight t))
   (setup (:pkg apropospriate-theme :straight t))
+  (setup (:pkg gruvbox-theme :straight t))
+  ;; (setup (:pkg solarized-theme :straight t))
+  ;; (setup (:pkg one-themes :straight t))
+  (setup (:pkg mood-one-theme :straight t))
+  (setup (:pkg atom-one-dark-theme :straight t))
+  ;; (setup (:pkg ancient-one-dark-theme :straight t))
 
   (add-hook 'emacs-startup-hook
 			(lambda ()
@@ -50,12 +56,13 @@
 			   '(fixed-pitch ((t (:inherit (default)))))
 			   '(fixed-pitch-serif ((t (:inherit (default)))))
 			   '(variable-pitch ((t (:font "Fira Code-10"))))))
-			(load-theme 'doom-gruvbox-light t))
+			(load-theme 'gruvbox t))
 
 #+end_src
 
 #+RESULTS:
-| lambda | nil | (message Bonk Emacs loaded in %s. (emacs-init-time))                                          |
+| lambda | nil | (message Bonk Emacs loaded in %s. (emacs-init-time))                                                                                                                                          |
+| lambda | nil | (if (or bonk-compile-core bonk-compile-user-modules bonk-compile-init-files bonk-compile-user-configuration) (progn (bonk-compile-core)))                                                     |
 | lambda | nil | (custom-set-faces '(default ((t (:font FantasqueSansMono Nerd Font-14)))) '(fixed-pitch ((t (:inherit (default))))) '(fixed-pitch-serif ((t (:inherit (default))))) '(variable-pitch ((t (:font Fira Code-10))))) |
 
 *Guix Packages*

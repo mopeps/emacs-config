@@ -52,12 +52,12 @@
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
   (setup (:pkg general :straight t)
-		 (general-create-definer bonk/leader-keys
+		 (general-create-definer bonk/set-leader-keys
 		   :keymaps '(normal insert visual emacs)
 		   :prefix "SPC"
 		   :global-prefix "C-SPC"))
 
-  (bonk/leader-keys
+  (bonk/set-leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text")
 	"t"  '(:ignore t :which-key "toggles")
 	"tt" '(counsel-load-theme :which-key "choose theme")

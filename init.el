@@ -78,12 +78,12 @@
 
 (use-package general
   :config
-  (general-create-definer bonk/leader-keys
+  (general-create-definer bonk/set-leader-keys
 	:keymaps '(normal insert visual emacs)
 	:prefix "SPC"
 	:global-prefix "C-SPC"))
 
-  (bonk/leader-keys
+  (bonk/set-leader-keys
 	"t"  '(:ignore t :which-key "toggles")
 	"tt" '(counsel-load-theme :which-key "choose theme")
   ;; Window navigation
@@ -280,7 +280,7 @@
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-(bonk/leader-keys
+(bonk/set-leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 (use-package ido
@@ -811,7 +811,7 @@
   (setq vterm-kill-buffer-on-exit t)
   (setq vterm-timer-delay 0.01))
 
-(bonk/leader-keys
+(bonk/set-leader-keys
   "Vt" '(vterm-other-window :which-key "vterm in new window")
   "Vb" '(vterm :which-key "open new buffer for vterm"))
 

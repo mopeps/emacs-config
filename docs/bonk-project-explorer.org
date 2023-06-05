@@ -146,7 +146,7 @@ editable directly to rename them!  Press =Z Z= to confirm renaming or =Z Q= to a
 	(defun bonk/dired-link (path)
 	  (lexical-let ((target path))
 		(lambda () (interactive) (message "Path: %s" target) (dired target))))
-	(bonk/leader-keys
+	(bonk/set-leader-keys
 	  "d"   '(:ignore t :which-key "dired")
 	  "dd"  '(dired :which-key "Here")
 	  "dh"  `(,(bonk/dired-link "~/") :which-key "Home")
@@ -202,7 +202,7 @@ For more info go to [[https://github.com/punassuming/ranger.el][ranger.]]
 	(setq ranger-max-preview-size 5)
 	(setq ranger-dont-show-binary t))
 
-  (bonk/leader-keys
+  (bonk/set-leader-keys
 	"r"  '(ranger :which-key "Ranger Current Dir"))
 #+end_src
 

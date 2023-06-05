@@ -24,6 +24,12 @@
 (setup (:pkg solo-jazz-theme :straight t))
 (setup (:pkg jazz-theme :straight t))
 (setup (:pkg apropospriate-theme :straight t))
+(setup (:pkg gruvbox-theme :straight t))
+;; (setup (:pkg solarized-theme :straight t))
+;; (setup (:pkg one-themes :straight t))
+(setup (:pkg mood-one-theme :straight t))
+(setup (:pkg atom-one-dark-theme :straight t))
+;; (setup (:pkg ancient-one-dark-theme :straight t))
 
 (add-hook 'emacs-startup-hook
 		  (lambda ()
@@ -32,7 +38,7 @@
 			 '(fixed-pitch ((t (:inherit (default)))))
 			 '(fixed-pitch-serif ((t (:inherit (default)))))
 			 '(variable-pitch ((t (:font "Fira Code-10"))))))
-		  (load-theme 'doom-gruvbox-light t))
+		  (load-theme 'gruvbox t))
 
 ;; (C-q Tab) inserts a tab space
   (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))

@@ -28,7 +28,7 @@
 ** Keybindings for opening vterm in other windows with =SPACE v +options=
 
 #+begin_src emacs-lisp
-	(bonk/leader-keys
+	(bonk/set-leader-keys
 	  "Vt" '(vterm-other-window :which-key "vterm in new window")
 	  "Vb" '(vterm :which-key "open new buffer for vterm"))
 

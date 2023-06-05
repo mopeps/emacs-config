@@ -28,6 +28,7 @@ Let's start by setting up some basic package and system stuff.
   (add-to-list 'load-path (expand-file-name "core/" user-emacs-directory))
   (require 'main-lib)
   (require 'bonk-package)
+  (require 'bonk-modules)
   (require 'bonk-evil)
   (require 'bonk-editing)
   (require 'bonk-ui)
@@ -36,6 +37,8 @@ Let's start by setting up some basic package and system stuff.
   (require 'bonk-shell)
   (require 'bonk-startup)
   (require 'bonk-compile)
+  (require 'bonk-tex)
+
 
   ;; Profile emacs startup
   (add-hook 'emacs-startup-hook
@@ -44,6 +47,11 @@ Let's start by setting up some basic package and system stuff.
 					   (emacs-init-time))))
 
 #+end_src
+
+#+RESULTS:
+| lambda | nil | (message Bonk Emacs loaded in %s. (emacs-init-time))                                          |
+| lambda | nil | (if (or bonk-compile-modules bonk-compile-user-modules bonk-compile-init-files bonk-compile-user-configuration) (progn (bonk-compile-modules))) |
+| lambda | nil | (custom-set-faces '(default ((t (:font FantasqueSansMono Nerd Font-14)))) '(fixed-pitch ((t (:inherit (default))))) '(fixed-pitch-serif ((t (:inherit (default))))) '(variable-pitch ((t (:font Fira Code-10))))) |
 
 * Mail Config
 

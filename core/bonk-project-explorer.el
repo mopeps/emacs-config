@@ -66,7 +66,7 @@
   (defun bonk/dired-link (path)
 	(lexical-let ((target path))
 	  (lambda () (interactive) (message "Path: %s" target) (dired target))))
-  (bonk/leader-keys
+  (bonk/set-leader-keys
 	"d"   '(:ignore t :which-key "dired")
 	"dd"  '(dired :which-key "Here")
 	"dh"  `(,(bonk/dired-link "~/") :which-key "Home")
@@ -99,7 +99,7 @@
   (setq ranger-max-preview-size 5)
   (setq ranger-dont-show-binary t))
 
-(bonk/leader-keys
+(bonk/set-leader-keys
   "r"  '(ranger :which-key "Ranger Current Dir"))
 
 (setup (:pkg projectile :straight t)

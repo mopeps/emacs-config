@@ -113,18 +113,19 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 * Keybindings
 
+** Leader-keys
 #+begin_src emacs-lisp
 
 	;; Make ESC quit prompts
 	(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 	(setup (:pkg general :straight t)
-		   (general-create-definer bonk/leader-keys
+		   (general-create-definer bonk/set-leader-keys
 			 :keymaps '(normal insert visual emacs)
 			 :prefix "SPC"
 			 :global-prefix "C-SPC"))
 
-	(bonk/leader-keys
+	(bonk/set-leader-keys
 	"ts" '(hydra-text-scale/body :which-key "scale text")
 	  "t"  '(:ignore t :which-key "toggles")
 	  "tt" '(counsel-load-theme :which-key "choose theme")
@@ -172,4 +173,44 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
   "emacs-general"
 
+#+end_src
+
+** Set Leader-keys for mode
+#+begin_src emacs-lisp
+
+(defun bonk/set-leader-keys-for-major-mode (mode key def &rest bindings)
+  "Add KEY and DEF as key bindings under
+`dotbonk-major-mode-leader-key' and
+`dotbonk-major-mode-emacs-leader-key' for the major-mode
+MODE. MODE should be a quoted symbol corresponding to a valid
+major mode. The rest of the arguments are treated exactly like
+they are in `bonk/set-leader-keys'."
+  (let* ((map (intern (format "bonk-%s-map" mode))))
+    (when (bonk//init-leader-mode-map mode map)
+      (while key
+        (define-key (symbol-value map) (kbd key) def)
+        (setq key (pop bindings) def (pop bindings))))))
+(put 'bonk/set-leader-keys-for-major-mode 'lisp-indent-function 'defun)
+
+(defalias
+  'evil-leader/set-key-for-mode
+  'bonk/set-leader-keys-for-major-mode)
+
+(defun bonk/set-leader-keys-for-minor-mode (mode key def &rest bindings)
+  "Add KEY and DEF as key bindings under
+`dotbonk-major-mode-leader-key' and
+`dotbonk-major-mode-emacs-leader-key' for the minor-mode
+MODE. MODE should be a quoted symbol corresponding to a valid
+minor mode. The rest of the arguments are treated exactly like
+they are in `bonk/set-leader-keys'. If DEF is string, then
+it is treated as a prefix not a command."
+  (let* ((map (intern (format "bonk-%s-map" mode))))
+    (when (bonk//init-leader-mode-map mode map t)
+      (let ((map-value (symbol-value map)))
+        (while key
+          (if (stringp def)
+              (which-key-add-keymap-based-replacements map-value key def)
+            (define-key map-value (kbd key) def))
+          (setq key (pop bindings) def (pop bindings)))))))
+(put 'bonk/set-leader-keys-for-minor-mode 'lisp-indent-function 'defun)
 #+end_src

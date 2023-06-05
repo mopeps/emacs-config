@@ -25,14 +25,17 @@
   (setq standard-indent 4) ; I want indent to be four spaces wide
   (show-paren-mode t)
   (display-line-numbers-mode)
-  (setq whitespace-style '(tab-mark trailing spaces space-mark))
-  (custom-set-faces
-	'(whitespace-tab ((t (:foreground "#636363"))))
-	'(whitespace-space ((t (:foreground "#636363"))))
-	)
-  (setq whitespace-display-mappings '(
-									  (tab-mark 9 [9474 9] [92 9])
-									  (space-mark 32 [183] [46])))
+  (setq whitespace-line-column nil
+		whitespace-style
+		'(face indentation tabs tab-mark spaces space-mark newline newline-mark
+			   trailing)
+		whitespace-display-mappings
+		'((tab-mark ?\t [?› ?\t])
+		  (newline-mark ?\n [?¬ ?\n])
+		  (space-mark ?\  [?·] [?.])))
+  ;; (setq whitespace-display-mappings '(
+  ;; 									   (tab-mark 9 [9474 9] [92 9])
+  ;; 									   (space-mark 32 [183] [46])))
   (setq-local show-trailing-whitespace t)
   (bonk/infer-indent-style)
   (whitespace-mode))
@@ -105,7 +108,7 @@
 												(haskell-mode . "haskell")
 												(php-mode . "php")
 												(json-mode . "json")
-												(typescript-mode . "typescript")
+												(tsx-ts-mode . "typescript")
 												(rjsx-mode . "javascript")
 												))
 
@@ -146,11 +149,26 @@
   (:disabled)
   (:load-after lsp-mode))
 
+(setup (:pkg consult-eglot :straight t)
+  (:when-loaded
+   (progn
+	 (map! map eglot-mode-map [remap xref-find-definitions] #'consult-eglot-symbols))
+  ))
+(setup (:pkg flycheck-eglot :straight t))
 (setup (:pkg eglot :straight t)
-			 :ensure t)
-  ;;  hooks
-	  (defun bonk-ide--add-eglot-hooks (mode-list)
-		"Iterates over MODE-LIST recursively to add eglot-ensure to
+  :hook (flycheck-eglot-mode)
+  :ensure t
+  :commands (eglot-ensure)
+  :options
+  (setq eglot-sync-connect 1)
+  (setq eglot-connect-timeout 10)
+  (setq eglot-autoshutdown t)
+  (setq eglot-send-changes-idle-time 0.8)
+  (setq eglot-auto-display-help-buffer nil)
+  )
+;;  hooks
+(defun bonk-ide--add-eglot-hooks (mode-list)
+  "Iterates over MODE-LIST recursively to add eglot-ensure to
 	  existing mode hooks.
 
 	  The mode must be loaded, ie. found with `fboundp'. A mode which
@@ -159,35 +177,34 @@
 
 	  `(add-hook 'some-mode-hook #'eglot-ensure)'
 	  "
-		(dolist (mode-def mode-list)
-		  (let ((mode (if (listp mode-def) (car mode-def) mode-def)))
-			(cond
-			 ((listp mode) (bonk-ide--add-eglot-hooks mode))
-			 (t
-			  (when (and (fboundp mode)
-						 (not (eq 'clojure-mode mode))  ; prefer cider
-						 (not (eq 'lisp-mode mode))     ; prefer sly/slime
-						 (not (eq 'scheme-mode mode))   ; prefer geiser
-						 )
-				(let ((hook-name (concat (symbol-name mode) "-hook")))
-				  (message (concat "adding eglot to " hook-name))
-				  (add-hook (intern hook-name) #'eglot-ensure))))))))
+  (dolist (mode-def mode-list)
+	(let ((mode (if (listp mode-def) (car mode-def) mode-def)))
+	  (cond
+	   ((listp mode) (bonk-ide--add-eglot-hooks mode))
+	   (t
+		(when (and (fboundp mode)
+				   (not (eq 'clojure-mode mode))  ; prefer cider
+				   (not (eq 'lisp-mode mode))     ; prefer sly/slime
+				   (not (eq 'scheme-mode mode))   ; prefer geiser
+				   )
+		  (let ((hook-name (concat (symbol-name mode) "-hook")))
+			(message (concat "adding eglot to " hook-name))
+			(add-hook (intern hook-name) #'eglot-ensure))))))))
 
-  ;; add eglot to existing programming modes when eglot is loaded.
-  (with-eval-after-load "eglot"
-	  (bonk-ide--add-eglot-hooks eglot-server-programs)
+;; add eglot to existing programming modes when eglot is loaded.
+(with-eval-after-load "eglot"
+  (bonk-ide--add-eglot-hooks eglot-server-programs)
 
-(add-to-list 'eglot-server-programs
-			 '((ruby-mode) "solargraph" "stdio"))
-)
+  (add-to-list 'eglot-server-programs
+			   '((ruby-mode) "solargraph" "stdio")))
 	  ;;; customization
-	  ;; Shutdown server when last managed buffer is killed
-	  (customize-set-variable 'eglot-autoshutdown t)
-  (customize-set-variable 'eglot-send t)
+;; Shutdown server when last managed buffer is killed
+(customize-set-variable 'eglot-autoshutdown t)
+(customize-set-variable 'eglot-send t)
 
 (setup (:pkg tree-sitter :straight t)
   (:hook tree-sitter-hl-mode)
-  (:hook-into typescript-mode))
+  (:hook-into tsx-ts-mode))
 (setup (:pkg tree-sitter-langs :straight t))
 
 (setup (:pkg rainbow-mode :straight t)
@@ -221,29 +238,49 @@
 
 (add-hook 'python-mode-hook 'flycheck-mode)
 
-  (with-eval-after-load 'company
-	(add-hook 'python-mode-hook 'company-mode))
+(with-eval-after-load 'company
+  (add-hook 'python-mode-hook 'company-mode))
 
-  (setup (:pkg company-jedi :straight t)
-	(:when-loaded
-	  (progn
-		(add-to-list 'company-backends 'company-jedi))))
+(setup (:pkg company-jedi :straight t)
+  (:when-loaded
+	(progn
+	  (add-to-list 'company-backends 'company-jedi))))
 
-  (defun python-mode-company-init ()
-	(setq-local company-backends '((company-jedi
-									company-etags
-									company-dabbrev-code))))
+(defun python-mode-company-init ()
+  (setq-local company-backends '((company-jedi
+								  company-etags
+								  company-dabbrev-code))))
 (setup (:pkg python-mode :straight t)
   (:hook tree-sitter-mode)
   (:hook eglot-ensure)
+  :config
+
+(set-docsets! '(python-mode inferior-python-mode) "Python 3" "NumPy" "SciPy" "Pandas")
+  (set-ligatures! 'python-mode
+				  ;; Functional
+				  :def "def"
+				  :lambda "lambda"
+				  ;; Types
+				  :null "None"
+				  :true "True" :false "False"
+				  :int "int" :str "str"
+				  :float "float"
+				  :bool "bool"
+				  :tuple "tuple"
+				  ;; Flow
+				  :not "not"
+				  :in "in" :not-in "not in"
+				  :and "and" :or "or"
+				  :for "for"
+				  :return "return" :yield "yield")
   (:when-loaded
 	(progn
 	  (setq indent-tabs-mode nil)
 	  (setq python-indent-guess-indent-offset t)
 	  )))
 
-  (with-eval-after-load 'python-mode
-	(lambda () (require 'lsp-pyright)))
+(with-eval-after-load 'python-mode
+  (lambda () (require 'lsp-pyright)))
 (setup (:pkg lsp-pyright :straight t)
   (:when-loaded
 	(progn
@@ -282,6 +319,7 @@
   (add-hook 'go-mode-hook 'lsp-go-install-save-hooks))
 
 (setup (:pkg rjsx-mode :straight t)
+  (:disabled)
 	(:file-match "\\.js\\' \\.jsx?\\' \\.tsx\\'")
 	(:hook tree-sitter-hl-mode)
 	(setq indent-tabs-mode 0)
@@ -289,23 +327,31 @@
 
 (setup (:pkg prettier-js))
 
+(setup (:pkg tsx-ts-mode)
+	(:hook eglot-ensure)
+	(:hook tide-setup)
+	(tree-sitter-require 'tsx)
+	(add-to-list
+	 'tree-sitter-major-mode-language-alist
+	 '(tsx-ts-mode . tsx))
+	(:hook tree-sitter-hl-mode)
+	(:hook tide-hl-identifier-mode)
+	)
+
 (setup (:pkg typescript-mode :straight t)
-  (:hook tree-sitter-hl-mode)
-  (:hook eglot-ensure)
-  (:hook tide-setup)
-  (:hook tide-hl-identifier-mode)
+  (:hook tsx-ts-mode) ;; Completely hacky, feels dirty
   )
 
-(setup (:pkg tide :straight t)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (:load-after typescript-mode company-mode flycheck-mode))
+  (setup (:pkg tide :straight t)
+	(setq flycheck-check-syntax-automatically '(save mode-enabled))
+	(:load-after tsx-ts-mode company-mode flycheck-mode))
 
-(setup (:pkg js2-mode :straight t)
-  ;; Use js2-mode for Node scripts
-  (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
+  (setup (:pkg js2-mode :straight t)
+	;; Use js2-mode for Node scripts
+	(add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
 
-  ;; Don't use built-in syntax checking
-  (setq js2-mode-show-strict-warnings nil))
+	;; Don't use built-in syntax checking
+	(setq js2-mode-show-strict-warnings nil))
 
 ;; yaml-mode doesn't derive from prog-mode, but we can at least enable
 ;; whitespace-mode and apply cleanup.
@@ -351,11 +397,11 @@
 		   [remap describe-command] helpful-command
 		   [remap describe-key] helpful-key))
 
-(bonk/leader-keys
+(bonk/set-leader-keys
   "e"   '(:ignore t :which-key "eval")
   "eb"  '(eval-buffer :which-key "eval buffer"))
 
-(bonk/leader-keys
+(bonk/set-leader-keys
   :keymaps '(visual)
   "er" '(eval-region :which-key "eval region"))
 
@@ -443,23 +489,100 @@
   (:hook irony-cdb-autosetup-compile-options))
 
 (setup (:pkg verilog-mode :straight t))
-(setup (:pkg vhdl-mode))
+
+(defvar vhdl-ext-eglot-default-server 've-rust-hdl)
+
+(defconst vhdl-ext-lsp-available-servers
+  '((ve-hdl-checker . ("hdl_checker" "--lsp"))
+	(ve-rust-hdl    . "vhdl_ls")
+	(ve-ghdl-ls     . "ghdl-ls")
+	(ve-vhdl-tool   . ("vhdl-tool" "lsp")))
+  "Vhdl-ext available LSP servers.")
+(defconst vhdl-ext-lsp-server-ids
+  (mapcar #'car vhdl-ext-lsp-available-servers))
+(defconst my-vhdl-style
+  '((vhdl-tab-always-indent        . t)
+	(vhdl-comment-only-line-offset . 4)
+	(vhdl-offsets-alist            . ((arglist-close    . vhdl-lineup-arglist)
+									  (statement-cont   . 0)
+									  (case-alternative . 4)
+									  (block-open       . 0)))
+	(vhdl-echo-syntactic-information-p . t)
+	)
+  "My VHDL Programming Style")
+
+(defun vhdl-ext-eglot-set-server (server-id)
+  "Configure VHDL for `eglot' for selected SERVER-ID.
+  Override any previous configuration for `vhdl-mode' and `vhdl-ts-mode'."
+  (interactive (list (intern (completing-read "Server-id: " vhdl-ext-lsp-server-ids nil t))))
+  (let ((cmd (alist-get server-id vhdl-ext-lsp-available-servers)))
+	(unless cmd
+	  (error "%s not recognized as a supported server" server-id))
+	(if (not (executable-find (if (listp cmd)
+								  (car cmd)
+								cmd)))
+		(message "%s not in $PATH, skipping config..." server-id)
+	  ;; Else configure available server
+	  (dolist (mode '(vhdl-mode vhdl-ts-mode))
+		(setq eglot-server-programs (assq-delete-all mode eglot-server-programs))
+		(if (listp cmd)
+			(push (append (list mode) cmd) eglot-server-programs)
+		  (push (list mode cmd) eglot-server-programs)))
+	  (message "Set eglot VHDL server: %s" server-id))))
+(defun bonk-vhdl-mode-hook ()
+  ;; offset customizations not in my-vhdl-style
+  (vhdl-set-offset 'statement-case-intro '++)
+  ;; other customizations
+  (setq tab-width 4
+		;; this will make sure spaces are used instead of tabs
+		indent-tabs-mode nil)
+  (setq line-numbers-mode t)
+  ;; keybindings for VHDL are put in vhdl-mode-map
+
+  (vhdl-ext-eglot-set-server vhdl-ext-eglot-default-server)
+  (define-key vhdl-mode-map "\C-m" 'newline-and-indent)
+
+  )
+
+
+(setup (:pkg vhdl-tools :straight t)
+  (:hook-into vhdl-mode)
+  (:hook whitespace-mode)
+  (:hook display-line-numbers-mode)
+  (:hook bonk-vhdl-mode-hook)
+  ;; (:hook eglot-ensure)
+  )
 
 (setup (:pkg zig-mode :straight t)
-  (:disabled)
-  (:hook eglot-ensure))
-
-(setup (:pkg rustic :straight t)
-  (:hook copilot-mode)
-  (:hook tree-sitter-mode)
-  (:with-map rustic-mode-map
-	(:bind "C-c C-c l"  flycheck-list-errors
-			))
+  (:hook eglot-ensure)
   :config
-  (setq rustic-rustfmt-config-alist '((edition . "2018")))
-  ;; uncomment for less flashiness
-  (setq rustic-lsp-client 'eglot)
-  (setq rustic-format-on-save t))
+  (setq zig-format-on-save nil) ; rely on :editor format instead
+  (add-hook 'zig-mode-local-vars-hook #'tree-sitter! 'append)
+  (flycheck-define-checker zig
+	"A zig syntax checker using zig's `ast-check` command."
+	:command ("zig" "ast-check" (eval (buffer-file-name)))
+	:error-patterns
+	((error line-start (file-name) ":" line ":" column ": error: " (message) line-end))
+	:modes zig-mode)
+  (add-to-list 'flycheck-checkers 'zig)
+  )
+
+(after! projectile
+  (add-to-list 'projectile-project-root-files "Cargo.toml"))
+  (setup (:pkg rustic :straight t)
+	(:hook copilot-mode)
+	(:hook tree-sitter-mode)
+	(:with-map rustic-mode-map
+	  (:bind "C-c C-c l"  flycheck-list-errors
+			 ))
+	:config
+	(setq rustic-rustfmt-config-alist '((edition . "2018")))
+	(setq rustic-lsp-client 'eglot)
+	(setq rust-prettify-symbols-alist nil)
+	(setq rustic-indent-method-chain t)
+	(after! rustic-flycheck
+			(add-to-list 'flycheck-checkers 'rustic-clippy))
+	(setq rustic-format-on-save t))
 
 (setup (:pkg markdown-mode :straight t)
   (setq markdown-command "marked")
@@ -508,6 +631,31 @@
 	:ensure t)
   ;; you can utilize :map :hook and :config to customize copilot
 (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+(define-key copilot-completion-map (kbd "C-c j") 'copilot-next-completion)
+(define-key copilot-completion-map (kbd "C-c k") 'copilot-previous-completion)
+
+(setup (:pkg dap-mode :straight t)
+  (:disabled)
+  ;; Assuming that `dap-debug' will invoke all this
+  (:when-loaded
+	(setq dap-auto-configure-features '(sessions locals controls tooltip))))
+
+(defvar +debugger--realgud-alist
+  '((realgud:bashdb    :modes (sh-mode))
+	(realgud:gdb)
+	(realgud:gub       :modes (go-mode))
+	(realgud:kshdb     :modes (sh-mode))
+	(realgud:pdb       :modes (python-mode))
+	(realgud:perldb    :modes (perl-mode perl6-mode))
+	(realgud:rdebug    :modes (ruby-mode))
+	(realgud:remake)
+	(realgud:trepan    :modes (perl-mode perl6-mode))
+	(realgud:trepan2   :modes (python-mode))
+	(realgud:trepan3k  :modes (python-mode))
+	(realgud:trepanjs  :modes (javascript-mode js2-mode js3-mode))
+	(realgud:trepanpl  :modes (perl-mode perl6-mode raku-mode))
+	(realgud:zshdb     :modes (sh-mode))))
+;; TODO Setup realgud
 
 (setup (:pkg docker :straight t)
 	   (:hook tree-sitter-mode)
@@ -544,7 +692,10 @@
 (setup (:pkg ess-smart-underscore :straight t)
   :defer t)
 
-(setup (:pkg ein :straight t))
+(setup (:pkg ein :straight t)
+  (:hook eglot-ensure)
+  (:hook tree-sitter-mode)
+  )
 (setup (:pkg math-preview :straight t))
 (setup (:pkg ipython-shell-send :straight t))
 

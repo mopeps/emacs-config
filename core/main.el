@@ -2,6 +2,7 @@
 (add-to-list 'load-path (expand-file-name "core/" user-emacs-directory))
 (require 'main-lib)
 (require 'bonk-package)
+(require 'bonk-modules)
 (require 'bonk-evil)
 (require 'bonk-editing)
 (require 'bonk-ui)
@@ -10,6 +11,8 @@
 (require 'bonk-shell)
 (require 'bonk-startup)
 (require 'bonk-compile)
+(require 'bonk-tex)
+
 
 ;; Profile emacs startup
 (add-hook 'emacs-startup-hook
