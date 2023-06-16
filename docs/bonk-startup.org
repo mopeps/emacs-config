@@ -43,12 +43,17 @@
   (setup (:pkg jazz-theme :straight t))
   (setup (:pkg apropospriate-theme :straight t))
   (setup (:pkg gruvbox-theme :straight t))
-  ;; (setup (:pkg solarized-theme :straight t))
-  ;; (setup (:pkg one-themes :straight t))
+  (setup (:pkg solarized-theme :straight t))
+  (setup (:pkg one-themes :straight t))
   (setup (:pkg mood-one-theme :straight t))
   (setup (:pkg atom-one-dark-theme :straight t))
-  ;; (setup (:pkg ancient-one-dark-theme :straight t))
+  (setup (:pkg ancient-one-dark-theme :straight t))
+  (setup (:pkg cyberpunk-theme :straight t))
+  (setup (:pkg ample-theme :straight t))
+  (setup (:pkg moe-theme :straight t))
+#+end_src
 
+#+begin_src emacs-lisp
   (add-hook 'emacs-startup-hook
 			(lambda ()
 			  (custom-set-faces
