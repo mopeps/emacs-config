@@ -109,6 +109,18 @@ It's a useful helper when working with more than one standard of code.
 #+RESULTS:
 : bonk/set-latex-scale
 
+** Disable eglot-logging in case of lag
+#+begin_src emacs-lisp
+	(defun bonk/disable-eglot-logging-for-lag ()
+  "It must be triggered after eglot is running, not before"
+  (interactive)
+	  (fset #'jsonrpc--log-event #'ignore)
+	)
+#+end_src
+
+#+RESULTS:
+: bonk/disable-eglot-logging-for-lag
+
 ** Toggle alpha
 #+begin_src emacs-lisp
  (defun toggle-transparency ()

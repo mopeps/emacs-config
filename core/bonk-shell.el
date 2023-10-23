@@ -1,21 +1,21 @@
 (setup (:pkg vterm :straight t)
-      (:bind
-       "C-<tab>" vterm-send-tab)
-	      (:when-loaded
-      (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
-      (setq vterm-max-scrollback 10000)
-      ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
-      ;; spawn another if want one.
-      (setq vterm-kill-buffer-on-exit t)
-      (setq vterm-timer-delay 0.01)))
+  (:bind
+   "C-<tab>" vterm-send-tab)
+	  (:when-loaded
+  (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+  (setq vterm-max-scrollback 10000)
+  ;; Once vterm is dead, the vterm buffer is useless. Why keep it around? We can
+  ;; spawn another if want one.
+  (setq vterm-kill-buffer-on-exit t)
+  (setq vterm-timer-delay 0.01)))
 
 (bonk/set-leader-keys
   "Vt" '(vterm-other-window :which-key "vterm in new window")
   "Vb" '(vterm :which-key "open new buffer for vterm"))
 
 (setup (:pkg exec-path-from-shell :straight t)
-      :ensure t
-      (exec-path-from-shell-initialize))
+  :ensure t
+  (exec-path-from-shell-initialize))
 
 (setup (:pkg load-env-vars :straight t)
   :ensure t)
@@ -34,32 +34,32 @@
   )
 
 (defun read-file (file-path)
-      (with-temp-buffer
+  (with-temp-buffer
 	(insert-file-contents file-path)
 	(buffer-string)))
 
 (defun get-current-package-version ()
-      (interactive)
-      (let ((package-json-file (concat (eshell/pwd) "/package.json")))
+  (interactive)
+  (let ((package-json-file (concat (eshell/pwd) "/package.json")))
 	(when (file-exists-p package-json-file)
-	      (let* ((package-json-contents (read-file package-json-file))
+	  (let* ((package-json-contents (read-file package-json-file))
 			 (package-json (ignore-errors (json-parse-string package-json-contents))))
 		(when package-json
-		      (ignore-errors (gethash "version" package-json)))))))
+		  (ignore-errors (gethash "version" package-json)))))))
 (defun map-line-to-status-char (line)
-      (cond ((string-match "^?\\? " line) "?")))
+  (cond ((string-match "^?\\? " line) "?")))
 
 (defun get-git-status-prompt ()
-      (let ((status-lines (cdr (process-lines "git" "status" "--porcelain" "-b"))))
+  (let ((status-lines (cdr (process-lines "git" "status" "--porcelain" "-b"))))
 	(seq-uniq (seq-filter 'identity (mapcar 'map-line-to-status-char status-lines)))))
 
 (defun get-prompt-path ()
-      (let* ((current-path (eshell/pwd))
+  (let* ((current-path (eshell/pwd))
 		 (git-output (shell-command-to-string "git rev-parse --show-toplevel"))
 		 (has-path (not (string-match "^fatal" git-output))))
 	(if (not has-path)
 		(abbreviate-file-name current-path)
-	      (string-remove-prefix (file-name-directory git-output) current-path))))
+	  (string-remove-prefix (file-name-directory git-output) current-path))))
 
 ;; This prompt function mostly replicates my custom zsh prompt setup
 ;; that is powered by github.com/denysdovhan/spaceship-prompt.
@@ -87,49 +87,49 @@
      (propertize " " 'face `(:inherit (default))))))
 
 (defun bonks/configure-eshell ()
-      ;; Make sure magit is loaded
-      (require 'magit)
+  ;; Make sure magit is loaded
+  (require 'magit)
 
-      (require 'evil-collection-eshell)
-      (evil-collection-eshell-setup)
+  (require 'evil-collection-eshell)
+  (evil-collection-eshell-setup)
 
-      (setup (:pkg xterm-color :straight t))
+  (setup (:pkg xterm-color :straight t))
 
-      (push 'eshell-tramp eshell-modules-list)
-      (push 'xterm-color-filter eshell-preoutput-filter-functions)
-      (delq 'eshell-handle-ansi-color eshell-output-filter-functions)
+  (push 'eshell-tramp eshell-modules-list)
+  (push 'xterm-color-filter eshell-preoutput-filter-functions)
+  (delq 'eshell-handle-ansi-color eshell-output-filter-functions)
 
-      ;; Save command history when commands are entered
-      (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+  ;; Save command history when commands are entered
+  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
 
-      (add-hook 'eshell-before-prompt-hook
+  (add-hook 'eshell-before-prompt-hook
 			(lambda ()
-			      (setq xterm-color-preserve-properties t)))
+			  (setq xterm-color-preserve-properties t)))
 
-      ;; Truncate buffer for performance
-      (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+  ;; Truncate buffer for performance
+  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
-      ;; We want to use xterm-256color when running interactive commands
-      ;; in eshell but not during other times when we might be launching
-      ;; a shell command to gather its output.
-      (add-hook 'eshell-pre-command-hook
+  ;; We want to use xterm-256color when running interactive commands
+  ;; in eshell but not during other times when we might be launching
+  ;; a shell command to gather its output.
+  (add-hook 'eshell-pre-command-hook
 			(lambda () (setenv "TERM" "xterm-256color")))
-      (add-hook 'eshell-post-command-hook
+  (add-hook 'eshell-post-command-hook
 			(lambda () (setenv "TERM" "dumb")))
 
-      ;; Use completion-at-point to provide completions in eshell
-      (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
+  ;; Use completion-at-point to provide completions in eshell
+  (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
 
-      ;; Initialize the shell history
-      (eshell-hist-initialize)
+  ;; Initialize the shell history
+  (eshell-hist-initialize)
 
-      (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'consult-history)
-      (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
-      (evil-normalize-keymaps)
+  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'consult-history)
+  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+  (evil-normalize-keymaps)
 
-      (setenv "PAGER" "cat")
+  (setenv "PAGER" "cat")
 
-      (setq eshell-prompt-function      'eshell-prompt
+  (setq eshell-prompt-function      'eshell-prompt
 		eshell-prompt-regexp        "^λ "
 		eshell-history-size         10000
 		eshell-buffer-maximum-lines 10000
@@ -139,12 +139,12 @@
 		eshell-prefer-lisp-functions nil))
 
 (use-package eshell
-      :hook (eshell-first-time-mode . bonks/configure-eshell)
-      :config
-
-      (with-eval-after-load 'esh-opt
+  :hook (eshell-first-time-mode . bonks/configure-eshell)
+  :config
+  (setq system-uses-terminfo nil)
+  (with-eval-after-load 'esh-opt
 	(setq eshell-destroy-buffer-when-process-dies t)
-	(setq eshell-visual-commands '("htop" "zsh" "vim" "nvim"))))
+	(setq eshell-visual-commands '("htop" "zsh" "vim" "nvim" "bundle"))))
 
 (setup (:pkg eshell-toggle :straight t)
   (:global "C-M-'" eshell-toggle)

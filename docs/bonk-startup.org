@@ -57,7 +57,7 @@
   (add-hook 'emacs-startup-hook
 			(lambda ()
 			  (custom-set-faces
-			   '(default ((t (:font "FantasqueSansMono Nerd Font-14"))))
+			   '(default ((t (:font "Input Mono-14"))))
 			   '(fixed-pitch ((t (:inherit (default)))))
 			   '(fixed-pitch-serif ((t (:inherit (default)))))
 			   '(variable-pitch ((t (:font "Fira Code-10"))))))
@@ -66,9 +66,10 @@
 #+end_src
 
 #+RESULTS:
-| lambda | nil | (message Bonk Emacs loaded in %s. (emacs-init-time))                                                                                                                                          |
-| lambda | nil | (if (or bonk-compile-core bonk-compile-user-modules bonk-compile-init-files bonk-compile-user-configuration) (progn (bonk-compile-core)))                                                     |
-| lambda | nil | (custom-set-faces '(default ((t (:font FantasqueSansMono Nerd Font-14)))) '(fixed-pitch ((t (:inherit (default))))) '(fixed-pitch-serif ((t (:inherit (default))))) '(variable-pitch ((t (:font Fira Code-10))))) |
+| lambda | nil | (message Bonk Emacs loaded in %s. (emacs-init-time))                                                                                                                                                            |
+| lambda | nil | (if (or bonk-compile-core bonk-compile-user-modules bonk-compile-init-files bonk-compile-user-configuration) (progn (bonk-compile-core)))                                                                       |
+| lambda | nil | (custom-set-faces '(default ((t (:font ProFontIIx Nerd Font Mono-14)))) '(fixed-pitch ((t (:inherit (default))))) '(fixed-pitch-serif ((t (:inherit (default))))) '(variable-pitch ((t (:font Fira Code-10))))) |
+| lambda | nil | (custom-set-faces '(default ((t (:font Input Mono-14)))) '(fixed-pitch ((t (:inherit (default))))) '(fixed-pitch-serif ((t (:inherit (default))))) '(variable-pitch ((t (:font Fira Code-10)))))                |
 
 *Guix Packages*
 

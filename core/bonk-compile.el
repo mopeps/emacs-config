@@ -205,47 +205,50 @@ specified, then it is ignored without a warning."
 		  (bonk-compile-file module-src))))))
 
 ;; A funciton to execute the compilation of the init files:
-(defun bonk-compile-init ()
-  "Compile (native or byte-code) the initialization files.
+  (defun bonk-compile-init ()
+	"Compile (native or byte-code) the initialization files.
 
-The files to be compiled is defined in
-`bonk-compile-init-files-list'."
-  (interactive)
-  (bonk-compile-file (bonk-compile--init-files-list)))
+  The files to be compiled is defined in
+  `bonk-compile-init-files-list'."
+	(interactive)
+	(bonk-compile-file (bonk-compile--init-files-list)))
 
-;; A funciton to execute the compilation of the config files:
-(defun bonk-compile-config ()
-  "Compile (native or byte-code) the configuration files.
+  ;; A funciton to execute the compilation of the config files:
+  (defun bonk-compile-config ()
+	"Compile (native or byte-code) the configuration files.
 
-The files to be compiled is defined in
-`bonk-compile-config-files-list'."
-  (interactive)
-  (bonk-compile-file (bonk-compile--config-files-list)))
+  The files to be compiled is defined in
+  `bonk-compile-config-files-list'."
+	(interactive)
+	(bonk-compile-file (bonk-compile--config-files-list)))
 
-
-;;;; Hooks:
+  
+  ;;;; Hooks:
 
-;;;;; Modules
-;; To autocompile modules.  This could be toggled by setting
-;; `bonk-compile-core' or
-;; `bonk-compile-user-configuration' either to `nil' or
-;; `t'.
-(add-hook 'emacs-startup-hook ;; or kill-emacs-hook?
-		  (lambda ()
-			(when (or bonk-compile-core
-					  bonk-compile-user-modules
-					  bonk-compile-init-files
-					  bonk-compile-user-configuration)
-			  (bonk-compile-core))))
+  ;;;;; Modules
+  ;; To autocompile modules.  This could be toggled by setting
+  ;; `bonk-compile-core' or
+  ;; `bonk-compile-user-configuration' either to `nil' or
+  ;; `t'.
+  (add-hook 'emacs-startup-hook ;; or kill-emacs-hook?
+			(lambda ()
+			  (when (or bonk-compile-core
+						bonk-compile-user-modules
+						bonk-compile-init-files
+						bonk-compile-user-configuration)
+				(bonk-compile-core))))
 
-;;;;; On save files
-;; To auto compile after saving the file.  This could be toggled by
-;; seting `bonk-compile-on-save' to `nil' or `t'
-(add-hook 'after-save-hook
-		  (lambda ()
-			(when (and bonk-compile-on-save
-					   (string-equal major-mode "emacs-lisp-mode"))
-			  (bonk-compile-buffer))))
+  ;;;;; On save files
+  ;; To auto compile after saving the file.  This could be toggled by
+  ;; seting `bonk-compile-on-save' to `nil' or `t'
+  (add-hook 'after-save-hook
+			(lambda ()
+			  (when (and bonk-compile-on-save
+						 (string-equal major-mode "emacs-lisp-mode"))
+				(bonk-compile-buffer))))
+
+  
+(setq package-install-upgrade-built-in t)
 
 ;;; Package:
 (provide 'bonk-compile)

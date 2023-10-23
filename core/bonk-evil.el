@@ -8,7 +8,9 @@
 	(setq evil-want-integration t)
 	(setq evil-want-keybinding nil)
 	(setq evil-want-C-u-scroll t)
-	(setq evil-want-C-i-jump nil)
+	(setq evil-want-C-i-jump t)
+	(setq evil-move-beyond-eol t)
+	(setq evil-cross-lines t)
 ;; Activate evil-mode
 	(evil-mode 1)
 	(define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
@@ -57,10 +59,18 @@
 		   :prefix "SPC"
 		   :global-prefix "C-SPC"))
 
+(defun choose-new-theme ()
+  (interactive)
+		  (counsel-load-theme)
+		  (set-face-attribute 'whitespace-tab nil
+							  :foreground (face-attribute 'default :foreground)
+							  :background (face-attribute 'default :background)
+							  :weight 'bold))
+
   (bonk/set-leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text")
 	"t"  '(:ignore t :which-key "toggles")
-	"tt" '(counsel-load-theme :which-key "choose theme")
+	"tt" '(choose-new-theme :which-key "choose theme")
 	;; Window navigation
 	"h" '(evil-window-left :which-key "move to left window")
 	"l" '(evil-window-right :which-key "move to right window")
@@ -95,3 +105,39 @@
 	;; Org-Present
 	"oP" '(org-present :which "launches org-present-mode")
 	)
+
+(defun bonk/set-leader-keys-for-major-mode (mode key def &rest bindings)
+  "Add KEY and DEF as key bindings under
+`dotbonk-major-mode-leader-key' and
+`dotbonk-major-mode-emacs-leader-key' for the major-mode
+MODE. MODE should be a quoted symbol corresponding to a valid
+major mode. The rest of the arguments are treated exactly like
+they are in `bonk/set-leader-keys'."
+  (let* ((map (intern (format "bonk-%s-map" mode))))
+    (when (bonk//init-leader-mode-map mode map)
+      (while key
+        (define-key (symbol-value map) (kbd key) def)
+        (setq key (pop bindings) def (pop bindings))))))
+(put 'bonk/set-leader-keys-for-major-mode 'lisp-indent-function 'defun)
+
+(defalias
+  'evil-leader/set-key-for-mode
+  'bonk/set-leader-keys-for-major-mode)
+
+(defun bonk/set-leader-keys-for-minor-mode (mode key def &rest bindings)
+  "Add KEY and DEF as key bindings under
+`dotbonk-major-mode-leader-key' and
+`dotbonk-major-mode-emacs-leader-key' for the minor-mode
+MODE. MODE should be a quoted symbol corresponding to a valid
+minor mode. The rest of the arguments are treated exactly like
+they are in `bonk/set-leader-keys'. If DEF is string, then
+it is treated as a prefix not a command."
+  (let* ((map (intern (format "bonk-%s-map" mode))))
+    (when (bonk//init-leader-mode-map mode map t)
+      (let ((map-value (symbol-value map)))
+        (while key
+          (if (stringp def)
+              (which-key-add-keymap-based-replacements map-value key def)
+            (define-key map-value (kbd key) def))
+          (setq key (pop bindings) def (pop bindings)))))))
+(put 'bonk/set-leader-keys-for-minor-mode 'lisp-indent-function 'defun)

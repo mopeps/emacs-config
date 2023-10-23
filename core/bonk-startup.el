@@ -33,15 +33,14 @@
 (setup (:pkg cyberpunk-theme :straight t))
 (setup (:pkg ample-theme :straight t))
 (setup (:pkg moe-theme :straight t))
-
 (add-hook 'emacs-startup-hook
 		  (lambda ()
 			(custom-set-faces
-			 '(default ((t (:font "FantasqueSansMono Nerd Font-14"))))
+			 '(default ((t (:font "Input Mono-15"))))
 			 '(fixed-pitch ((t (:inherit (default)))))
 			 '(fixed-pitch-serif ((t (:inherit (default)))))
 			 '(variable-pitch ((t (:font "Fira Code-10"))))))
-		  (load-theme 'doom-solarized-dark t))
+		  (load-theme 'atom-one-dark t))
 
 ;; (C-q Tab) inserts a tab space
   (add-hook 'ess-mode-hook (lambda () (local-set-key "\t" 'self-insert-command)))

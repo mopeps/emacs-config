@@ -1,43 +1,50 @@
 (provide 'bonk-editing)
 
+(defun my-org-capture-place-template-dont-delete-windows (oldfun &rest args)
+  (cl-letf (((symbol-function 'delete-other-windows) 'ignore))
+    (apply oldfun args)))
+
+(with-eval-after-load "org-capture"
+  (advice-add 'org-capture-place-template :around 'my-org-capture-place-template-dont-delete-windows))
+
 (defun bonk/org-no-line-number ()
-  (display-line-numbers-mode 0))
+	(display-line-numbers-mode 0))
 
 (setup (:pkg org :straight t)
-  (:hook visual-line-mode visual-fill-column-mode org-init-org-directory-h) 
-  (:also-load org-tempo)
-  (setq org-ellipsis " ▾"
-		org-hide-emphasis-markers t
-		org-src-fontify-natively t
-		org-fontify-quote-and-verse-blocks t
-		org-src-tab-acts-natively t
-		org-edit-src-content-indentation 2
-		org-hide-block-startup nil
-		org-src-preserve-indentation nil
-		org-startup-folded 'content
-		org-cycle-separator-lines 2
-		org-capture-bookmark nil)
-  (setq org-refile-targets '((nil :maxlevel . 3)
-							 (org-agenda-files :maxlevel . 3)))
-  (setq org-outline-path-complete-in-steps nil)
+	(:hook visual-line-mode visual-fill-column-mode org-init-org-directory-h) 
+	(:also-load org-tempo)
+	(setq org-ellipsis " ▾"
+		  org-hide-emphasis-markers t
+		  org-src-fontify-natively t
+		  org-fontify-quote-and-verse-blocks t
+		  org-src-tab-acts-natively t
+		  org-edit-src-content-indentation 2
+		  org-hide-block-startup nil
+		  org-src-preserve-indentation nil
+		  org-startup-folded 'content
+		  org-cycle-separator-lines 2
+		  org-capture-bookmark nil)
+	(setq org-refile-targets '((nil :maxlevel . 3)
+							   (org-agenda-files :maxlevel . 3)))
+	(setq org-outline-path-complete-in-steps nil)
 
-  (setq org-todo-keywords
-		'((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
-		  (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
-  (setq org-refile-use-outline-path t)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-	 ))
+	(setq org-todo-keywords
+		  '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+			(sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
+	(setq org-refile-use-outline-path t)
+	(org-babel-do-load-languages
+	 'org-babel-load-languages
+	 '((emacs-lisp . t)
+	   ))
 
 
-  (push '("conf-unix" . conf-unix) org-src-lang-modes))
+	(push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 (setup (:pkg org-superstar :straight t)
-	(:load-after org)
-	(:hook-into org-mode)
-	(:option org-superstar-remove-leading-stars t
-			 org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
+	  (:load-after org)
+	  (:hook-into org-mode)
+	  (:option org-superstar-remove-leading-stars t
+			   org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 ;; Replace list hyphen with dot
 ;; (font-lock-add-keywords 'org-mode
@@ -45,36 +52,36 @@
 ;;                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
 (setup org-faces
-  ;; Make sure org-indent face is available
-  (:also-load org-indent)
-  (:when-loaded
-	;; Increase the size of various headings
-	(set-face-attribute 'org-document-title nil :font "Hack Nerd Font" :weight 'bold :height 1.3)
+	;; Make sure org-indent face is available
+	(:also-load org-indent)
+	(:when-loaded
+	  ;; Increase the size of various headings
+	  (set-face-attribute 'org-document-title nil :font "Hack Nerd Font" :weight 'bold :height 1.3)
 
-	(dolist (face '((org-level-1 . 1.2)
-					(org-level-2 . 1.1)
-					(org-level-3 . 1.05)
-					(org-level-4 . 1.0)
-					(org-level-5 . 1.1)
-					(org-level-6 . 1.1)
-					(org-level-7 . 1.1)
-					(org-level-8 . 1.1)))
-	  (set-face-attribute (car face) nil :font "Hack Nerd Font" :weight 'medium :height (cdr face)))
+	  (dolist (face '((org-level-1 . 1.2)
+					  (org-level-2 . 1.1)
+					  (org-level-3 . 1.05)
+					  (org-level-4 . 1.0)
+					  (org-level-5 . 1.1)
+					  (org-level-6 . 1.1)
+					  (org-level-7 . 1.1)
+					  (org-level-8 . 1.1)))
+		(set-face-attribute (car face) nil :font "Hack Nerd Font" :weight 'medium :height (cdr face)))
 
-	;; Ensure that anything that should be fixed-pitch in Org files appears that way
-	(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
-	(set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
-	(set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-	(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
-	(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-	(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-	(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-	(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+	  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+	  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+	  (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
+	  (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+	  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+	  (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+	  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+	  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+	  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+	  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
 
-	;; Get rid of the background on column views
-	(set-face-attribute 'org-column nil :background nil)
-	(set-face-attribute 'org-column-title nil :background nil)))
+	  ;; Get rid of the background on column views
+	  (set-face-attribute 'org-column nil :background nil)
+	  (set-face-attribute 'org-column-title nil :background nil)))
 
 ;; TODO: Others to consider
 ;; '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
@@ -87,29 +94,29 @@
 
 ;; This is needed as of Org 9.2
 (setup org-tempo
-   (:when-loaded
-	 (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
-	 (add-to-list 'org-structure-template-alist '("py" . "src python"))
-	 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-	 (add-to-list 'org-structure-template-alist '("scm" . "src scheme"))
-	 (add-to-list 'org-structure-template-alist '("li" . "src lisp"))
-	 (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
-	 (add-to-list 'org-structure-template-alist '("js" . "src javascript"))
-	 (add-to-list 'org-structure-template-alist '("cpp" . "src C++"))
-	 (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
-	 (add-to-list 'org-structure-template-alist '("py" . "src python"))
-	 (add-to-list 'org-structure-template-alist '("go" . "src go"))
-	 (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
-	 (add-to-list 'org-structure-template-alist '("r" . "src R :noweb yes :exports both"))
-	 (add-to-list 'org-structure-template-alist '("json" . "src json"))))
+	(:when-loaded
+	  (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+	  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+	  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+	  (add-to-list 'org-structure-template-alist '("scm" . "src scheme"))
+	  (add-to-list 'org-structure-template-alist '("li" . "src lisp"))
+	  (add-to-list 'org-structure-template-alist '("rb" . "src ruby"))
+	  (add-to-list 'org-structure-template-alist '("js" . "src javascript"))
+	  (add-to-list 'org-structure-template-alist '("cpp" . "src C++"))
+	  (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
+	  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+	  (add-to-list 'org-structure-template-alist '("go" . "src go"))
+	  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+	  (add-to-list 'org-structure-template-alist '("r" . "src R :noweb yes :exports both"))
+	  (add-to-list 'org-structure-template-alist '("json" . "src json"))))
 
 (defun prob-buffer (buffer-name)
-  "Creates a new probability and statistics buffer for school."
-  (interactive "sSet new buffer Name: ")
-  (let (($buf (generate-new-buffer buffer-name)))
-	(switch-to-buffer $buf)
-	(insert
-	 "#+author:\n#+TITLE:
+	"Creates a new probability and statistics buffer for school."
+	(interactive "sSet new buffer Name: ")
+	(let (($buf (generate-new-buffer buffer-name)))
+	  (switch-to-buffer $buf)
+	  (insert
+	   "#+author:\n#+TITLE:
 #+LATEX_HEADER: \\usepackage{unicode-math}
 #+LATEX_HEADER: \\usepackage{amsfonts}
 #+STARTUP: latexpreview
@@ -119,89 +126,89 @@
 #+BABEL: noweb yes
 #+PROPERTY: header-args:python :session practica1 :results output
 #+PROPERTY: header-args:python+ :async yes :results output")
-	(funcall 'org-mode)
-	(setq buffer-offer-save t)))
+	  (funcall 'org-mode)
+	  (setq buffer-offer-save t)))
 
 (defun org-init-org-directory-h ()
-	  (setq org-directory "~/Notes/agenda/")
-	  (unless org-id-locations-file
-		(setq org-id-locations-file (expand-file-name ".orgids" org-directory))))
+		(setq org-directory "~/Notes/agenda/")
+		(unless org-id-locations-file
+		  (setq org-id-locations-file (expand-file-name ".orgids" org-directory))))
 
-  (defun org-init-agenda-h ()
-	(setq org-agenda-files (list org-directory)))
-	(setq
-	 ;; Different colors for different priority levels
-	 org-agenda-deadline-faces
-	 '((1.001 . error)
-	   (1.0 . org-warning)
-	   (0.5 . org-upcoming-deadline)
-	   (0.0 . org-upcoming-distant-deadline))
-	 ;; Don't monopolize the whole frame just for the agenda
-	 org-agenda-window-setup 'current-window
-	 org-agenda-skip-unavailable-files t
-	 ;; Shift the agenda to show the previous 3 days and the next 7 days for
-	 ;; better context on your week. The past is less important than the future.
-	 org-agenda-span 10
-	 org-agenda-start-on-weekday nil
-	 org-agenda-start-day "-3d"
-	 ;; Optimize `org-agenda' by inhibiting extra work while opening agenda
-	 ;; buffers in the background. They'll be "restarted" if the user switches to
-	 ;; them anyway (see `+org-exclude-agenda-buffers-from-workspace-h')
-	 org-agenda-inhibit-startup t)
-  (setup (:pkg org-agenda)
-	(:hook org-init-agenda-h)
+	(defun org-init-agenda-h ()
+	  (setq org-agenda-files (list org-directory)))
+	  (setq
+	   ;; Different colors for different priority levels
+	   org-agenda-deadline-faces
+	   '((1.001 . error)
+		 (1.0 . org-warning)
+		 (0.5 . org-upcoming-deadline)
+		 (0.0 . org-upcoming-distant-deadline))
+	   ;; Don't monopolize the whole frame just for the agenda
+	   org-agenda-window-setup 'current-window
+	   org-agenda-skip-unavailable-files t
+	   ;; Shift the agenda to show the previous 3 days and the next 7 days for
+	   ;; better context on your week. The past is less important than the future.
+	   org-agenda-span 10
+	   org-agenda-start-on-weekday nil
+	   org-agenda-start-day "-3d"
+	   ;; Optimize `org-agenda' by inhibiting extra work while opening agenda
+	   ;; buffers in the background. They'll be "restarted" if the user switches to
+	   ;; them anyway (see `+org-exclude-agenda-buffers-from-workspace-h')
+	   org-agenda-inhibit-startup t)
+	(setup (:pkg org-agenda)
+	  (:hook org-init-agenda-h)
 
-	(setq org-agenda-custom-commands
-		  '(("d" "Dashboard"
-			 ((agenda "" ((org-deadline-warning-days 7)))
-			  (todo "NEXT"
-					((org-agenda-overriding-header "Next Tasks")))
-			  (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+	  (setq org-agenda-custom-commands
+			'(("d" "Dashboard"
+			   ((agenda "" ((org-deadline-warning-days 7)))
+				(todo "NEXT"
+					  ((org-agenda-overriding-header "Next Tasks")))
+				(tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
 
-	("n" "Next Tasks"
-	 ((todo "NEXT"
-		((org-agenda-overriding-header "Next Tasks")))))
+	  ("n" "Next Tasks"
+	   ((todo "NEXT"
+		  ((org-agenda-overriding-header "Next Tasks")))))
 
 
-	("W" "Work Tasks" tags-todo "+work")
+	  ("W" "Work Tasks" tags-todo "+work")
 
-	;; Low-effort next actions
-	("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
-	 ((org-agenda-overriding-header "Low Effort Tasks")
-	  (org-agenda-max-todos 20)
-	  (org-agenda-files org-agenda-files)))
+	  ;; Low-effort next actions
+	  ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+	   ((org-agenda-overriding-header "Low Effort Tasks")
+		(org-agenda-max-todos 20)
+		(org-agenda-files org-agenda-files)))
 
-	("w" "Workflow Status"
-	 ((todo "WAIT"
-			((org-agenda-overriding-header "Waiting on External")
-			 (org-agenda-files org-agenda-files)))
-	  (todo "REVIEW"
-			((org-agenda-overriding-header "In Review")
-			 (org-agenda-files org-agenda-files)))
-	  (todo "PLAN"
-			((org-agenda-overriding-header "In Planning")
-			 (org-agenda-todo-list-sublevels nil)
-			 (org-agenda-files org-agenda-files)))
-	  (todo "BACKLOG"
-			((org-agenda-overriding-header "Project Backlog")
-			 (org-agenda-todo-list-sublevels nil)
-			 (org-agenda-files org-agenda-files)))
-	  (todo "READY"
-			((org-agenda-overriding-header "Ready for Work")
-			 (org-agenda-files org-agenda-files)))
-	  (todo "ACTIVE"
-			((org-agenda-overriding-header "Active Projects")
-			 (org-agenda-files org-agenda-files)))
-	  (todo "COMPLETED"
-			((org-agenda-overriding-header "Completed Projects")
-			 (org-agenda-files org-agenda-files)))
-	  (todo "CANC"
-			((org-agenda-overriding-header "Cancelled Projects")
-			 (org-agenda-files org-agenda-files)))))))
-	)
+	  ("w" "Workflow Status"
+	   ((todo "WAIT"
+			  ((org-agenda-overriding-header "Waiting on External")
+			   (org-agenda-files org-agenda-files)))
+		(todo "REVIEW"
+			  ((org-agenda-overriding-header "In Review")
+			   (org-agenda-files org-agenda-files)))
+		(todo "PLAN"
+			  ((org-agenda-overriding-header "In Planning")
+			   (org-agenda-todo-list-sublevels nil)
+			   (org-agenda-files org-agenda-files)))
+		(todo "BACKLOG"
+			  ((org-agenda-overriding-header "Project Backlog")
+			   (org-agenda-todo-list-sublevels nil)
+			   (org-agenda-files org-agenda-files)))
+		(todo "READY"
+			  ((org-agenda-overriding-header "Ready for Work")
+			   (org-agenda-files org-agenda-files)))
+		(todo "ACTIVE"
+			  ((org-agenda-overriding-header "Active Projects")
+			   (org-agenda-files org-agenda-files)))
+		(todo "COMPLETED"
+			  ((org-agenda-overriding-header "Completed Projects")
+			   (org-agenda-files org-agenda-files)))
+		(todo "CANC"
+			  ((org-agenda-overriding-header "Cancelled Projects")
+			   (org-agenda-files org-agenda-files)))))))
+	  )
 
 (define-key global-map (kbd "C-c j")
-  (lambda () (interactive) (org-capture nil "j")))
+	(lambda () (interactive) (org-capture nil "j")))
 
 (setq org-capture-templates
   `(("t" "Tasks / Projects")
@@ -253,57 +260,58 @@
 (require 'org-protocol)
 
 (defun bonk/org-mode-visual-fill ()
-	(setq visual-fill-column-center-text t)
-	(setq visual-fill-column-width 100)
-	(visual-fill-column-mode 1))
+	  (setq visual-fill-column-center-text t)
+	  (setq visual-fill-column-width 100)
+	  (visual-fill-column-mode 1))
 
 (setup (:pkg visual-fill-column :straight t)
-  (:hook-into org)
-  (bonk/org-mode-visual-fill))
+	(:hook-into org)
+	(bonk/org-mode-visual-fill))
 
 (setup (:pkg evil-org :straight t)
-  (:hook-into org-mode org-agenda-mode)
-  (require 'evil-org)
-  (require 'evil-org-agenda)
-  (evil-org-set-key-theme '(navigation todo insert textobjects additional))
-  (evil-org-agenda-set-keys))
+	(:hook-into org-mode org-agenda-mode)
+	(require 'evil-org)
+	(require 'evil-org-agenda)
+	(evil-org-set-key-theme '(navigation todo insert textobjects additional))
+	(evil-org-agenda-set-keys))
 
 (bonk/set-leader-keys
-  "o"   '(:ignore t :which-key "org mode")
+	"o"   '(:ignore t :which-key "org mode")
 
-  "oi"  '(:ignore t :which-key "insert")
-  "oil" '(org-insert-link :which-key "insert link")
+	"oi"  '(:ignore t :which-key "insert")
+	"oil" '(org-insert-link :which-key "insert link")
 
-  "on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
+	"on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
 
-  "olp" '(org-latex-preview :which-key "preview latex block")
-
-  "oa"  '(org-agenda :which-key "status")
-  "ot"  '(org-todo-list :which-key "todos")
-  "oc"  '(org-capture t :which-key "capture")
-  "ox"  '(org-export-dispatch t :which-key "export"))
+	"olp" '(org-latex-preview :which-key "preview latex block")
+	"oki" '(org-krita-insert-new-image :which-key "insert new krita image")
+	
+	"oa"  '(org-agenda :which-key "status")
+	"ot"  '(org-todo-list :which-key "todos")
+	"oc"  '(org-capture t :which-key "capture")
+	"ox"  '(org-export-dispatch t :which-key "export"))
 
 (setup (:pkg ob-rust :straight t))
-	(setup (:pkg ob-go :straight t))
-	(setup (:pkg ob-typescript :straight t))
-	(setup (:pkg ob-ipython :straight t))
+	  (setup (:pkg ob-go :straight t))
+	  (setup (:pkg ob-typescript :straight t))
+	  (setup (:pkg ob-ipython :straight t))
 (setup (:pkg ob-sagemath :straight t))
 (setup (:pkg jupyter :straight t))
-	(with-eval-after-load 'org
-	  (org-babel-do-load-languages
-		'org-babel-load-languages
-		'((emacs-lisp . t)
-		  (python . t)
-		  (R . t)
-		  (typescript . t)
-		  (go . t)
-		  (scheme . t)
-		  (rust . t)
-		  (lisp . t)))
-	  (setq org-confirm-babel-evaluate nil)
-	  (setq org-babel-lisp-eval-fn #'sly-eval)
+	  (with-eval-after-load 'org
+		(org-babel-do-load-languages
+		  'org-babel-load-languages
+		  '((emacs-lisp . t)
+			(python . t)
+			(R . t)
+			(typescript . t)
+			(go . t)
+			(scheme . t)
+			(rust . t)
+			(lisp . t)))
+		(setq org-confirm-babel-evaluate nil)
+		(setq org-babel-lisp-eval-fn #'sly-eval)
 
-	  (push '("conf-unix" . conf-unix) org-src-lang-modes))
+		(push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 (defun bonk/org-present-prepare-slide ()
   (org-overview)
@@ -342,8 +350,37 @@
   (:with-hook org-present-mode-quit-hook
     (:hook bonk/org-present-quit-hook)))
 
+(setup (:pkg texfrag :straight t))
+(add-hook 'org-mode-hook
+  (lambda ()
+    (texfrag-mode)
+  ))
+
+(add-to-list 'org-latex-packages-alist
+             '("" "tikz" t))
+(eval-after-load "preview"
+  '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
+
 (setup (:pkg org-make-toc :straight t)
   (:hook-into org-mode))
+
+(setopt
+ display-buffer-base-action
+ '((display-buffer-reuse-window display-buffer-same-window
+    display-buffer-in-previous-window
+    display-buffer-use-some-window)))
+(setopt
+ display-buffer-alist
+ (cons '("*Org*" (display-buffer-same-window))
+        display-buffer-alist))
+ 
+  (add-to-list 'display-buffer-alist
+               '("\\*org-roam\\*"
+  					(inhibit-switch-frame . t)
+(
+                 (window-width . 0.33)
+                 (window-parameters . ((no-other-window . t)
+                                       (no-delete-other-windows . t))))))
 
 (setup (:pkg org-roam :straight t)
   (setq org-roam-v2-ack t)
@@ -366,6 +403,11 @@
 	  "* Category\n- Class: [[programming]] \n- Topic: %?\n- Language: "
 	  :if-new (file+head "programming/${title}.org"
 						 "#+title: ${title}\n#+filetags: org roam programming")
+	  :unnarrowed t)
+	 ("g" "programming note with graphics" plain
+	  "* Category\n- Class: [[programming]] \n- Topic: %?\n- Language: \n** Latex Imports\n#+LATEX_HEADER: \\usepackage{tikz}\n#+LATEX_HEADER: \\usepackage{svg}\n#+HEADER: :imagemagick yes\n#+HEADER: :exports results\n#+HEADER: :results output graphics file"
+	  :if-new (file+head "programming/${title}.org"
+						 "#+title: ${title}\n#+filetags: org roam programming graphics")
 	  :unnarrowed t)
 	 ("m" "math_esp" plain
 	  "* Category\n- Class: [[roam:math]] \n- Topic: %?"
@@ -393,3 +435,19 @@
 		   "C-c n g"   org-roam-graph
 		   "C-c n i"  org-roam-node-insert))
 (setup (:pkg org-roam-ui :straight t))
+
+(setup (:pkg org-krita :straight t
+       	 :type git
+			 :host github
+			 :repo "lepisma/org-krita"
+			 :files ("*.el" "resources") )
+  (:hook-into org-mode)
+  )
+
+(setup (:pkg org-xournalpp :straight t
+       	 :type git
+			 :host gitlab
+			 :repo "vherrmann/org-xournalpp"
+			 :files ("*.el" "resources") )
+  (:hook-into org-mode)
+  )

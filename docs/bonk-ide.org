@@ -75,9 +75,10 @@
 			   (newline-mark ?\n [?¬ ?\n])
 			   (space-mark ?\  [?·] [?.])))
 	   ;; (setq whitespace-display-mappings '(
-	   ;; 									   (tab-mark 9 [9474 9] [92 9])
+	   ;; 									   (tab-mark 9 [9474] [46])
 	   ;; 									   (space-mark 32 [183] [46])))
 	   (setq-local show-trailing-whitespace t)
+	   ;; face for Tabs
 	   (bonk/infer-indent-style)
 	   (whitespace-mode))
 
@@ -118,7 +119,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 		  "<tab>" company-indent-or-complete-common)
 		 (setq company-lsp-cache-candidates 'auto)
 		 (setq company-minimum-prefix-length 1)
-		 (setq company-idle-delay 0.15)
+		 (setq company-idle-delay 0.25)
 		 (setq company-auto-complete nil)
 		 (setq company-global-modes '(not org-mode eshell-mode))
 		 (setq company-tooltip-minimum-width 60))
@@ -261,62 +262,87 @@ Try these commands with =M-x=:
 
 *** Eglot
 #+begin_src emacs-lisp
-  (setup (:pkg consult-eglot :straight t)
-	(:when-loaded
-	 (progn
-	   (map! map eglot-mode-map [remap xref-find-definitions] #'consult-eglot-symbols))
-	))
-  (setup (:pkg flycheck-eglot :straight t))
-  (setup (:pkg eglot :straight t)
-	:hook (flycheck-eglot-mode)
-	:ensure t
-	:commands (eglot-ensure)
-	:options
-	(setq eglot-sync-connect 1)
-	(setq eglot-connect-timeout 10)
-	(setq eglot-autoshutdown t)
-	(setq eglot-send-changes-idle-time 0.8)
-	(setq eglot-auto-display-help-buffer nil)
-	)
-  ;;  hooks
-  (defun bonk-ide--add-eglot-hooks (mode-list)
-	"Iterates over MODE-LIST recursively to add eglot-ensure to
-		existing mode hooks.
+  		(setup (:pkg jsonrpc :straight t))
+            (setup (:pkg consult-eglot :straight t)
+              (:when-loaded
+              	(progn
+              	  (map! map eglot-mode-map [remap xref-find-definitions] #'consult-eglot-symbols))
+              	))
+            (setup (:pkg flycheck-eglot :straight t)
+  (:disabled)
+  )
+            (setup (:pkg eglot :straight t)
+              :ensure t
+              :commands (eglot-ensure)
+              :options
+              (setq eglot-sync-connect 1)
+              (setq eglot-connect-timeout 10)
+              (setq eglot-autoshutdown t)
+              (setq eglot-send-changes-idle-time 0.8)
+              (setq eglot-auto-display-help-buffer nil)
+              )
+            ;;  hooks
+            (defun bonk-ide--add-eglot-hooks (mode-list)
+              "Iterates over MODE-LIST recursively to add eglot-ensure to
+              		existing mode hooks.
 
-		The mode must be loaded, ie. found with `fboundp'. A mode which
-		is not loaded will not have a hook added, in which case add it
-		manually with something like this:
+              		The mode must be loaded, ie. found with `fboundp'. A mode which
+              		is not loaded will not have a hook added, in which case add it
+              		manually with something like this:
 
-		`(add-hook 'some-mode-hook #'eglot-ensure)'
-		"
-	(dolist (mode-def mode-list)
-	  (let ((mode (if (listp mode-def) (car mode-def) mode-def)))
-		(cond
-		 ((listp mode) (bonk-ide--add-eglot-hooks mode))
-		 (t
-		  (when (and (fboundp mode)
-					 (not (eq 'clojure-mode mode))  ; prefer cider
-					 (not (eq 'lisp-mode mode))     ; prefer sly/slime
-					 (not (eq 'scheme-mode mode))   ; prefer geiser
-					 )
-			(let ((hook-name (concat (symbol-name mode) "-hook")))
-			  (message (concat "adding eglot to " hook-name))
-			  (add-hook (intern hook-name) #'eglot-ensure))))))))
+              		`(add-hook 'some-mode-hook #'eglot-ensure)'
+              		"
+              (dolist (mode-def mode-list)
+              	(let ((mode (if (listp mode-def) (car mode-def) mode-def)))
+              	  (cond
+              	   ((listp mode) (bonk-ide--add-eglot-hooks mode))
+              	   (t
+              		(when (and (fboundp mode)
+              				   (not (eq 'clojure-mode mode))  ; prefer cider
+              				   (not (eq 'lisp-mode mode))     ; prefer sly/slime
+              				   (not (eq 'scheme-mode mode))   ; prefer geiser
+              				   )
+              		  (let ((hook-name (concat (symbol-name mode) "-hook")))
+              			(message (concat "adding eglot to " hook-name))
+              			(add-hook (intern hook-name) #'eglot-ensure))))))))
 
-  ;; add eglot to existing programming modes when eglot is loaded.
-  (with-eval-after-load "eglot"
-	(bonk-ide--add-eglot-hooks eglot-server-programs)
+            ;; add eglot to existing programming modes when eglot is loaded.
+            (with-eval-after-load "eglot"
+              (bonk-ide--add-eglot-hooks eglot-server-programs)
 
-	(add-to-list 'eglot-server-programs
-				 '((ruby-mode) "solargraph" "stdio")))
-		;;; customization
-  ;; Shutdown server when last managed buffer is killed
-  (customize-set-variable 'eglot-autoshutdown t)
-  (customize-set-variable 'eglot-send t)
+              (add-to-list 'eglot-server-programs
+              			   '((ruby-mode) "solargraph" "stdio"))
+            			 (add-to-list 'eglot-server-programs
+            						  '(
+          ((c-mode c++-mode)
+            							. ("clangd"
+            							   "-j=10"
+            							   "--log=error"
+            							   "--malloc-trim"
+            							   "--background-index"
+            							   "--clang-tidy"
+            							   "--cross-file-rename"
+            							   "--completion-style=detailed"
+            							   "--pch-storage=memory"
+            							   "--header-insertion=never"
+            							   "--header-insertion-decorators=0"))
+    ((tsx-ts-mode) . ("typescript-language-server" "--stdio"))
+    )
+      )
+        )
+            	;; (add-to-list 'eglot-server-programs '(tsx-ts-mode) ("typescript-language-server" "--stdio"))
+              		;;; customization
+            ;; Shutdown server when last managed buffer is killed
+            (customize-set-variable 'eglot-autoshutdown t)
+            	(customize-set-variable 'eglot-extend-to-xref t)
+            (customize-set-variable 'eglot-send t)
+              (customize-set-variable 'eglot-ignored-server-capabilities
+          		(quote (:documentFormattingProvider :documentRangeFormattingProvider)))
+
 #+end_src
 
 #+RESULTS:
-: t
+| :documentFormattingProvider | :documentRangeFormattingProvider |
 
 *** Treesitter
 #+begin_src emacs-lisp
@@ -447,15 +473,14 @@ Try these commands with =M-x=:
 		(:file-match "\\.rb\\'")
 		(:hook eglot-ensure)
 		(:hook tree-sitter-mode)
-		(setq ruby-indent-level 4)
-		 (setq ruby-indent-tabs-mode t)
+		(setq ruby-indent-level 2)
+		 (setq ruby-indent-tabs-mode nil)
 		 )
 
 
      #+end_src
 
 	 #+RESULTS:
-	 : t
 
 **** robe-mode
      #+begin_src emacs-lisp
@@ -751,35 +776,36 @@ Apparently James Gosling used and likes Emacs (nice)
 #+begin_src emacs-lisp
 
   (setup c-mode
-		(:hook tree-sitter-mode)
-	(:hook copilot-mode)
-		 (:hook eglot-ensure))
+  		(:hook tree-sitter-mode)
+  	;; (:hook copilot-mode)
+  		 (:hook eglot-ensure))
 
   (setup c++-mode
-		(:hook tree-sitter-mode)
-	(:hook copilot-mode)
-		 (:hook eglot-ensure))
+  		(:hook tree-sitter-mode)
+  	;; (:hook copilot-mode)
+  		 (:hook eglot-ensure))
 
-  (setup (:pkg flycheck-clang-analyzer :straight t)
-	(:hook-into flycheck)
-	(:when-loaded
-	  (progn
-	  (flycheck-clang-analyzer-setup))))
+  ;; (setup (:pkg flycheck-clang-analyzer :straight t)
+  ;; (:disabled)
+  ;; 	(:hook-into flycheck)
+  ;; 	(:when-loaded
+  	  ;; (progn
+  	  ;; (flycheck-clang-analyzer-setup))))
 
   (with-eval-after-load 'company
-	(add-hook 'c++-mode-hook 'company-mode)
-	(add-hook 'c-mode-hook 'company-mode))
+  	(add-hook 'c++-mode-hook 'company-mode)
+  	(add-hook 'c-mode-hook 'company-mode))
 
   (setup (:pkg company-irony :straight t)
-	(:when-loaded
-	  (progn
-	(setq company-backends '((
-							  company-dabbrev-code
-							  company-irony))))))
+  	(:when-loaded
+  	  (progn
+  	(setq company-backends '((
+  							  company-dabbrev-code
+  							  company-irony))))))
 
   (setup (:pkg irony :straight t)
-	(:hook-into c++-mode c-mode)
-	(:hook irony-cdb-autosetup-compile-options))
+  	(:hook-into c++-mode c-mode)
+  	(:hook irony-cdb-autosetup-compile-options))
 
 #+end_src 
 
@@ -1007,7 +1033,7 @@ rustic is an extension of rust-mode which adds a number of useful features (see 
 	   :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
 	   :ensure t)
 	 ;; you can utilize :map :hook and :config to customize copilot
-   (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+   (define-key copilot-completion-map (kbd "C-c i") 'copilot-accept-completion)
    (define-key copilot-completion-map (kbd "C-c j") 'copilot-next-completion)
    (define-key copilot-completion-map (kbd "C-c k") 'copilot-previous-completion)
   

@@ -14,6 +14,7 @@
 (require 'bonk-tex)
 
 
+
 ;; Profile emacs startup
 (add-hook 'emacs-startup-hook
 		  (lambda ()

@@ -73,6 +73,12 @@
   (setq org-format-latex-options (plist-put org-format-latex-options :scale scale-number))
   )
 
+(defun bonk/disable-eglot-logging-for-lag ()
+"It must be triggered after eglot is running, not before"
+(interactive)
+	(fset #'jsonrpc--log-event #'ignore)
+  )
+
 (defun toggle-transparency ()
   (interactive)
   (let ((alpha (frame-parameter nil 'alpha)))

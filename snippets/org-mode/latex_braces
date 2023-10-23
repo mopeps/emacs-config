@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: latex_braces_squirly
+# key: bcrs_
+# --
+\$ \\\{ $1 \\\} $0 \$

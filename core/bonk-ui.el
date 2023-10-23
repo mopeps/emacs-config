@@ -1,29 +1,60 @@
 (provide 'bonk-ui)
 
 (setup (:pkg command-log-mode :straight t)
-  (command-log-mode 1))
+	(command-log-mode 1))
 
 (setup (:pkg all-the-icons :straight t))
 
-  (setup (:pkg minions :straight t)
-	(:hook-into doom-modeline-mode))
+    (setup (:pkg minions :straight t)
+  	(:hook-into telephone-line-mode))
+(use-package telephone-line
+  :custom 
+  (telephone-line-primary-left-separator 'telephone-line-cubed-left)
+  (telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left)
+  (telephone-line-primary-right-separator 'telephone-line-cubed-right)
+  (telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
+  (telephone-line-height 24)
+  (telephone-line-evil-use-short-tag t)  
+  :config
+  (telephone-line-defsegment telephone-line-pdf-segment ()
+			     (if (eq major-mode 'pdf-view-mode)
+				 (propertize (pdf-view-page-number)
+					     'face '(:inherit)
+					     'display '(raise 0.0)
+					     'mouse-face '(:box 1)
+					     'local-map (make-mode-line-mouse-map
+							 'mouse-1 (lambda ()
+								    (interactive)
+								    (pdf-view-goto-page))))))
+  (telephone-line-defsegment telephone-line-winum-segment ()
+			     (propertize winum--mode-line-segment
+					 'face '(:box (:line-width 2 :color "cyan" :style released-button))		
+					 'display '(raise 0.0)
+					 'mouse-face '(:box 1)))
+  (setq telephone-line-lhs '((accent . (telephone-line-winum-segment
+					telephone-line-pdf-segment
+					telephone-line-vc-segment
+					telephone-line-erc-modified-channels-segment
+					telephone-line-process-segment))
+			     (nil . (telephone-line-projectile-segment telephone-line-buffer-segment))))
+  (telephone-line-mode t))
 
-  (setup (:pkg doom-modeline :straight t)
-	(:hook-into after-init-hook)
-	(:option doom-modeline-height 15
-			 doom-modeline-bar-width 4
-			 doom-modeline-lsp t
-			 doom-modeline-github nil
-			 doom-modeline-mu4e nil
-			 doom-modeline-irc t
-			 doom-modeline-minor-modes t
-			 doom-modeline-modal-icon t
-			 doom-modeline-persp-name nil
-			 doom-modeline-buffer-file-name-style 'truncate-except-project
-			 doom-modeline-major-mode-icon nil)
-	(setq all-the-icons-scale-factor 0.9)
-	(custom-set-faces '(mode-line ((t (:height 0.85, :family "Fira Code"))))
-					  '(mode-line-inactive ((t (:height 0.85, :family "Fira Code"))))))
+    ;; (setup (:pkg doom-modeline :straight t)
+    ;; 	(:hook-into after-init-hook)
+    ;; 	(:option doom-modeline-height 15
+    ;; 			 doom-modeline-bar-width 4
+    ;; 			 doom-modeline-lsp t
+    ;; 			 doom-modeline-github nil
+    ;; 			 doom-modeline-mu4e nil
+    ;; 			 doom-modeline-irc t
+    ;; 			 doom-modeline-minor-modes t
+    ;; 			 doom-modeline-modal-icon t
+    ;; 			 doom-modeline-persp-name nil
+    ;; 			 doom-modeline-buffer-file-name-style 'truncate-except-project
+    ;; 			 doom-modeline-major-mode-icon nil)
+    ;; 	(setq all-the-icons-scale-factor 0.9)
+    ;; 	(custom-set-faces '(mode-line ((t (:height 0.85, :family "Fira Code"))))
+    ;; 					  '(mode-line-inactive ((t (:height 0.85, :family "Fira Code"))))))
 
 (use-package ivy
   :diminish
@@ -52,15 +83,15 @@
   (counsel-mode 1))
 
 (use-package helpful
-  :commands (helpful-callable helpful-variable helpful-command helpful-key)
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key))
+	:commands (helpful-callable helpful-variable helpful-command helpful-key)
+	:custom
+	(counsel-describe-function-function #'helpful-callable)
+	(counsel-describe-variable-function #'helpful-variable)
+	:bind
+	([remap describe-function] . counsel-describe-function)
+	([remap describe-command] . helpful-command)
+	([remap describe-variable] . counsel-describe-variable)
+	([remap describe-key] . helpful-key))
 
 (use-package hydra
 	:defer t)
@@ -77,7 +108,7 @@
 (setup ido
   (ido-mode 'buffers) ;; only use this line to turn off ido for file names!
   (setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
-							 "*Messages*" "Async Shell Command")))
+							  "*Messages*" "Async Shell Command")))
 
 (defvar +ligatures-extra-symbols
   '(;; org
